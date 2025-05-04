@@ -1,0 +1,136 @@
+#!/usr/bin/env groovy
+import groovy.ant.AntBuilder
+
+binding.groupId = 'se.alipsa.uso'
+binding.artifactId = 'uso-core'
+binding.version = '0.0.1'
+binding.ant = new AntBuilder()
+def groovyHome = System.getenv("GROOVY_HOME")
+
+binding.groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
+
+def buildDir = new File("out")
+if (!buildDir.exists()) {
+  buildDir.mkdir()
+}
+binding.buildDir = buildDir
+
+def mainBuildDir = new File(buildDir, "main")
+if (!mainBuildDir.exists()) {
+  mainBuildDir.mkdir()
+}
+binding.mainBuildDir = mainBuildDir
+
+if (args.contains('clean')) {
+  clean()
+}
+if (args.contains('compile')) {
+  compile()
+}
+
+if (args.contains('jar')) {
+  clean()
+  compile()
+  jar()
+}
+
+if (args.contains('deployLocal')) {
+  clean()
+  compile()
+  jar()
+  createPom()
+  deployLocal()
+}
+
+boolean hasRan(String targetName) {
+  boolean result = binding.hasVariable(targetName) && binding.getVariable(targetName)
+  binding.setVariable(targetName, true)
+  return result
+}
+
+def clean() {
+  if (hasRan('isCleaned')) return
+  println "\n[clean]"
+  ant.delete dir: buildDir
+  ant.mkdir dir: mainBuildDir
+}
+
+def compile() {
+  if (hasRan('isCompiled')) return
+  println "\n[compile]"
+  ant.taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')
+  ant.echo "Compiling main groovy classes"
+  ant.groovyc(
+      srcdir: 'src/main/groovy',
+      destdir: mainBuildDir,
+      classpath: groovyClasspath
+  )
+}
+def jar() {
+  if (hasRan('isJared')) return
+  println "\n[jar]"
+  ant.mkdir dir: 'out/jar'
+  ant.jar(destfile: "out/jar/$artifactId-${version}.jar", basedir: mainBuildDir) {
+    zipfileset(dir: "src/main/script")
+    manifest {
+      attribute name: 'Main-Class', value: 'se.alipsa.muskrat.Muskrat'
+    }
+  }
+}
+
+def createPom() {
+  if (hasRan('isCreatedPom')) return
+  println "\n[createPom]"
+  def pomFile = new File(mainBuildDir, "$artifactId-${version}.pom")
+  pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>$groupId</groupId>
+    <artifactId>$artifactId</artifactId>
+    <version>$version</version>
+    <packaging>jar</packaging>
+    <name>Groovy Markdown</name>
+    <description>Ant based build system for Groovy</description>
+    <url>https://github.com/Alipsa/uso</url>
+    <licenses>
+      <license>
+        <name>MIT License</name>
+        <url>https://github.com/Alipsa/uso/blob/main/LICENSE</url>
+      </license>
+    </licenses>
+    <developers>
+      <developer>
+        <id>perNyfelt</id>
+        <name>Per Nyfelt</name>
+      </developer>
+    </developers>
+    <scm>
+      <connection>scm:git:https://github.com/Alipsa/uso.git</connection>
+      <developerConnection>scm:git:git@github.com:Alipsa/uso.git</developerConnection>
+      <url>https://github.com/Alipsa/uso</url>
+    </scm>
+  </project>
+  """.stripIndent()
+  ant.echo "created $pomFile"
+}
+
+def deployLocal() {
+  if (hasRan('isDeployedLocal')) return
+  println "\n[deployLocal]"
+  def m2HomeDir = System.getProperty("M2_HOME") ?: System.getProperty("user.home") + "/.m2"
+  def m2Home = new File(m2HomeDir)
+  if (!m2Home.exists()) {
+    ant.echo "Unable to locate the local maven repository. Please set the M2_HOME environment variable."
+    return
+  }
+  def groupDir = groupId.replace('.', '/')
+  def localRepo = new File(m2Home, "repository/$groupDir/$artifactId/$version")
+  if (!localRepo.exists()) {
+    localRepo.mkdirs()
+  }
+  ant.copy file: "out/jar/$artifactId-${version}.jar", toDir: localRepo
+  ant.copy file: "out/main/$artifactId-${version}.pom", toDir: localRepo
+  ant.echo "Deployed to local maven repository at $localRepo"
+}

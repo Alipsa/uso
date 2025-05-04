@@ -1,0 +1,54 @@
+#!/usr/bin/env groovy
+@Grab('se.alipsa.uso:uso-core:0.0.1')
+import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl
+import se.alipsa.uso.ProjectBuilder
+
+ProjectBuilder projectBuilder = new ProjectBuilder()
+GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
+
+def parseArgs(String[] args) {
+  File buildFile
+  List<String> targets = []
+  List<String> props = []
+  if (args.length < 1) {
+    buildFile = new File("build.groovy")
+  } else {
+    buildFile = new File(args[0])
+    if (!buildFile.exists()) {
+      buildFile = new File("build.groovy")
+    }
+  }
+  args.each {
+    if (it != buildFile.name && !it.startsWith('-D')) {
+      targets << it
+    }
+    if (it.startsWith('-D')) {
+      props << it.substring(2)
+    }
+  }
+  [
+      buildFile: buildFile,
+      targets: targets,
+      systemProperties: props
+  ]
+}
+
+def params = parseArgs(args)
+params.systemProperties.each {
+  keyVal = it.split('=')
+  System.setProperty(keyVal[0], keyVal[1])
+}
+scriptEngine.put("project", projectBuilder)
+scriptEngine.eval(params.buildFile.text)
+projectBuilder.name = projectBuilder.name ?: params.buildFile.name
+
+
+List<String> targets
+if (params.targets.isEmpty()) {
+  targets = [projectBuilder.defaultTarget]
+} else {
+  targets = params.targets
+}
+targets.each { target ->
+  projectBuilder.execute(target)
+}
