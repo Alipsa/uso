@@ -42,6 +42,14 @@ if (args.contains('deployLocal')) {
   deployLocal()
 }
 
+/**
+ * Check if a target has already been run.
+ * If it has, return true and set the variable to true.
+ * If it hasn't, set the variable to false and return false.
+ *
+ * @param targetName the target name to check
+ * @return true if the target has already been run, false otherwise
+ */
 boolean hasRan(String targetName) {
   boolean result = binding.hasVariable(targetName) && binding.getVariable(targetName)
   binding.setVariable(targetName, true)
@@ -69,19 +77,22 @@ def compile() {
 def jar() {
   if (hasRan('isJared')) return
   println "\n[jar]"
+  def jarName = "$artifactId-${version}.jar"
   ant.mkdir dir: 'out/jar'
-  ant.jar(destfile: "out/jar/$artifactId-${version}.jar", basedir: mainBuildDir) {
+  ant.jar(destfile: "out/jar/$jarName", basedir: mainBuildDir) {
     zipfileset(dir: "src/main/script")
     manifest {
-      attribute name: 'Main-Class', value: 'se.alipsa.muskrat.Muskrat'
+      attribute name: 'Main-Class', value: 'se.alipsa.uso.ProjectBuilder'
     }
   }
+  binding.jarName = jarName
 }
 
 def createPom() {
   if (hasRan('isCreatedPom')) return
   println "\n[createPom]"
-  def pomFile = new File(mainBuildDir, "$artifactId-${version}.pom")
+  def pomName = "$artifactId-${version}.pom"
+  def pomFile = new File(mainBuildDir, pomName)
   pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -91,13 +102,13 @@ def createPom() {
     <artifactId>$artifactId</artifactId>
     <version>$version</version>
     <packaging>jar</packaging>
-    <name>Groovy Markdown</name>
+    <name>Uso Core</name>
     <description>Ant based build system for Groovy</description>
     <url>https://github.com/Alipsa/uso</url>
     <licenses>
       <license>
         <name>MIT License</name>
-        <url>https://github.com/Alipsa/uso/blob/main/LICENSE</url>
+        <url>https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/LICENSE</url>
       </license>
     </licenses>
     <developers>
@@ -113,6 +124,7 @@ def createPom() {
     </scm>
   </project>
   """.stripIndent()
+  binding.pomName = pomName
   ant.echo "created $pomFile"
 }
 
@@ -130,7 +142,7 @@ def deployLocal() {
   if (!localRepo.exists()) {
     localRepo.mkdirs()
   }
-  ant.copy file: "out/jar/$artifactId-${version}.jar", toDir: localRepo
-  ant.copy file: "out/main/$artifactId-${version}.pom", toDir: localRepo
+  ant.copy file: "out/jar/$jarName", toDir: localRepo
+  ant.copy file: "out/main/$pomName", toDir: localRepo
   ant.echo "Deployed to local maven repository at $localRepo"
 }

@@ -43,7 +43,7 @@ class ProjectBuilder extends AntBuilder {
         execute(target.depends)
       }
       if (!executedTargets.contains(targetName)) {
-        println "[$targetName]"
+        println "\n[$targetName]"
         target.execute()
         executedTargets << targetName
       }
