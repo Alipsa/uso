@@ -55,3 +55,7 @@ The build script is executed in the context of a ProjectBuilder instance running
 - variables that are declared without a type are global
 - variables that are declared with a type or with def are local
 
+### What is the meaning of Uso?
+Uso is a Spanish word meaning "use". It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
+The name was chosen because it is short and easy to remember, and it has a nice ring to it. The project is intended to be a simple and easy-to-use build system for Groovy projects, so the name fits well.
+
