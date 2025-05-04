@@ -52,7 +52,7 @@ uso clean compile
 The idea is very simple: 
 1. Your build script resides within a project closure.
 2. You define targets with a name and optional target dependencies.
-3. The target har a closure that is executed when the target is called.
+3. The target has a closure that is executed when the target is called.
 4. The target closure typically contains ant tasks but you are free to use any Groovy code you like.
 
 The build script is executed in the context of a ProjectBuilder instance running in the jsr233 [GroovyScriptEngineImpl](https://docs.groovy-lang.org/latest/html/api/org/codehaus/groovy/jsr223/GroovyScriptEngineImpl.html), which means that:

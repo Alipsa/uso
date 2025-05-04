@@ -71,8 +71,8 @@ class TargetBuilder extends AntBuilder {
       }
     } catch (Exception e) {
       String errorMessage = e.message
-          .replace(" class: se.alipsa.muskrat.TargetBuilder", " script $project.name")
-          .replace("se.alipsa.muskrat.TargetBuilder", project.name)
+          .replace(" class: se.alipsa.uso.TargetBuilder", " script $project.name")
+          .replace("se.alipsa.uso.TargetBuilder", project.name)
       System.err.println "Error executing target(s) '$targets': ${errorMessage}"
       System.exit(1)
     }

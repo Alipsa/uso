@@ -55,8 +55,8 @@ class ProjectBuilder extends AntBuilder {
       }
     } catch (Exception e) {
       String errorMessage = e.message
-          .replace(" class: se.alipsa.muskrat.ProjectBuilder", " script $name")
-          .replace("se.alipsa.muskrat.ProjectBuilder", name)
+          .replace(" class: se.alipsa.uso.ProjectBuilder", " script $name")
+          .replace("se.alipsa.uso.ProjectBuilder", name)
       System.err.println "Error executing target '$targetName': ${errorMessage}"
       System.exit(1)
     }
@@ -86,6 +86,7 @@ class ProjectBuilder extends AntBuilder {
 
   void setDefaultTarget(String defaultTarget) {
     this.defaultTarget = defaultTarget
+    project.setDefault(defaultTarget)
   }
 
   String getBaseDir() {
@@ -114,6 +115,7 @@ class ProjectBuilder extends AntBuilder {
 
   void setArtifactId(String artifactId) {
     this.artifactId = artifactId
+    project.name = artifactId
   }
 
   String getVersion() {
