@@ -66,7 +66,9 @@ To install uso, you need to have Groovy installed. You can use [sdkman](https://
 ```bash
 wget https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/uso
 chmod +x uso
-if [! -f build.groovy]; then
+wget https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/usas
+chmod +x usas
+if [[ ! -f build.groovy ]]; then
   echo "project.with {
   groupId = ''
   artifactId = ''
@@ -76,9 +78,20 @@ if [! -f build.groovy]; then
 }" > build.groovy
 fi
 ```
+There are two versions of uso scripts:
+- uso: this version only executes a target once per build
+- usas: this version uses the default way of how ant is executing targets i.e. for each target supplied to the command line, it will execute all the dependent targets for each one.
+
+Let's say we have 3 targets:
+- init
+- clean depends on init
+- compile depends on init
+
+`uso clean compile` will execute init -> clean -> compile. (maven style)
+`usas clean compile` will execute init -> clean -> init -> compile. (ant style)
 
 
 ### What is the meaning of Uso?
-Uso is a Spanish word meaning "use". It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
-The name was chosen because it is short and easy to remember, and it has a nice ring to it. The project is intended to be a simple and easy-to-use build system for Groovy projects, so the name fits well.
+Uso is a Spanish word meaning "use" (first person; usas is the second person singular form). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
+The name was chosen because it is short and easy to remember, and it has a nice ring to it. The project is intended to be a simple and easy-to-use Groovy based build system for jvm languages, so the name fits well.
 

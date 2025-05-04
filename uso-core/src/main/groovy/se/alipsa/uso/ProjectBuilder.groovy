@@ -2,6 +2,12 @@ package se.alipsa.uso
 
 import groovy.ant.AntBuilder
 
+/**
+ * An extension of AntBuilder that allows for the creation of Ant targets using Groovy closures.
+ * This class is used to build and execute Ant targets in a Groovy-based build system.
+ * A target will only be executed once, even if it is called (through dependant tasks) multiple times.
+ * The targets created are not real Ant targets but an inner class of this Class.
+ */
 class ProjectBuilder extends AntBuilder {
   String groupId
   String artifactId
@@ -43,7 +49,7 @@ class ProjectBuilder extends AntBuilder {
         execute(target.depends)
       }
       if (!executedTargets.contains(targetName)) {
-        println "\n[$targetName]"
+        println "\n$targetName:"
         target.execute()
         executedTargets << targetName
       }
@@ -92,10 +98,6 @@ class ProjectBuilder extends AntBuilder {
 
   Map<String, Target> getTargets() {
     return targets
-  }
-
-  void setTargets(Map<String, Target> targets) {
-    this.targets = targets
   }
 
   String getGroupId() {

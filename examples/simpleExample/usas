@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 @Grab('se.alipsa.uso:uso-core:0.0.1')
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl
-import se.alipsa.uso.ProjectBuilder
+import se.alipsa.uso.TargetBuilder
 
-ProjectBuilder projectBuilder = new ProjectBuilder()
+TargetBuilder projectBuilder = new TargetBuilder()
 GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
 
 def parseArgs() {
@@ -34,30 +34,11 @@ def parseArgs() {
 }
 
 def params = parseArgs()
-if (!params.buildFile.exists()) {
-  println "Build file ${params.buildFile.name} does not exist, specify it as the first parameter or name the build file build.groovy"
-  System.exit(1)
-}
-
 params.systemProperties.each {
   keyVal = it.split('=')
   System.setProperty(keyVal[0], keyVal[1])
 }
 scriptEngine.put("project", projectBuilder)
 scriptEngine.eval(params.buildFile.text)
-projectBuilder.name = projectBuilder.name ?: params.buildFile.name
 
-
-List<String> targets
-if (params.targets.isEmpty()) {
-  if(projectBuilder.defaultTarget == null) {
-    println "No targets defined in build file ${params.buildFile.name}"
-    System.exit(1)
-  }
-  targets = [projectBuilder.defaultTarget]
-} else {
-  targets = params.targets
-}
-targets.each { target ->
-  projectBuilder.execute(target)
-}
+projectBuilder.execute(params.targets)

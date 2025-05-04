@@ -5,6 +5,7 @@ project.with {
   defaultTarget = 'init'
 
   target('init') {
+    echo "Initializing project..."
     buildDir = new File("build")
     if (!buildDir.exists()) {
       buildDir.mkdir()

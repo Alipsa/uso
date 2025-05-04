@@ -6,7 +6,7 @@ import se.alipsa.uso.ProjectBuilder
 ProjectBuilder projectBuilder = new ProjectBuilder()
 GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
 
-def parseArgs(String[] args) {
+def parseArgs() {
   File buildFile
   List<String> targets = []
   List<String> props = []
@@ -33,7 +33,7 @@ def parseArgs(String[] args) {
   ]
 }
 
-def params = parseArgs(args)
+def params = parseArgs()
 if (!params.buildFile.exists()) {
   println "Build file ${params.buildFile.name} does not exist, specify it as the first parameter or name the build file build.groovy"
   System.exit(1)
