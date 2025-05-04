@@ -1,6 +1,6 @@
 # Uso, an ANT based build system
 
-The Uso ProjectBuilder is an extension of AntBuilder, adding declarative targets while still keeping the simplicity of AntBuilder to define and execute tasks. The result is a build system that works the same as Ant, but using Groovy as the build scripting language.
+The Uso ProjectBuilder is an extension of [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html), adding declarative targets while still keeping the simplicity of AntBuilder to define and execute tasks. The result is a build system that works the same as Ant, but using Groovy as the build scripting language.
 
 It requires groovy to be installed and on the path (e.g. through sdkman)
 
@@ -50,8 +50,8 @@ uso clean compile
 ```
 
 
-The build script is executed in the context of a ProjectBuilder instance running in the jsr233 GroovyScriptEngineImpl, which means that:
-- The ProjectBuilder is injected into the build script with the name project. It extends the AntBuilder so by doing `project.with {}` you can use all AntBuilder methods as well as the additional target methods in Project builder without having to reference the project object.
+The build script is executed in the context of a ProjectBuilder instance running in the jsr233 [GroovyScriptEngineImpl](https://docs.groovy-lang.org/latest/html/api/org/codehaus/groovy/jsr223/GroovyScriptEngineImpl.html), which means that:
+- The ProjectBuilder is injected into the build script with the name project. It extends the [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html) so by doing `project.with {}` you can use all AntBuilder methods as well as the additional target methods in Project builder without having to reference the project object.
 - variables that are declared without a type are global
 - variables that are declared with a type or with def are local
 
