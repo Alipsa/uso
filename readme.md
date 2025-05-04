@@ -64,7 +64,8 @@ The build script is executed in the context of a ProjectBuilder instance running
 To install uso, you need to have Groovy installed. You can use [sdkman](https://sdkman.io/) to install it. Once you have Groovy installed, you can install uso in the project you want to use it in using the following command:
 
 ```bash
-curl -s "https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/installUso.sh" | bash
+curl -H 'Cache-Control: no-cache, no-store' \
+-s "https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/installUso.sh" | bash
 ```
 There are two versions of uso scripts:
 - uso: this version only executes a target once per build
@@ -75,8 +76,9 @@ Let's say we have 3 targets:
 - clean depends on init
 - compile depends on init
 
-`uso clean compile` will execute init -> clean -> compile. (maven style)
-`usas clean compile` will execute init -> clean -> init -> compile. (ant style)
+If you run the following commands:
+- `uso clean compile` will execute init -> clean -> compile. (maven style)
+- `usas clean compile` will execute init -> clean -> init -> compile. (ant style)
 
 
 ### What is the meaning of Uso?
