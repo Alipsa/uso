@@ -49,11 +49,34 @@ This is executed using the uso command, e.g. to run the clean and compile target
 uso clean compile
 ```
 
+The idea is very simple: 
+1. Your build script resides within a project closure.
+2. You define targets with a name and optional target dependencies.
+3. The target har a closure that is executed when the target is called.
+4. The target closure typically contains ant tasks but you are free to use any Groovy code you like.
 
 The build script is executed in the context of a ProjectBuilder instance running in the jsr233 [GroovyScriptEngineImpl](https://docs.groovy-lang.org/latest/html/api/org/codehaus/groovy/jsr223/GroovyScriptEngineImpl.html), which means that:
 - The ProjectBuilder is injected into the build script with the name project. It extends the [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html) so by doing `project.with {}` you can use all AntBuilder methods as well as the additional target methods in Project builder without having to reference the project object.
-- variables that are declared without a type are global
+- variables that are declared without a type are global. You can use ant properties if you prefer but it is not necessary.
 - variables that are declared with a type or with def are local
+
+## Installation
+To install uso, you need to have Groovy installed. You can use [sdkman](https://sdkman.io/) to install it. Once you have Groovy installed, you can install uso in the project you want to use it in using the following command:
+
+```bash
+wget https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/uso
+chmod +x uso
+if [! -f build.groovy]; then
+  echo "project.with {
+  groupId = ''
+  artifactId = ''
+  version = ''
+  defaultTarget = ''
+  // target definitions goes here
+}" > build.groovy
+fi
+```
+
 
 ### What is the meaning of Uso?
 Uso is a Spanish word meaning "use". It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
