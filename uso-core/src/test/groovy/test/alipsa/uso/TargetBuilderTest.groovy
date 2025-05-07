@@ -97,5 +97,6 @@ class TargetBuilderTest {
     assert file.exists()
     assert file.text == "Hello from testQuiet!Hello again from testQuiet!"
     //println "File content: ${file.text}"
+    file.deleteOnExit()
   }
 }

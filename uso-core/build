@@ -194,8 +194,6 @@ def createPom() {
   """.stripIndent()
   binding.pomName = pomName
   ant.echo "created $pomFile"
-  // Copy pom to the root for improved IDE support
-  ant.copy file: pomFile, toDir: '.'
 }
 
 def deployLocal() {
