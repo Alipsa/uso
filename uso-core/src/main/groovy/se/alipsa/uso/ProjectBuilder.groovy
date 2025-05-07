@@ -1,83 +1,55 @@
 package se.alipsa.uso
-
 import groovy.ant.AntBuilder
 
-/**
- * An extension of AntBuilder that allows for the creation of Ant targets using Groovy closures.
- * This class is used to build and execute Ant targets in a Groovy-based build system.
- * A target will only be executed once, even if it is called (through dependant tasks) multiple times.
- * The targets created are not real Ant targets but an inner class of this Class.
- */
-class ProjectBuilder extends AntBuilder {
+abstract class ProjectBuilder extends AntBuilder {
   String groupId
   String artifactId
   String version
-  String name
   String defaultTarget
   String baseDir
-
-  Map<String, Target> targets = [:]
-  List<String> executedTargets = []
 
   ProjectBuilder() {
     super()
     this.baseDir = System.getProperty("user.dir")
     taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')
+    //taskdef(uri:"antlib:org.apache.maven.resolver.ant", resource:"org/apache/maven/resolver/ant/antlib.xml")
+
+    typedef(name:"authentication", classname:"org.apache.maven.resolver.internal.ant.types.Authentication")
+    typedef(name:"proxy", classname:"org.apache.maven.resolver.internal.ant.types.Proxy")
+    typedef(name:"mirror", classname:"org.apache.maven.resolver.internal.ant.types.Mirror")
+    typedef(name:"localrepo", classname:"org.apache.maven.resolver.internal.ant.types.LocalRepository")
+    typedef(name:"remoterepo", classname:"org.apache.maven.resolver.internal.ant.types.RemoteRepository")
+    typedef(name:"remoterepos", classname:"org.apache.maven.resolver.internal.ant.types.RemoteRepositories")
+    typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
+    typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+    typedef(name:"artifact", classname:"org.apache.maven.resolver.internal.ant.types.Artifact")
+    typedef(name:"artifacts", classname:"org.apache.maven.resolver.internal.ant.types.Artifacts")
+    typedef(name:"settings", classname:"org.apache.maven.resolver.internal.ant.types.Settings")
+    taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
+    taskdef(name:"install", classname:"org.apache.maven.resolver.internal.ant.tasks.Install")
+    taskdef(name:"deploy", classname:"org.apache.maven.resolver.internal.ant.tasks.Deploy")
+    taskdef(name:"pom", classname:"org.apache.maven.resolver.internal.ant.types.Pom")
   }
 
-  ProjectBuilder target(Map params, Closure closure) {
-    String name = params.name
-    String depends = params.depends
-    targets[name] = new Target(name: name, depends: depends, closure: closure)
-    this
-  }
+  abstract void target(Map<String, String> params, Closure closure)
+  abstract void target(String name, Closure closure)
+  abstract void target(String name, String depends, Closure closure)
 
-  ProjectBuilder target(String name, Closure closure) {
-    targets[name] = new Target(name: name, closure: closure)
-    this
+  def execute() {
+    if (defaultTarget == null) {
+      throw new IllegalArgumentException("No target specified and no default target set.")
+    }
+    execute(defaultTarget)
   }
-
-  ProjectBuilder target(String name, String depends, Closure closure) {
-    targets[name] = new Target(name: name, depends: depends, closure: closure)
-    this
-  }
-
   def execute(String targetName) {
-    try {
-      def target = targets[targetName]
-      if (target.depends != null) {
-        execute(target.depends)
-      }
-      if (!executedTargets.contains(targetName)) {
-        println "\n$targetName:"
-        target.execute()
-        executedTargets << targetName
-      }
-    } catch (Exception e) {
-      String errorMessage = e.message
-          .replace(" class: se.alipsa.uso.ProjectBuilder", " script $name")
-          .replace("se.alipsa.uso.ProjectBuilder", name)
-      System.err.println "Error executing target '$targetName': ${errorMessage}"
-      System.exit(1)
-    }
+    execute([targetName])
   }
+  abstract def execute(List<String> targets)
 
-  static class Target {
-    String name
-    String depends
-    Closure closure
-
-    def execute() {
-      closure.call()
-    }
-  }
+  abstract Map<String, ?> getTargets()
 
   String getName() {
-    return name
-  }
-
-  void setName(String name) {
-    this.name = name
+    return "$groupId:$artifactId:$version"
   }
 
   String getDefaultTarget() {
@@ -95,10 +67,6 @@ class ProjectBuilder extends AntBuilder {
 
   void setBaseDir(String baseDir) {
     this.baseDir = baseDir
-  }
-
-  Map<String, Target> getTargets() {
-    return targets
   }
 
   String getGroupId() {
@@ -124,5 +92,25 @@ class ProjectBuilder extends AntBuilder {
 
   void setVersion(String version) {
     this.version = version
+  }
+
+  /**
+   * Sets the output level for the project. Levels are:
+   * <pre>
+   * 0 - off (errors only)
+   * 1 - warnings and above i.e. show echo but supress build messages
+   * 2 - info i.e. show build messages (the default)
+   * 3 - verbose i.e. show all messages
+   * 4 - debug i.e. show all messages including debug messages
+   * </pre>
+   *
+   * @param level the output level to set
+   * @return the previous output level
+   */
+  int setOutputLevel(Integer level) {
+    def listener = project.getBuildListeners().firstElement()
+    def oldLevel = listener.getMessageOutputLevel()
+    listener.setMessageOutputLevel(level)
+    return oldLevel
   }
 }

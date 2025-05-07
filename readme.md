@@ -53,12 +53,13 @@ The idea is very simple:
 1. Your build script resides within a project closure.
 2. You define targets with a name and optional target dependencies.
 3. The target has a closure that is executed when the target is called.
-4. The target closure typically contains ant tasks but you are free to use any Groovy code you like.
+4. The target closure typically contains ant tasks, but you are free to use any Groovy code you like.
 
 The build script is executed in the context of a ProjectBuilder instance running in the jsr233 [GroovyScriptEngineImpl](https://docs.groovy-lang.org/latest/html/api/org/codehaus/groovy/jsr223/GroovyScriptEngineImpl.html), which means that:
 - The ProjectBuilder is injected into the build script with the name project. It extends the [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html) so by doing `project.with {}` you can use all AntBuilder methods as well as the additional target methods in Project builder without having to reference the project object.
-- variables that are declared without a type are global. You can use ant properties if you prefer but it is not necessary.
+- variables that are declared without a type are global. You can use ant properties if you prefer, but it is not necessary.
 - variables that are declared with a type or with def are local
+- Maven ant tasks and the groovyc task are already defined so no need to do taskdef for them.
 
 ## Installation
 To install uso, you need to have Groovy installed. You can use [sdkman](https://sdkman.io/) to install it. Once you have Groovy installed, you can install uso in the project you want to use it in using the following command:
@@ -68,8 +69,8 @@ curl -H 'Cache-Control: no-cache, no-store' \
 -s "https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/installUso.sh" | bash
 ```
 There are two versions of uso scripts:
-- uso: this version only executes a target once per build
-- usas: this version uses the default way of how ant is executing targets i.e. for each target supplied to the command line, it will execute all the dependent targets for each one.
+- uso: this version uses the default way of how ant is executing targets i.e. for each target supplied to the command line, it will execute all the dependent targets for each one. 
+- usas: this version only executes a target once per build. Note: the targets are not real Ant targets so does not support all the Ant features.
 
 Let's say we have 3 targets:
 - init
@@ -77,8 +78,10 @@ Let's say we have 3 targets:
 - compile depends on init
 
 If you run the following commands:
-- `uso clean compile` will execute init -> clean -> compile. (maven style)
-- `usas clean compile` will execute init -> clean -> init -> compile. (ant style)
+- `uso clean compile` will execute init -> clean -> init -> compile. (ant style)
+- `usas clean compile` will execute init -> clean -> compile. (maven style). Your targets should be constructed similarly to maven targets (compile, test, package, install, etc) to get the best out of this.
+
+Please see the [examples](examples) directory for more examples of how to use uso.
 
 
 ### What is the meaning of Uso?
