@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:resolver="antlib:org.apache.maven.resolver.ant" default="deploy">
+  <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml">
+    <classpath>
+      <fileset dir="lib" includes="maven-resolver-ant-tasks-*uber.jar"/>
+    </classpath>
+  </taskdef>
+
+  <dependencies id='compile'>
+  //dependency(groupId: 'se.alipsa.matrix', artifactId:'matrix-bom', version:'2.2.0', type: 'pom', scope: 'import')
+    <dependency groupId='se.alipsa.matrix' artifactId='matrix-core' version='3.2.0'/>
+    <dependency groupId='se.alipsa.matrix' artifactId='matrix-csv' version='2.1.0'/>
+  </dependencies>
+
+  <dependencies id='test'>
+    <dependency refid='compile'/>
+    //dependency(groupId: 'org.junit', artifactId: 'junit-bom', version:'5.12.2', type: 'pom', scope: 'import')
+    <dependency groupId='org.junit.jupiter' artifactId='junit-jupiter-engine' version='5.12.2'/>
+    <dependency groupId='org.junit.platform' artifactId='junit-platform-launcher' version='1.12.2'/>
+    <dependency coords='org.apache.ant:ant-junitlauncher:1.10.15'/>
+  </dependencies>
+
+  <target name='init'>
+    <echo message="Initializing project..." />
+    <resolve dependenciesref='compile'>
+      <path refId='compilePath' classpath='compile'/>
+    </resolve>
+    <mkdir dir="build"/>
+    <property name="buildDir" value="build"/>
+    <property name="mainBuildDir" value="${buildDir}/main"/>
+    <mkdir dir="${mainBuildDir}"/>
+    <property name="testBuildDir" value="${buildDir}/test"/>
+    <mkdir dir="${testBuildDir}"/>
+  </target>
+
+  <target name='clean' depends='init'>
+    <delete dir="${buildDir}"/>
+    <mkdir dir="${mainBuildDir}"/>
+  </target>
+
+  <target name='compile' depends='init'>
+    <echo>Compiling main groovy classes"</echo>
+  <groovyc
+    srcdir='src/main/groovy'
+    destdir='${mainBuildDir}'
+    classpathref='compilePath'
+  targetBytecode: "21"
+  )
+  </target>
+
+  target(name: 'test', depends: 'compile') {
+  echo "Compiling test groovy classes"
+  groovyc(
+  srcdir: 'src/test/groovy',
+  destdir: testBuildDir,
+  classpath: compile,
+  targetBytecode: "21"
+  )
+  junitlauncher {
+  classpath {
+  pathelement path: mainBuildDir
+  pathelement path: testBuildDir
+  pathelement path: dependencies.test.toPath()
+  }
+  testclasses(outputdir: outputDir.canonicalPath) {
+  fileset dir: testBuildDir
+  listener type: "legacy-brief", sendSysOut: true
+  }
+  }
+  }
+
+  target(name: 'jar', depends: 'compile') {
+  echo "Creating jar file"
+  jarFile = new File(buildDir, "libs/${artifactId}-${version}.jar")
+  jar(destfile: jarFile) {
+  fileset dir: mainBuildDir
+  }
+  }
+</project>

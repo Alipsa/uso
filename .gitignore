@@ -33,3 +33,14 @@ bin/
 /examples/examples.iml
 /uso-core/src/main/main.iml
 /uso-core/src/test/test.iml
+/examples/multimodule/multimodule.iml
+/examples/parentChild/parentChild.iml
+/examples/publish/publish.iml
+/ideaPlugin/ideaPlugin.iml
+/ideaPlugin/.gradle/
+/examples/multimodule/common/common.iml
+/examples/parentChild/common/common.iml
+/examples/multimodule/subA/subA.iml
+/examples/parentChild/subA/subA.iml
+/examples/multimodule/subB/subB.iml
+/examples/parentChild/subB/subB.iml

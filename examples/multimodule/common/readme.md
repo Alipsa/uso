@@ -1,0 +1,1 @@
+# This is the common module for the multimodule project
