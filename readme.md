@@ -15,18 +15,13 @@ project.with {
 
   target('init') {
     buildDir = new File("build")
-    if (!buildDir.exists()) {
-      buildDir.mkdir()
-    }
+    mkdir dir: buildDir
     mainBuildDir = new File(buildDir, "main")
-    if (!mainBuildDir.exists()) {
-      mainBuildDir.mkdir()
-    }
+    mkdir dir: mainBuildDir
   }
 
-  target(name: 'clean', depends: 'init') {
+  target(name: 'clean') {
     delete dir: buildDir
-    mkdir dir: mainBuildDir
   }
 
   target(name: 'compile', depends: 'init') {
