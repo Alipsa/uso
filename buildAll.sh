@@ -3,17 +3,19 @@ set -e
 cd "$(dirname "$0")"
 
 function buildExample() {
-  pushd "$1"
+  dir="$1"
+  shift 1
+  pushd "$dir"
     echo ""
     echo "********************************"
-    echo "Building $(basename $PWD) using uso"
+    echo "Building $(basename "$dir") using uso"
     echo "********************************"
-    ./uso clean test
+    ./uso "$@"
     echo ""
     echo "*********************************"
-    echo "Building $(basename $PWD) using usas"
+    echo "Building $(basename "$dir") using usas"
     echo "*********************************"
-    ./usas clean test
+    ./usas "$@"
   popd
 }
 
@@ -24,8 +26,8 @@ pushd uso-core
   echo "********************"
   ./build deployLocal
 popd
-buildExample examples/simpleExample
-# buildExample examples/dependencies
+buildExample examples/simpleExample clean compile
+buildExample examples/dependencies clean test
 echo ""
 echo "*****"
 echo "Done!"

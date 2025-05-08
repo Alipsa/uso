@@ -65,17 +65,26 @@ project.with {
     def outputDir = new File(buildDir, "testoutput")
     mkdir dir: outputDir
 
-    junitlauncher {
+    junitlauncher(printSummary: true, haltOnFailure: true) {
       classpath {
         pathelement location: mainBuildDir
         pathelement location: testBuildDir
         path refid: "testPath"
       }
-      testclasses(outputdir: outputDir.canonicalPath) {
+      testclasses(outputdir: outputDir) {
         fileset dir: testBuildDir
-        listener type: "legacy-brief", sendSysOut: true
+        listener type: "legacy-xml", sendSysOut: true, sendSysErr: true
+        //listener type: "legacy-plain", sendSysOut: true, sendSysErr: true
       }
     }
+    testReportDir = new File(outputDir, "testreport")
+    mkdir dir: testReportDir
+    junitreport(todir: outputDir) {
+      fileset dir: outputDir
+      report format: 'frames', todir: testReportDir
+    }
+    //def testResults = new File(outputDir, "TEST-MatrixExampleTest.txt")
+    //if (testResults.exists()) println testResults.text
   }
 
   target(name: 'jar', depends: 'compile') {

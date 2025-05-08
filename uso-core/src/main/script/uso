@@ -44,5 +44,9 @@ params.systemProperties.each {
 }
 scriptEngine.put("project", projectBuilder)
 scriptEngine.eval(params.buildFile.text)
-
-projectBuilder.execute(params.targets)
+if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
+  println projectBuilder.targets.keySet()
+  return
+} else {
+  projectBuilder.execute(params.targets)
+}
