@@ -1,6 +1,5 @@
 package se.alipsa.uso
 
-import groovy.ant.AntBuilder
 import org.apache.tools.ant.Target
 
 /**
@@ -9,20 +8,20 @@ import org.apache.tools.ant.Target
  * All targets in the dependency chain will be executed for each target specified.
  * The targets created are real Ant targets.
  */
-class TargetBuilder extends AntBuilder {
-  String groupId
-  String artifactId
-  String version
-  String defaultTarget
-  String baseDir
+class AntTargetBuilder extends ProjectBuilder {
 
-  TargetBuilder() {
+  AntTargetBuilder() {
     super()
-    this.baseDir = System.getProperty("user.dir")
-    taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')
   }
 
-  Target target(Map<String, String> params, Closure closure) {
+  AntTargetBuilder(String groupId, String artifactId, String version) {
+    super()
+    this.groupId = groupId
+    this.artifactId = artifactId
+    this.version = version
+  }
+
+  void target(Map<String, String> params, Closure closure) {
     Target antTarget = new Target()
     params.each {
       if (antTarget.hasProperty(it.key)) {
@@ -37,23 +36,12 @@ class TargetBuilder extends AntBuilder {
     antTarget
   }
 
-  Target target(String name, Closure closure) {
+  void target(String name, Closure closure) {
     target(name: name, closure)
   }
 
-  Target target(String name, String depends, Closure closure) {
+  void target(String name, String depends, Closure closure) {
     target(name: name, depends: depends, closure)
-  }
-
-  def execute() {
-    if (defaultTarget == null) {
-      throw new IllegalArgumentException("No target specified and no default target set.")
-    }
-    execute([defaultTarget])
-  }
-
-  def execute(String targetName) {
-    execute([targetName])
   }
 
   def execute(List<String> targets) {
@@ -71,8 +59,8 @@ class TargetBuilder extends AntBuilder {
       }
     } catch (Exception e) {
       String errorMessage = e.message
-          .replace(" class: se.alipsa.uso.TargetBuilder", " script $project.name")
-          .replace("se.alipsa.uso.TargetBuilder", project.name)
+          .replace(" class: se.alipsa.uso.AntTargetBuilder", " script $project.name")
+          .replace("se.alipsa.uso.AntTargetBuilder", project.name)
       System.err.println "Error executing target(s) '$targets': ${errorMessage}"
       System.exit(1)
     }
@@ -84,47 +72,5 @@ class TargetBuilder extends AntBuilder {
       targetMap.put(String.valueOf(k),  v as Target)
     }
     targetMap
-  }
-
-  String getDefaultTarget() {
-    return defaultTarget
-  }
-
-  void setDefaultTarget(String defaultTarget) {
-    this.defaultTarget = defaultTarget
-    project.setDefault(defaultTarget)
-  }
-
-  String getBaseDir() {
-    return baseDir
-  }
-
-  void setBaseDir(String baseDir) {
-    this.baseDir = baseDir
-  }
-
-  String getGroupId() {
-    return groupId
-  }
-
-  void setGroupId(String groupId) {
-    this.groupId = groupId
-  }
-
-  String getArtifactId() {
-    return artifactId
-  }
-
-  void setArtifactId(String artifactId) {
-    this.artifactId = artifactId
-    project.name = artifactId
-  }
-
-  String getVersion() {
-    return version
-  }
-
-  void setVersion(String version) {
-    this.version = version
   }
 }

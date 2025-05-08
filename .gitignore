@@ -28,3 +28,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/examples/dependencies/build/
+/examples/simpleExample/build/
+/examples/examples.iml
+/uso-core/src/main/main.iml
+/uso-core/src/test/test.iml

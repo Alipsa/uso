@@ -1,9 +1,12 @@
 #!/usr/bin/env groovy
 @Grab('se.alipsa.uso:uso-core:0.0.1')
+@Grab('org.slf4j:slf4j-simple:2.0.17')
+@GrabConfig(systemClassLoader=true)
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl
-import se.alipsa.uso.TargetBuilder
+import se.alipsa.uso.ProjectBuilder
+import se.alipsa.uso.TargetOnceProjectBuilder
 
-TargetBuilder targetBuilder = new TargetBuilder()
+ProjectBuilder projectBuilder = new TargetOnceProjectBuilder()
 GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
 
 def parseArgs() {
@@ -34,11 +37,21 @@ def parseArgs() {
 }
 
 def params = parseArgs()
+if (!params.buildFile.exists()) {
+  println "Build file ${params.buildFile.name} does not exist, specify it as the first parameter or name the build file build.groovy"
+  System.exit(1)
+}
+
 params.systemProperties.each {
-  keyVal = it.split('=')
+  def keyVal = it.split('=')
   System.setProperty(keyVal[0], keyVal[1])
 }
-scriptEngine.put("project", targetBuilder)
+scriptEngine.put("project", projectBuilder)
 scriptEngine.eval(params.buildFile.text)
 
-targetBuilder.execute(params.targets)
+if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
+  println projectBuilder.targets.keySet()
+  return
+} else {
+  projectBuilder.execute(params.targets)
+}

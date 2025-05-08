@@ -3,6 +3,7 @@
 //@Grab('org.junit.platform:junit-platform-launcher:1.12.2')
 //@Grab('org.junit.platform:junit-platform-commons:1.12.2')
 //@Grab('org.opentest4j:opentest4j:1.3.0')
+@Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.2')
 @Grab('org.apache.ant:ant-junitlauncher:1.10.15')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
@@ -47,6 +48,10 @@ if (args.contains('deployLocal')) {
   jar()
   createPom()
   deployLocal()
+}
+
+if (args.contains('deploy')) {
+  deploy()
 }
 
 /**
@@ -100,7 +105,7 @@ def compileTest() {
 def test() {
   if (hasRan('isTested')) return
   println "\n[test]"
-  ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask')
+  //ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask')
   def outputDir = new File(buildDir, "testoutput")
   if (!outputDir.exists()) {
     outputDir.mkdirs()
@@ -168,6 +173,23 @@ def createPom() {
       <developerConnection>scm:git:git@github.com:Alipsa/uso.git</developerConnection>
       <url>https://github.com/Alipsa/uso</url>
     </scm>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-ant-tasks</artifactId>
+        <version>1.5.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-xml</artifactId>
+        <version>4.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant-junitlauncher</artifactId>
+        <version>1.10.15</version>
+      </dependency>
+    </dependencies>
   </project>
   """.stripIndent()
   binding.pomName = pomName
@@ -190,9 +212,42 @@ def deployLocal() {
   }
   ant.copy file: "out/jar/$jarName", toDir: localRepo
   ant.copy file: "out/main/$pomName", toDir: localRepo
+  ant.delete dir: "${System.getProperty('user.home')}/.groovy/grapes/se.alipsa.uso"
   ant.echo "Deployed to local maven repository at $localRepo"
 }
 
+def signJar() {
+  if (hasRan('isSigned')) return
+  println "\n[signJar]"
+  def jarFile = new File(mainBuildDir, jarName)
+  def sigFile = new File(mainBuildDir, "$jarName.asc")
+  ant.signjar(jar: jarFile, alias: 'uso', keystore: 'uso.jks', storepass: 'password', sigfile: sigFile)
+}
+
+def deploy() {
+  //https://stackoverflow.com/questions/61250554/deploying-jar-to-nexus-using-maven-ant-task
+  if (hasRan('isDeployed')) return
+  ant.taskdef(uri:"antlib:org.apache.maven.resolver.ant", resource:"org/apache/maven/resolver/ant/antlib.xml")
+  /*
+  <typedef name="authentication"       classname="org.apache.maven.resolver.internal.ant.types.Authentication"/>
+  <typedef name="proxy"                classname="org.apache.maven.resolver.internal.ant.types.Proxy"/>
+  <typedef name="mirror"               classname="org.apache.maven.resolver.internal.ant.types.Mirror"/>
+  <typedef name="localrepo"            classname="org.apache.maven.resolver.internal.ant.types.LocalRepository"/>
+  <typedef name="remoterepo"           classname="org.apache.maven.resolver.internal.ant.types.RemoteRepository"/>
+  <typedef name="remoterepos"          classname="org.apache.maven.resolver.internal.ant.types.RemoteRepositories"/>
+  <typedef name="dependency"           classname="org.apache.maven.resolver.internal.ant.types.Dependency"/>
+  <typedef name="dependencies"         classname="org.apache.maven.resolver.internal.ant.types.Dependencies"/>
+  <typedef name="artifact"             classname="org.apache.maven.resolver.internal.ant.types.Artifact"/>
+  <typedef name="artifacts"            classname="org.apache.maven.resolver.internal.ant.types.Artifacts"/>
+  <typedef name="settings"             classname="org.apache.maven.resolver.internal.ant.types.Settings"/>
+
+  <taskdef name="resolve"              classname="org.apache.maven.resolver.internal.ant.tasks.Resolve"/>
+  <taskdef name="install"              classname="org.apache.maven.resolver.internal.ant.tasks.Install"/>
+  <taskdef name="deploy"               classname="org.apache.maven.resolver.internal.ant.tasks.Deploy"/>
+  <taskdef name="pom"                  classname="org.apache.maven.resolver.internal.ant.types.Pom"/>
+   */
+
+}
 
 def createProjectLayout() {
   println "\n[createProjectLayout]"
