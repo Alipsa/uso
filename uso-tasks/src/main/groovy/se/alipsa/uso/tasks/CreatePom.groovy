@@ -1,9 +1,19 @@
 package se.alipsa.uso.tasks
 
+import groovy.xml.XmlSlurper
+import groovy.xml.XmlUtil
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.apache.maven.resolver.internal.ant.types.Dependency
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
+import org.w3c.dom.Document
+
+import javax.xml.XMLConstants
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 
 class CreatePom extends Task {
 
@@ -102,10 +112,11 @@ class CreatePom extends Task {
       }
     }
 
+    String schemaLocation = 'https://maven.apache.org/xsd/maven-4.0.0.xsd'
     pomFile.text = """
     <project xmlns="http://maven.apache.org/POM/4.0.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 $schemaLocation">
       <modelVersion>4.0.0</modelVersion>
       <groupId>${getGroupId()}</groupId>
       <artifactId>${getArtifactId()}</artifactId>
@@ -117,5 +128,19 @@ class CreatePom extends Task {
       </dependencies>
     </project>
     """.stripIndent()
+
+    try {
+      def doc = new XmlSlurper().parse(pomFile)
+
+      def xsdLocation = new URI(schemaLocation).toURL()
+
+      SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI)
+          .newSchema(xsdLocation)
+          .newValidator()
+          .validate(new StreamSource(new StringReader( XmlUtil.serialize(doc))))
+    } catch (Exception e) {
+      throw new BuildException("Failed to create a valid pom file: ${e.message}", e)
+    }
+    log("Created pom file ${pomFile.canonicalPath}")
   }
 }
