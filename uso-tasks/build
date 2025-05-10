@@ -1,16 +1,11 @@
 #!/usr/bin/env groovy
-//@Grab('org.junit.jupiter:junit-jupiter-engine:5.1.12')
-//@Grab('org.junit.platform:junit-platform-launcher:1.12.2')
-//@Grab('org.junit.platform:junit-platform-commons:1.12.2')
-//@Grab('org.opentest4j:opentest4j:1.3.0')
 @Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.2')
 @Grab('org.apache.ant:ant-junitlauncher:1.10.15')
-@Grab('se.alipsa.uso:uso-tasks:0.0.1')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
 
 binding.groupId = 'se.alipsa.uso'
-binding.artifactId = 'uso-core'
+binding.artifactId = 'uso-tasks'
 binding.version = '0.0.1'
 binding.ant = new AntBuilder()
 def groovyHome = System.getenv("GROOVY_HOME")
@@ -131,12 +126,7 @@ def jar() {
   println "\n[jar]"
   def jarName = "$artifactId-${version}.jar"
   ant.mkdir dir: 'out/jar'
-  ant.jar(destfile: "out/jar/$jarName", basedir: mainBuildDir) {
-    zipfileset(dir: "src/main/script")
-    manifest {
-      attribute name: 'Main-Class', value: 'se.alipsa.uso.ProjectBuilder'
-    }
-  }
+  ant.jar(destfile: "out/jar/$jarName", basedir: mainBuildDir)
   binding.jarName = jarName
 }
 
@@ -154,8 +144,8 @@ def createPom() {
     <artifactId>$artifactId</artifactId>
     <version>$version</version>
     <packaging>jar</packaging>
-    <name>Uso Core</name>
-    <description>Ant based build system for Groovy</description>
+    <name>Uso Ant Tasks</name>
+    <description>Ant taks for uso builds</description>
     <url>https://github.com/Alipsa/uso</url>
     <licenses>
       <license>
@@ -176,24 +166,10 @@ def createPom() {
     </scm>
     <dependencies>
       <dependency>
-        <groupId>org.apache.maven.resolver</groupId>
-        <artifactId>maven-resolver-ant-tasks</artifactId>
-        <version>1.5.2</version>
-      </dependency>
-      <dependency>
-        <groupId>se.alipsa.uso</groupId>
-        <artifactId>uso-tasks</artifactId>
-        <version>0.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-xml</artifactId>
-        <version>4.0.4</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-junitlauncher</artifactId>
         <version>1.10.15</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </project>
@@ -269,6 +245,11 @@ def createProjectLayout() {
     mainBuildDir.mkdirs()
   }
   binding.mainBuildDir = mainBuildDir
+
+  def testSrcDir = new File("src/test/groovy")
+  if (!testSrcDir.exists()) {
+    testSrcDir.mkdirs()
+  }
 
   def testBuildDir = new File(buildDir, "testClasses")
   if (!testBuildDir.exists()) {

@@ -29,6 +29,8 @@ abstract class ProjectBuilder extends AntBuilder {
     taskdef(name:"install", classname:"org.apache.maven.resolver.internal.ant.tasks.Install")
     taskdef(name:"deploy", classname:"org.apache.maven.resolver.internal.ant.tasks.Deploy")
     taskdef(name:"pom", classname:"org.apache.maven.resolver.internal.ant.types.Pom")
+
+    taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
   }
 
   abstract void target(Map<String, String> params, Closure closure)
@@ -75,6 +77,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setGroupId(String groupId) {
     this.groupId = groupId
+    antProject.setProperty('groupId', groupId)
   }
 
   String getArtifactId() {
@@ -83,6 +86,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setArtifactId(String artifactId) {
     this.artifactId = artifactId
+    antProject.setProperty('artifactId', artifactId)
     project.name = artifactId
   }
 
@@ -92,6 +96,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setVersion(String version) {
     this.version = version
+    antProject.setProperty('version', version)
   }
 
   /**

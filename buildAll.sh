@@ -19,6 +19,13 @@ function buildExample() {
   popd
 }
 
+pushd uso-tasks
+  echo ""
+  echo "********************"
+  echo "Building uso-tasks..."
+  echo "********************"
+  ./build deployLocal
+popd
 pushd uso-core
   echo ""
   echo "********************"
@@ -28,6 +35,7 @@ pushd uso-core
 popd
 buildExample examples/simpleExample clean compile
 buildExample examples/dependencies clean test
+buildExample examples/publish clean deployLocal
 echo ""
 echo "*****"
 echo "Done!"

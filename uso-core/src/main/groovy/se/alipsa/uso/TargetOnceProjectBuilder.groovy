@@ -30,7 +30,13 @@ class TargetOnceProjectBuilder extends ProjectBuilder {
     try {
       def target = targets[targetName]
       if (target.depends != null) {
-        execute(target.depends)
+       if (target.depends.contains(',')) {
+          target.depends.split(',').each { t ->
+            execute(t.trim())
+          }
+        } else {
+          execute(target.depends)
+        }
       }
       if (!executedTargets.contains(targetName)) {
         println "\n$targetName:"
@@ -48,7 +54,13 @@ class TargetOnceProjectBuilder extends ProjectBuilder {
 
   def execute(List<String> targetsToExecute) {
     targetsToExecute.each { targetName ->
-      execute(targetName)
+      if (targetName.contains(',')) {
+        targetName.split(',').each { t ->
+          execute(t.trim())
+        }
+      } else {
+        execute(targetName)
+      }
     }
   }
 
