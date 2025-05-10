@@ -1,5 +1,6 @@
 package se.alipsa.uso
 import groovy.ant.AntBuilder
+import org.apache.tools.ant.DefaultLogger
 
 abstract class ProjectBuilder extends AntBuilder {
   String groupId
@@ -113,9 +114,18 @@ abstract class ProjectBuilder extends AntBuilder {
    * @return the previous output level
    */
   int setOutputLevel(Integer level) {
-    def listener = project.getBuildListeners().firstElement()
+    DefaultLogger listener = project.getBuildListeners().find{
+     it instanceof DefaultLogger
+    } as DefaultLogger
     def oldLevel = listener.getMessageOutputLevel()
     listener.setMessageOutputLevel(level)
     return oldLevel
+  }
+
+  int getOutputLevel() {
+    DefaultLogger listener = project.getBuildListeners().find{
+     it instanceof DefaultLogger
+    } as DefaultLogger
+    return listener.getMessageOutputLevel()
   }
 }

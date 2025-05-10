@@ -47,6 +47,11 @@
       <artifactId>groovy-ant</artifactId>
       <version>4.0.26</version>
     </dependency>
+    <dependency>
+      <groupId>se.alipsa.uso</groupId>
+      <artifactId>uso-tasks</artifactId>
+      <version>0.0.1</version>
+    </dependency>
   </dependencies>
 </project>
   

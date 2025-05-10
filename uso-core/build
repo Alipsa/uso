@@ -111,12 +111,12 @@ def test() {
   if (!outputDir.exists()) {
     outputDir.mkdirs()
   }
-  ant.junitlauncher {
+  ant.junitlauncher(haltOnFailure: true, printSummary: true) {
     classpath {
-      pathelement path: mainBuildDir
-      pathelement path: testBuildDir
+      pathelement location: mainBuildDir
+      pathelement location: testBuildDir
       groovyClasspath.each { jar ->
-        pathelement path: jar
+        pathelement location: jar
       }
     }
     testclasses(outputdir: outputDir.canonicalPath) {
