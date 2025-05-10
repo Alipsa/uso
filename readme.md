@@ -1,6 +1,6 @@
 # Uso, an ANT based build system
 
-The Uso ProjectBuilder is an extension of [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html), adding declarative targets while still keeping the simplicity of AntBuilder to define and execute tasks. The result is a build system that works the same as Ant, but using Groovy as the build scripting language.
+The Uso ProjectBuilder is an extension of [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html), adding declarative targets while still keeping the simplicity of AntBuilder to define and execute tasks. The result is a build system that works the same as Ant, but using Groovy as the build scripting language. The Maven Ant tasks are also included and enabled by default making it possible to define and resolve, dependencies and to publish artifacts to a maven repository.
 
 It requires groovy to be installed and on the path (e.g. through sdkman)
 
@@ -77,7 +77,7 @@ If you run the following commands:
 - `usas clean compile` will execute init -> clean -> compile. (maven style). Your targets should be constructed similarly to maven targets (compile, test, package, install, etc) to get the best out of this.
 
 Please see the [examples](examples) directory for more examples of how to use uso.
-
+A translation of the ant manual into the AntBuilder DSL syntax is also available in the [docs/tasks](docs/tasks) directory.
 
 ### What is the meaning of Uso?
 Uso is a Spanish word meaning "use" (first person; usas is the second person singular form). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
