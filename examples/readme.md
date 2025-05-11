@@ -7,7 +7,7 @@ This is a very simple project showing the very basics of uso.
 This project shows how to use uso with 3:rd party dependencies. 
 
 ### [publish](publish)
-This projects show how to publish a prject locally and to maven central (sonatype).
+This projects show how to publish a project locally and to maven central (sonatype).
 
 ### [multimodule](multimodule)
 NOTE: Work in progress. This example is not yet functional.
