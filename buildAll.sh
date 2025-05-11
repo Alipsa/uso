@@ -34,7 +34,7 @@ pushd uso-core
   ./build deployLocal
 popd
 buildExample examples/simpleExample clean compile
-buildExample examples/dependencies clean test
+buildExample examples/dependencies clean jar
 buildExample examples/publish clean deployLocal
 echo ""
 echo "*****"
