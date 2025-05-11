@@ -7,14 +7,11 @@ project.with {
   buildDir = new File("build")
 
   dependencies(id: 'compile') {
-    //dependency(groupId: 'se.alipsa.matrix', artifactId:'matrix-bom', version:'2.2.0', type: 'pom', scope: 'import')
     dependency(groupId:'se.alipsa.matrix', artifactId:'matrix-core', version: '3.2.0')
     dependency(groupId:'se.alipsa.matrix', artifactId:'matrix-csv', version: '2.1.0')
 
-    //dependency(groupId: 'org.junit', artifactId: 'junit-bom', version:'5.12.2', type: 'pom', scope: 'import')
     dependency(groupId:'org.junit.jupiter', artifactId: 'junit-jupiter-engine', version:'5.12.2', scope: 'test')
     dependency(groupId: 'org.junit.platform', artifactId:'junit-platform-launcher', version:'1.12.2', scope: 'test')
-    //dependency(coords: 'org.apache.ant:ant-junitlauncher:1.10.15', scope: 'test')
   }
 
   target('init') {
@@ -83,8 +80,6 @@ project.with {
       fileset dir: outputDir
       report format: 'frames', todir: testReportDir
     }
-    //def testResults = new File(outputDir, "TEST-MatrixExampleTest.txt")
-    //if (testResults.exists()) println testResults.text
   }
 
   target(name: 'jar', depends: 'compile') {
@@ -94,37 +89,6 @@ project.with {
       fileset dir: mainBuildDir
     }
   }
-
-  /*target(name: 'pom') {
-    echo "Creating pom file"
-    pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
-    pomFile.text = """
-    <project xmlns="http://maven.apache.org/POM/4.0.0"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-          <modelVersion>4.0.0</modelVersion>
-      <groupId>$groupId</groupId>
-      <artifactId>$artifactId</artifactId>
-      <version>$version</version>
-      <packaging>jar</packaging>
-      <name>Dependencies example</name>
-      <description>Show how dependencies works in uso</description>
-      ${dependencies.compile.toMavenXml()}
-    </project>
-    """.stripIndent()
-  }
-
-  target(name: 'deployLocal', depends: 'jar, pom') {
-    echo "Deploying to local maven repository"
-    def m2Home = new File(System.getProperty("user.home"), ".m2/repository")
-    def groupDir = groupId.replace('.', '/')
-    def localRepo = new File(m2Home, "repository/$groupDir/$artifactId/$version")
-    if (!localRepo.exists()) {
-      localRepo.mkdirs()
-    }
-    copy(file: jarFile, todir: localRepo)
-    copy(file: pomFile, todir: localRepo)
-  }*/
 }
 
 
