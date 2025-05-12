@@ -26,6 +26,6 @@ To run this, you would typically use Groovy to execute the script.
 
 ### Navigation
 
+*   [Next Task: ANTLR Task](ANTLR_Task_Groovy.md)
 *   [Return to Introduction](00-Introduction_Groovy_Ant_Manual.md)
-*   [Next: Ant Tasks - Property](05-Ant_Tasks_Property_Groovy.md)
 *   [View Full Task List (Appendix)](Appendix_A_Ant_XML_to_Groovy_Mapping.md)

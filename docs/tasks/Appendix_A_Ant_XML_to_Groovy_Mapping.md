@@ -180,5 +180,5 @@ This list is not exhaustive but covers many common use cases. The general patter
 
 ### Navigation
 
-*   [Previous: Fileset Data Type](12-Ant_DataTypes_Fileset_Groovy.md)
-*   [Table of Contents](00-Introduction_Groovy_Ant_Manual.md)
+*   [Previous Task: Echo Task](Echo_Task_Groovy.md)
+*   [Return to Introduction](00-Introduction_Groovy_Ant_Manual.md)
