@@ -23,6 +23,7 @@ abstract class ProjectBuilder extends AntBuilder {
     typedef(name:"remoterepos", classname:"org.apache.maven.resolver.internal.ant.types.RemoteRepositories")
     typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
     typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+    typedef(name:"dependencyManagement", classname:"org.apache.maven.resolver.internal.ant.types.DependencyManagement")
     typedef(name:"artifact", classname:"org.apache.maven.resolver.internal.ant.types.Artifact")
     typedef(name:"artifacts", classname:"org.apache.maven.resolver.internal.ant.types.Artifacts")
     typedef(name:"settings", classname:"org.apache.maven.resolver.internal.ant.types.Settings")
