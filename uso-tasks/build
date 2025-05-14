@@ -166,6 +166,11 @@ def createPom() {
     </scm>
     <dependencies>
       <dependency>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-ant-tasks</artifactId>
+        <version>1.5.2</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-junitlauncher</artifactId>
         <version>1.10.15</version>

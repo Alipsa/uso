@@ -6,7 +6,6 @@ project.with {
 
   buildDir = new File("build")
 
-  // TODO: this requires an enhancement of of maven-resolver-ant-tasks to work
   dependencyManagement(id: 'dm') {
     dependencies {
       dependency(groupId: 'se.alipsa.matrix', artifactId:'matrix-bom', version:'2.2.0', type: 'pom', scope: 'import')
@@ -14,7 +13,7 @@ project.with {
     }
   }
 
-  dependencies(id: 'compile', references: 'dm') {
+  dependencies(id: 'compile') {
     dependency(groupId:'se.alipsa.matrix', artifactId:'matrix-core')
     dependency(groupId:'se.alipsa.matrix', artifactId:'matrix-csv')
 
@@ -24,9 +23,12 @@ project.with {
 
   target('init') {
     echo "Initializing project..."
-    // TODO: resolve needs to be enhanced to work with dependencyManagement
-    //   or take a pom file reference (requiring createPom() to run before resolve)
-    resolve(dependenciesref: 'compile') {
+    pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
+    echo "Creating pom file ${pomFile.canonicalPath}"
+    createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
+        name: 'publish-example', description: "A simple example of a publishable library")
+    pom( file: pomFile)
+    resolve {
       path(refId: 'compilePath', classpath: 'compile')
       path(refId: 'testPath', classpath: 'test')
     }
@@ -103,15 +105,7 @@ project.with {
     artifact(file:jarFile, type:"jar", id:"jar")
   }
 
-  target(name: 'pom') {
-    pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
-    echo "Creating pom file ${pomFile.canonicalPath}"
-    // TODO: createPom needs to be enhanced to work with dependencyManagement
-    createPom(pomTarget: pomFile, dependenciesRef: 'compile',
-        name: 'publish-example', description: "A simple example of a publishable library")
-  }
-
-  target(name: 'deployLocal', depends: 'jar, pom') {
+  target(name: 'deployLocal', depends: 'jar') {
     echo "Deploying to local maven repository"
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'

@@ -5,19 +5,17 @@ import groovy.xml.XmlUtil
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
-import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
-import org.w3c.dom.Document
+import se.alipsa.uso.types.DependencyManagement
 
 import javax.xml.XMLConstants
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
 class CreatePom extends Task {
 
   private String dependenciesRef
+  private String dependencyManagementRef
   private File pomFile
   private String groupId
   private String artifactId
@@ -30,6 +28,10 @@ class CreatePom extends Task {
   }
   void setPomTarget(File pomTarget) {
     pomFile = pomTarget
+  }
+
+  void setDependencyManagementRef(String dependencyManagementRef) {
+    this.dependencyManagementRef = dependencyManagementRef
   }
 
   void setDependenciesRef(String dependenciesRef) {
@@ -85,35 +87,28 @@ class CreatePom extends Task {
   @Override
   void execute() {
     log("createPom: groupId: ${getGroupId()} artifactId: ${getArtifactId()} version: ${getVersion()}")
+
+    StringBuilder depManagementDeps = new StringBuilder()
+    if (dependencyManagementRef != null) {
+      def dependencyManagement = new DependencyManagement()
+      dependencyManagement.setProject(project)
+      def ref = new org.apache.tools.ant.types.Reference(project, dependencyManagementRef)
+      dependencyManagement.setRefid(ref)
+      depManagementDeps.append("<dependencyManagement><dependencies>")
+      appendDependencies(dependencyManagement.getDependencies(), depManagementDeps)
+      depManagementDeps.append("<dependencies><dependencyManagement>")
+    }
     def dependencies = new Dependencies()
     dependencies.setProject(project)
     def ref = new org.apache.tools.ant.types.Reference(project, dependenciesRef)
     dependencies.setRefid(ref)
+
     StringBuilder deps = new StringBuilder()
-    dependencies.getDependencyContainers().each { container ->
-      if (container instanceof Dependency) {
-        def dep = (Dependency) container
-        //echo "Dependency: $dep.groupId:$dep.artifactId:$dep.version:$dep.type:${dep.classifier ?: ''}:$dep.scope"
-        deps.append("""
-        <dependency>
-          <groupId>${dep.groupId}</groupId>
-          <artifactId>${dep.artifactId}</artifactId>
-          <version>${dep.version}</version>""")
-        if (dep.classifier) {
-          deps.append("\n          <classifier>${dep.classifier}</classifier>")
-        }
-        if (dep.type) {
-          deps.append("\n          <type>${dep.type}</type>")
-        }
-        if (dep.scope) {
-          deps.append("\n          <scope>${dep.scope}</scope>")
-        }
-        deps.append("\n        </dependency>")
-      }
-    }
+    appendDependencies(dependencies, deps)
+
 
     String schemaLocation = 'https://maven.apache.org/xsd/maven-4.0.0.xsd'
-    pomFile.text = """
+    String pomContent = """
     <project xmlns="http://maven.apache.org/POM/4.0.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 $schemaLocation">
@@ -124,11 +119,42 @@ class CreatePom extends Task {
       <packaging>jar</packaging>
       ${name ? "<name>$name</name>" : ''}
       ${description ? "<description>$description</description>" : ''}
+      $depManagementDeps
       <dependencies>$deps
       </dependencies>
     </project>
     """.stripIndent()
 
+    pomFile.text = XmlUtil.serialize(pomContent) // pretty print it
+    validatePomFile(schemaLocation)
+    log("Created pom file ${pomFile.canonicalPath}")
+  }
+
+  static void appendDependencies(Dependencies dependencies, StringBuilder deps) {
+    dependencies.getDependencyContainers().each { container ->
+      if (container instanceof Dependency) {
+        def dep = (Dependency) container
+        //echo "Dependency: $dep.groupId:$dep.artifactId:$dep.version:$dep.type:${dep.classifier ?: ''}:$dep.scope"
+        deps.append("""
+        <dependency>
+          <groupId>${dep.groupId}</groupId>
+          <artifactId>${dep.artifactId}</artifactId>
+          <version>${dep.version}</version>""")
+        if (dep.classifier) {
+          deps.append("<classifier>${dep.classifier}</classifier>")
+        }
+        if (dep.type) {
+          deps.append("<type>${dep.type}</type>")
+        }
+        if (dep.scope) {
+          deps.append("<scope>${dep.scope}</scope>")
+        }
+        deps.append("</dependency>")
+      }
+    }
+  }
+
+  void validatePomFile(String schemaLocation) {
     try {
       def doc = new XmlSlurper().parse(pomFile)
 
@@ -141,6 +167,5 @@ class CreatePom extends Task {
     } catch (Exception e) {
       throw new BuildException("Failed to create a valid pom file: ${e.message}", e)
     }
-    log("Created pom file ${pomFile.canonicalPath}")
   }
 }

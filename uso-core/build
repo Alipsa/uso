@@ -3,7 +3,7 @@
 //@Grab('org.junit.platform:junit-platform-launcher:1.12.2')
 //@Grab('org.junit.platform:junit-platform-commons:1.12.2')
 //@Grab('org.opentest4j:opentest4j:1.3.0')
-@Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.3-SNAPSHOT')
+@Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.2')
 @Grab('org.apache.ant:ant-junitlauncher:1.10.15')
 @Grab('se.alipsa.uso:uso-tasks:0.0.1')
 @GrabConfig(systemClassLoader=true)
@@ -178,7 +178,7 @@ def createPom() {
       <dependency>
         <groupId>org.apache.maven.resolver</groupId>
         <artifactId>maven-resolver-ant-tasks</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
+        <version>1.5.2</version>
       </dependency>
       <dependency>
         <groupId>se.alipsa.uso</groupId>
