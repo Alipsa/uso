@@ -81,8 +81,6 @@ project.with {
       fileset dir: outputDir
       report format: 'frames', todir: testReportDir
     }
-    //def testResults = new File(outputDir, "TEST-MatrixExampleTest.txt")
-    //if (testResults.exists()) println testResults.text
   }
 
   target(name: 'jar', depends: 'compile') {

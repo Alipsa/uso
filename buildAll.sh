@@ -36,6 +36,7 @@ popd
 buildExample examples/simpleExample clean compile
 buildExample examples/dependencies clean jar
 buildExample examples/publish clean deployLocal
+buildExample examples/boms clean deployLocal
 echo ""
 echo "*****"
 echo "Done!"

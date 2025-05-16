@@ -1,6 +1,6 @@
 project.with {
   groupId = 'se.alipsa.uso'
-  artifactId = 'simple-example'
+  artifactId = 'bom-example'
   version = '0.0.1'
   defaultTarget = 'init'
 
@@ -108,9 +108,7 @@ project.with {
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'
     }
-    install(artifactsref:"localArtifacts") {
-      pom file: pomFile
-    }
+    install(artifactsref:"localArtifacts")
   }
 }
 

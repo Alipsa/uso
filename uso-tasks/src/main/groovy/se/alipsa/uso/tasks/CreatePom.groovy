@@ -132,10 +132,10 @@ class CreatePom extends Task {
       Node pomNode = new XmlParser().parseText(pomContent)
       xmlNodePrinter.print(pomNode)
     }
-
+    log("Created pom file ${pomFile.canonicalPath}", Project.MSG_VERBOSE)
     //log("Pom file content:\n${pomFile.text}")
-    validatePomFile(pomContent, schemaLocation)
-    log("Created pom file ${pomFile.canonicalPath}")
+    validatePomContent(pomContent, schemaLocation)
+    log("Created and validated pom file ${pomFile.canonicalPath}")
   }
 
   static void appendDependencies(Dependencies dependencies, StringBuilder deps) {
@@ -165,7 +165,7 @@ class CreatePom extends Task {
     }
   }
 
-  void validatePomFile(String content, String schemaLocation) {
+  static void validatePomContent(String content, String schemaLocation) {
     try {
       def xsdLocation = new URI(schemaLocation).toURL()
 
