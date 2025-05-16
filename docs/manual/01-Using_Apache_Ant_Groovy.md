@@ -233,6 +233,6 @@ ant.java(classname: "com.example.Main", classpath: "build/classes", fork: true) 
 This list is not exhaustive but covers many common use cases. The general pattern of converting tags to methods and attributes to named parameters, with nested tags becoming closures, applies broadly.
 ### Navigation
 
-*   [Next Task: ANTLR Task](ANTLR_Task_Groovy.md)
+*   [Next Task: Ant Task](tasks/Ant_Task.md)
 *   [Return to Introduction](00-Introduction_Groovy_Ant_Manual.md)
 *   [View Full Task List (Appendix)](Tasks-Overview.md)
