@@ -82,18 +82,43 @@ abstract class ProjectBuilder extends AntBuilder {
     property('groupId', groupId)
   }
 
+  /**
+   * Sets a property with the given name and value.
+   *
+   * @param name  the name of the property to set
+   * @param value the value of the property
+   */
   void property(String name, String value) {
     antProject.setProperty(name, value)
   }
 
+  /**
+   * Returns the value of a property with the given name.
+   * If the property is not set, it returns null.
+   *
+   * @param name the name of the property to retrieve
+   * @return the value of the property, or null if not set
+   */
   String '$'(String name) {
-    return antProject.getProperty(name)
+    return property(name)
   }
 
+  /**
+   * Returns the value of a property with the given name.
+   * If the property is not set, it returns null.
+   *
+   * @param name the name of the property to retrieve
+   * @return the value of the property, or null if not set
+   */
   String property(String name) {
     return antProject.getProperty(name)
   }
 
+  /**
+   * The artifactId of the project determines the name of the artifact when published.
+   *
+   * @return The artifactId of the project.
+   */
   String getArtifactId() {
     return artifactId
   }
