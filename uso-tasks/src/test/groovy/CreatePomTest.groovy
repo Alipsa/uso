@@ -1,0 +1,79 @@
+import groovy.ant.AntBuilder
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
+class CreatePomTest  {
+
+  @Test
+  void testCreatePom() {
+
+    AntBuilder ant = new AntBuilder()
+    ant.with {
+
+      path(id: 'libpath') {
+        pathelement location: "out/main"
+      }
+
+      typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
+      taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom', classpathref: 'libpath')
+      typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
+      typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+      antProject.setProperty('groupId', 'se.alipsa.uso')
+      antProject.setProperty('artifactId', 'CreatePomTest')
+      antProject.setProperty('version', '1.0.0')
+      dependencyManagement(id: 'dm') {
+        dependencies {
+          dependency(groupId: 'org.junit', artifactId: 'junit-bom', version:'5.12.2', type: 'pom', scope: 'import')
+        }
+      }
+      dependencies(id: 'compile') {
+        dependency(groupId:'org.junit.jupiter', artifactId: 'junit-jupiter-engine', scope: 'test')
+        dependency(groupId: 'org.junit.platform', artifactId:'junit-platform-launcher', scope: 'test')
+      }
+      def outDir = new File("out/testClasses")
+      if (!outDir.exists()) {
+        outDir.mkdirs()
+      }
+      def pomFile = new File(outDir, "${antProject.getProperty('artifactId')}-${antProject.getProperty('version')}.pom")
+      createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
+          name: 'publish-example', description: "A simple example of a publishable library")
+      def content = pomFile.text
+      Assertions.assertEquals('''\
+        |<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        |  <modelVersion>4.0.0</modelVersion>
+        |  <groupId>se.alipsa.uso</groupId>
+        |  <artifactId>CreatePomTest</artifactId>
+        |  <version>1.0.0</version>
+        |  <packaging>jar</packaging>
+        |  <name>publish-example</name>
+        |  <description>A simple example of a publishable library</description>
+        |  <dependencyManagement>
+        |    <dependencies>
+        |      <dependency>
+        |        <groupId>org.junit</groupId>
+        |        <artifactId>junit-bom</artifactId>
+        |        <version>5.12.2</version>
+        |        <type>pom</type>
+        |        <scope>import</scope>
+        |      </dependency>
+        |    </dependencies>
+        |  </dependencyManagement>
+        |  <dependencies>
+        |    <dependency>
+        |      <groupId>org.junit.jupiter</groupId>
+        |      <artifactId>junit-jupiter-engine</artifactId>
+        |      <type>jar</type>
+        |      <scope>test</scope>
+        |    </dependency>
+        |    <dependency>
+        |      <groupId>org.junit.platform</groupId>
+        |      <artifactId>junit-platform-launcher</artifactId>
+        |      <type>jar</type>
+        |      <scope>test</scope>
+        |    </dependency>
+        |  </dependencies>
+        |</project>
+        '''.trim().stripMargin(), content.trim())
+    }
+  }
+}

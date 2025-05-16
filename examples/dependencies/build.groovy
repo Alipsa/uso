@@ -16,6 +16,7 @@ project.with {
 
   target('init') {
     echo "Initializing project..."
+    // if we dont create the pom file and then call pom(), we can reference the dependencies instead
     resolve(dependenciesref: 'compile') {
       path(refId: 'compilePath', classpath: 'compile')
       path(refId: 'testPath', classpath: 'test')

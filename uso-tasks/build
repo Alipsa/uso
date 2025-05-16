@@ -1,16 +1,22 @@
 #!/usr/bin/env groovy
 @Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.2')
 @Grab('org.apache.ant:ant-junitlauncher:1.10.15')
+@Grab('org.codehaus.plexus:plexus-xml:4.1.0')
+@Grab(group='org.slf4j', module='slf4j-simple', version='2.0.17', scope='test')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
 
-binding.groupId = 'se.alipsa.uso'
-binding.artifactId = 'uso-tasks'
-binding.version = '0.0.1'
-binding.ant = new AntBuilder()
+groupId = 'se.alipsa.uso'
+artifactId = 'uso-tasks'
+version = '0.0.1'
+ant = new AntBuilder()
+
+ant.typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
+ant.typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+
 def groovyHome = System.getenv("GROOVY_HOME")
 
-binding.groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
+groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
 
 createProjectLayout()
 
@@ -101,39 +107,50 @@ def compileTest() {
 def test() {
   if (hasRan('isTested')) return
   println "\n[test]"
-  //ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask')
   def outputDir = new File(buildDir, "testoutput")
   if (!outputDir.exists()) {
     outputDir.mkdirs()
   }
-  ant.junitlauncher {
+
+  ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
+
+  ant.dependencies(id: 'test') {
+    dependency(groupId:'org.apache.ant', artifactId: 'ant-junitlauncher', version:'1.10.15', scope: 'test')
+    dependency(groupId: 'org.apache.maven.resolver', artifactId:'maven-resolver-ant-tasks', version:'1.5.2', scope: 'test')
+  }
+  ant.resolve(dependenciesref: 'test') {
+    path(refId: 'testPath', classpath: 'test')
+  }
+  ant.junitlauncher(haltOnFailure: true, printSummary: true) {
     classpath {
-      pathelement path: mainBuildDir
-      pathelement path: testBuildDir
+      pathelement location: mainBuildDir
+      pathelement location: testBuildDir
       groovyClasspath.each { jar ->
-        pathelement path: jar
+        pathelement location: jar
       }
+      path refid: "testPath"
     }
     testclasses(outputdir: outputDir.canonicalPath) {
+      fork(includeJUnitPlatformLibraries: false, includeAntRuntimeLibraries: false)
       fileset dir: testBuildDir
       listener type: "legacy-brief", sendSysOut: true
     }
+
   }
 }
 
 def jar() {
   if (hasRan('isJared')) return
   println "\n[jar]"
-  def jarName = "$artifactId-${version}.jar"
+  jarName = "$artifactId-${version}.jar"
   ant.mkdir dir: 'out/jar'
   ant.jar(destfile: "out/jar/$jarName", basedir: mainBuildDir)
-  binding.jarName = jarName
 }
 
 def createPom() {
   if (hasRan('isCreatedPom')) return
   println "\n[createPom]"
-  def pomName = "$artifactId-${version}.pom"
+  pomName = "$artifactId-${version}.pom"
   def pomFile = new File(mainBuildDir, pomName)
   pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -179,7 +196,6 @@ def createPom() {
     </dependencies>
   </project>
   """.stripIndent()
-  binding.pomName = pomName
   ant.echo "created $pomFile"
 }
 
@@ -208,7 +224,7 @@ def signJar() {
   println "\n[signJar]"
   def jarFile = new File(mainBuildDir, jarName)
   def sigFile = new File(mainBuildDir, "$jarName.asc")
-  ant.signjar(jar: jarFile, alias: 'uso', keystore: 'uso.jks', storepass: 'password', sigfile: sigFile)
+  ant.signjar(jar: jarFile, alias: 'uso', keystore: 'uso.jks', storepass: 'changeIt', sigfile: sigFile)
 }
 
 def deploy() {

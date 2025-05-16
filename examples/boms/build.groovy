@@ -23,12 +23,13 @@ project.with {
 
   target('init') {
     echo "Initializing project..."
+    // Since we need to resolve dependencies based on dependency management, we need to create the pom file first
     pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
     echo "Creating pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
         name: 'publish-example', description: "A simple example of a publishable library")
-    pom( file: pomFile)
-    resolve {
+    pom( file: pomFile) // THis makes maven ant tasks aware of the pom file
+    resolve { // resolve will use the pom file we just declared
       path(refId: 'compilePath', classpath: 'compile')
       path(refId: 'testPath', classpath: 'test')
     }
@@ -49,7 +50,7 @@ project.with {
 
   target(name: 'compile', depends: 'init') {
     echo "Compiling main groovy classes"
-    int level = setOutputLevel(1)
+    int level = setOutputLevel(1) // reduce the chattiness of groovyc
     groovyc(
         srcdir: 'src/main/groovy',
         destdir: mainBuildDir,
@@ -83,7 +84,6 @@ project.with {
       testclasses(outputdir: outputDir) {
         fileset dir: testBuildDir
         listener type: "legacy-xml", sendSysOut: true, sendSysErr: true
-        //listener type: "legacy-plain", sendSysOut: true, sendSysErr: true
       }
     }
     testReportDir = new File(outputDir, "testreport")
@@ -92,8 +92,6 @@ project.with {
       fileset dir: outputDir
       report format: 'frames', todir: testReportDir
     }
-    //def testResults = new File(outputDir, "TEST-MatrixExampleTest.txt")
-    //if (testResults.exists()) println testResults.text
   }
 
   target(name: 'jar', depends: 'compile') {

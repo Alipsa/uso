@@ -1,10 +1,11 @@
 package se.alipsa.uso.tasks
 
-import groovy.xml.XmlSlurper
-import groovy.xml.XmlUtil
+import groovy.xml.XmlNodePrinter
+import groovy.xml.XmlParser
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
+import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
 import se.alipsa.uso.types.DependencyManagement
 
@@ -86,17 +87,17 @@ class CreatePom extends Task {
 
   @Override
   void execute() {
-    log("createPom: groupId: ${getGroupId()} artifactId: ${getArtifactId()} version: ${getVersion()}")
+    log("createPom: groupId: ${getGroupId()} artifactId: ${getArtifactId()} version: ${getVersion()}", Project.MSG_VERBOSE)
 
+    if(!pomFile.getParentFile().exists()) {
+      pomFile.getParentFile().mkdirs()
+    }
     StringBuilder depManagementDeps = new StringBuilder()
     if (dependencyManagementRef != null) {
-      def dependencyManagement = new DependencyManagement()
-      dependencyManagement.setProject(project)
-      def ref = new org.apache.tools.ant.types.Reference(project, dependencyManagementRef)
-      dependencyManagement.setRefid(ref)
+      def dependencyManagement = DependencyManagement.get(project, dependencyManagementRef)
       depManagementDeps.append("<dependencyManagement><dependencies>")
       appendDependencies(dependencyManagement.getDependencies(), depManagementDeps)
-      depManagementDeps.append("<dependencies><dependencyManagement>")
+      depManagementDeps.append("</dependencies></dependencyManagement>")
     }
     def dependencies = new Dependencies()
     dependencies.setProject(project)
@@ -105,7 +106,6 @@ class CreatePom extends Task {
 
     StringBuilder deps = new StringBuilder()
     appendDependencies(dependencies, deps)
-
 
     String schemaLocation = 'https://maven.apache.org/xsd/maven-4.0.0.xsd'
     String pomContent = """
@@ -125,8 +125,16 @@ class CreatePom extends Task {
     </project>
     """.stripIndent()
 
-    pomFile.text = XmlUtil.serialize(pomContent) // pretty print it
-    validatePomFile(schemaLocation)
+    try (FileWriter fw = new FileWriter(pomFile)
+        PrintWriter pw = new PrintWriter(fw)) {
+      XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(pw)
+      xmlNodePrinter.preserveWhitespace = true
+      Node pomNode = new XmlParser().parseText(pomContent)
+      xmlNodePrinter.print(pomNode)
+    }
+
+    //log("Pom file content:\n${pomFile.text}")
+    validatePomFile(pomContent, schemaLocation)
     log("Created pom file ${pomFile.canonicalPath}")
   }
 
@@ -139,7 +147,10 @@ class CreatePom extends Task {
         <dependency>
           <groupId>${dep.groupId}</groupId>
           <artifactId>${dep.artifactId}</artifactId>
-          <version>${dep.version}</version>""")
+        """)
+        if (dep.version) {
+          deps.append("<version>${dep.version}</version>")
+        }
         if (dep.classifier) {
           deps.append("<classifier>${dep.classifier}</classifier>")
         }
@@ -154,16 +165,14 @@ class CreatePom extends Task {
     }
   }
 
-  void validatePomFile(String schemaLocation) {
+  void validatePomFile(String content, String schemaLocation) {
     try {
-      def doc = new XmlSlurper().parse(pomFile)
-
       def xsdLocation = new URI(schemaLocation).toURL()
 
       SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI)
           .newSchema(xsdLocation)
           .newValidator()
-          .validate(new StreamSource(new StringReader( XmlUtil.serialize(doc))))
+          .validate(new StreamSource(new StringReader(content)))
     } catch (Exception e) {
       throw new BuildException("Failed to create a valid pom file: ${e.message}", e)
     }
