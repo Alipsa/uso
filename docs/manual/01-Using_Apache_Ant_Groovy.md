@@ -178,15 +178,15 @@ ant.zip destfile: "archive.zip", basedir: "build"
 *Ant XML:*
 ```xml
 <zip destfile="myarchive.zip">
-    <fileset dir="src" includes="**/*.java"/>
-    <fileset dir="resources" includes="**/*.properties"/>
+  <fileset dir="src" includes="**/*.java"/>
+  <fileset dir="resources" includes="**/*.properties"/>
 </zip>
 ```
 *Groovy AntBuilder:*
 ```groovy
 ant.zip(destfile: "myarchive.zip") {
-    fileset dir: "src", includes: "**/*.java"
-    fileset dir: "resources", includes: "**/*.properties"
+  fileset dir: "src", includes: "**/*.java"
+  fileset dir: "resources", includes: "**/*.properties"
 }
 ```
 
@@ -203,31 +203,31 @@ ant.javac srcdir: "src",
           debug: "on"
 // For more complex classpath or nested elements:
 ant.javac(srcdir: 'src', destdir: 'build/classes') {
-    classpath {
-        pathelement location: 'lib/somelib.jar'
-        pathelement path: System.getProperty('java.class.path')
-    }
-    include name: 'com/example/**/*.java'
-    exclude name: 'com/example/test/**'
+  classpath {
+    pathelement location: 'lib/somelib.jar'
+    pathelement path: System.getProperty('java.class.path')
+  }
+  include name: 'com/example/**/*.java'
+  exclude name: 'com/example/test/**'
 }
 ```
 
-7.  **Java Task**
-*   **Ant XML:**
+### Java Task
+*Ant XML:*
 ```xml
-      <java classname="com.example.Main" classpath="build/classes">
-          <arg value="-h"/>
-          <jvmarg value="-Xmx512m"/>
-          <sysproperty key="my.prop" value="myValue"/>
-      </java>
+<java classname="com.example.Main" classpath="build/classes">
+    <arg value="-h"/>
+    <jvmarg value="-Xmx512m"/>
+    <sysproperty key="my.prop" value="myValue"/>
+</java>
 ```
-  *   **Groovy AntBuilder:**
+*Groovy AntBuilder:*
 ```groovy
-      ant.java(classname: "com.example.Main", classpath: "build/classes", fork: true) {
-          arg value: "-h"
-          jvmarg value: "-Xmx512m"
-          sysproperty key: "my.prop", value: "myValue"
-      }
+ant.java(classname: "com.example.Main", classpath: "build/classes", fork: true) {
+  arg value: "-h"
+  jvmarg value: "-Xmx512m"
+  sysproperty key: "my.prop", value: "myValue"
+}
 ```
 
 This list is not exhaustive but covers many common use cases. The general pattern of converting tags to methods and attributes to named parameters, with nested tags becoming closures, applies broadly.
