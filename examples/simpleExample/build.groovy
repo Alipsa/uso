@@ -5,19 +5,21 @@ project.with {
   defaultTarget = 'init'
 
   target('init') {
-    buildDir = new File("build")
-    if (!buildDir.exists()) {
-      buildDir.mkdir()
-    }
-    mainBuildDir = new File(buildDir, "main")
-    if (!mainBuildDir.exists()) {
-      mainBuildDir.mkdir()
-    }
+    property('buildDir', "build") // define an ant property (value must be a String or GString)
+    mkdir dir: '${buildDir}'
+    // Straight Groovy code, we must resolve the property directly
+    mainBuildDir = new File(property('buildDir'), "main")
+    mkdir dir: mainBuildDir
   }
 
   target(name: 'clean', depends: 'init') {
-    delete dir: buildDir
-    mkdir dir: mainBuildDir
+    // In an Ant task, we can use the property using the ${propertyName} syntax (surrounded by single quotes)
+    delete dir: '${buildDir}'
+    // if we use double quotes (GString), the property will be resolved by groovy directly,
+    // since mainBuildDir is a global groovy variable this will work
+    // if we wanted to use is as an ant property, we would have to do
+    // property('mainBuildDir', mainBuildDir.canonicalPath) first and then refter to it as '${mainBuildDir}'
+    mkdir dir: "${mainBuildDir}"
   }
 
   target(name: 'compile', depends: 'init') {

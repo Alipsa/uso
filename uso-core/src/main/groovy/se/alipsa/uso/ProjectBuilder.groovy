@@ -79,7 +79,15 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setGroupId(String groupId) {
     this.groupId = groupId
-    antProject.setProperty('groupId', groupId)
+    property('groupId', groupId)
+  }
+
+  void property(String name, String value) {
+    antProject.setProperty(name, value)
+  }
+
+  String property(String name) {
+    return antProject.getProperty(name)
   }
 
   String getArtifactId() {
@@ -88,7 +96,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setArtifactId(String artifactId) {
     this.artifactId = artifactId
-    antProject.setProperty('artifactId', artifactId)
+    property('artifactId', artifactId)
     project.name = artifactId
   }
 
@@ -98,7 +106,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
   void setVersion(String version) {
     this.version = version
-    antProject.setProperty('version', version)
+    property('version', version)
   }
 
   /**
