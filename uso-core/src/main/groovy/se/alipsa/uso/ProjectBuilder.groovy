@@ -86,6 +86,10 @@ abstract class ProjectBuilder extends AntBuilder {
     antProject.setProperty(name, value)
   }
 
+  String '$'(String name) {
+    return antProject.getProperty(name)
+  }
+
   String property(String name) {
     return antProject.getProperty(name)
   }
