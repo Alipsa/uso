@@ -7,12 +7,21 @@ import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
+import se.alipsa.uso.model.MavenProject
 import se.alipsa.uso.types.DependencyManagement
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
+/**
+ * Creates a Maven pom file with the specified dependencies and dependency management.
+ * The pom file is created in the specified target directory. This is useful for dependecy resolving in ant but
+ * if you want to publish then artifact with the pom, you should consider using the CreatePom task instead since that
+ * will enable you to add license, developer meta-data etc.
+ *
+ * @since 0.0.1
+ */
 class CreatePom extends Task {
 
   private String dependenciesRef
@@ -55,6 +64,10 @@ class CreatePom extends Task {
     this.name = name
   }
 
+  String getName() {
+    return name
+  }
+
   void setDescription(String description) {
     this.description = description
   }
@@ -92,77 +105,73 @@ class CreatePom extends Task {
     if(!pomFile.getParentFile().exists()) {
       pomFile.getParentFile().mkdirs()
     }
-    StringBuilder depManagementDeps = new StringBuilder()
+    MavenProject pom = new MavenProject()
+    pom.setGroupId(getGroupId())
+    pom.setArtifactId(getArtifactId())
+    pom.setVersion(getVersion())
+    pom.setName(getName())
+    pom.setDescription(getDescription())
+
     if (dependencyManagementRef != null) {
       def dependencyManagement = DependencyManagement.get(project, dependencyManagementRef)
-      depManagementDeps.append("<dependencyManagement><dependencies>")
-      appendDependencies(dependencyManagement.getDependencies(), depManagementDeps)
-      depManagementDeps.append("</dependencies></dependencyManagement>")
+      appendManagedDependencies(dependencyManagement.getDependencies(), pom)
     }
     def dependencies = new Dependencies()
     dependencies.setProject(project)
     def ref = new org.apache.tools.ant.types.Reference(project, dependenciesRef)
     dependencies.setRefid(ref)
 
-    StringBuilder deps = new StringBuilder()
-    appendDependencies(dependencies, deps)
+    appendDependencies(dependencies, pom)
 
-    String schemaLocation = 'https://maven.apache.org/xsd/maven-4.0.0.xsd'
-    String pomContent = """
-    <project xmlns="http://maven.apache.org/POM/4.0.0"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 $schemaLocation">
-      <modelVersion>4.0.0</modelVersion>
-      <groupId>${getGroupId()}</groupId>
-      <artifactId>${getArtifactId()}</artifactId>
-      <version>${getVersion()}</version>
-      <packaging>jar</packaging>
-      ${name ? "<name>$name</name>" : ''}
-      ${description ? "<description>$description</description>" : ''}
-      $depManagementDeps
-      <dependencies>$deps
-      </dependencies>
-    </project>
-    """.stripIndent()
-
-    try (FileWriter fw = new FileWriter(pomFile)
-        PrintWriter pw = new PrintWriter(fw)) {
-      XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(pw)
-      xmlNodePrinter.preserveWhitespace = true
-      Node pomNode = new XmlParser().parseText(pomContent)
-      xmlNodePrinter.print(pomNode)
+    try (FileWriter fw = new FileWriter(pomFile)) {
+      pom.toPom(fw)
+    } catch (IOException e) {
+      throw new BuildException("Failed to create pom file: ${e.message}", e)
     }
     log("Created pom file ${pomFile.canonicalPath}", Project.MSG_VERBOSE)
-    //log("Pom file content:\n${pomFile.text}")
-    validatePomContent(pomContent, schemaLocation)
-    log("Created and validated pom file ${pomFile.canonicalPath}")
   }
 
-  static void appendDependencies(Dependencies dependencies, StringBuilder deps) {
+  static void appendDependencies(Dependencies dependencies, MavenProject pom) {
     dependencies.getDependencyContainers().each { container ->
       if (container instanceof Dependency) {
         def dep = (Dependency) container
         //echo "Dependency: $dep.groupId:$dep.artifactId:$dep.version:$dep.type:${dep.classifier ?: ''}:$dep.scope"
-        deps.append("""
-        <dependency>
-          <groupId>${dep.groupId}</groupId>
-          <artifactId>${dep.artifactId}</artifactId>
-        """)
-        if (dep.version) {
-          deps.append("<version>${dep.version}</version>")
-        }
-        if (dep.classifier) {
-          deps.append("<classifier>${dep.classifier}</classifier>")
-        }
-        if (dep.type) {
-          deps.append("<type>${dep.type}</type>")
-        }
-        if (dep.scope) {
-          deps.append("<scope>${dep.scope}</scope>")
-        }
-        deps.append("</dependency>")
+        pom.addDependency(toMap(dep))
       }
     }
+  }
+
+  static void appendManagedDependencies(Dependencies dependencies, MavenProject mavenProject) {
+    dependencies.getDependencyContainers().each {
+      if (it instanceof Dependency) {
+        def dep = (Dependency) it
+        //echo "Dependency: $dep.groupId:$dep.artifactId:$dep.version:$dep.type:${dep.classifier ?: ''}:$dep.scope"
+        mavenProject.addToDependencyManagement(toMap(dep))
+      }
+    }
+  }
+
+  static Map<String, String> toMap(Dependency dep) {
+    Map<String, String> params = [:]
+    if (dep.groupId) {
+      params.put('groupId', dep.groupId)
+    }
+    if (dep.artifactId) {
+      params.put('artifactId', dep.artifactId)
+    }
+    if (dep.version) {
+      params.put('version', dep.version)
+    }
+    if (dep.classifier) {
+      params.put('classifier', dep.classifier)
+    }
+    if (dep.type) {
+      params.put('type', dep.type)
+    }
+    if (dep.scope) {
+      params.put('scope', dep.scope)
+    }
+    return params
   }
 
   static void validatePomContent(String content, String schemaLocation) {
@@ -174,7 +183,7 @@ class CreatePom extends Task {
           .newValidator()
           .validate(new StreamSource(new StringReader(content)))
     } catch (Exception e) {
-      throw new BuildException("Failed to create a valid pom file: ${e.message}", e)
+      throw new BuildException("Failed to validate pom: ${e.message}", e)
     }
   }
 }

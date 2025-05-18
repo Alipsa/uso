@@ -13,8 +13,18 @@ ant = new AntBuilder()
 
 ant.typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
 ant.typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
 
-def groovyHome = System.getenv("GROOVY_HOME")
+ant.dependencies(id: 'deps') {
+  dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-core', version:'4.0.5')
+  dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-runtime', version:'4.0.5')
+  dependency(groupId:'org.apache.ant', artifactId: 'ant-junitlauncher', version:'1.10.15', scope: 'test')
+  dependency(groupId: 'org.apache.maven.resolver', artifactId:'maven-resolver-ant-tasks', version:'1.5.2', scope: 'test')
+  dependency(groupId: 'org.xmlunit', artifactId: 'xmlunit-core', version: '2.10.0', scope: 'test')
+  dependency(groupId: 'org.xmlunit', artifactId: 'xmlunit-matchers', version: '2.10.0', scope: 'test')
+}
+
+groovyHome = System.getenv("GROOVY_HOME")
 
 groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
 
@@ -80,13 +90,26 @@ def clean() {
 def compile() {
   if (hasRan('isCompiled')) return
   println "\n[compile]"
+  ant.resolve(dependenciesref: 'deps') {
+    path(refId: 'testPath', classpath: 'test')
+  }
+  ant.path(id: 'compilePath') {
+    pathelement location: mainBuildDir
+    fileset dir: testBuildDir
+    fileset dir: "$groovyHome/lib", includes: '*.jar'
+    path refId: 'testPath'
+  }
   ant.taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')
   ant.echo "Compiling main groovy classes"
   ant.groovyc(
       srcdir: 'src/main/groovy',
       destdir: mainBuildDir,
-      classpath: groovyClasspath
-  )
+      classpathref: 'compilePath'
+  ) {
+    javac {
+      include(name: '**/*.java')
+    }
+  }
 }
 
 def compileTest() {
@@ -100,6 +123,10 @@ def compileTest() {
       groovyClasspath.each { jar ->
         pathelement path: jar
       }
+      path refId: 'testPath'
+    }
+    javac {
+      include(name: '**/*.java')
     }
   }
 }
@@ -112,13 +139,8 @@ def test() {
     outputDir.mkdirs()
   }
 
-  ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
 
-  ant.dependencies(id: 'test') {
-    dependency(groupId:'org.apache.ant', artifactId: 'ant-junitlauncher', version:'1.10.15', scope: 'test')
-    dependency(groupId: 'org.apache.maven.resolver', artifactId:'maven-resolver-ant-tasks', version:'1.5.2', scope: 'test')
-  }
-  ant.resolve(dependenciesref: 'test') {
+  ant.resolve(dependenciesref: 'deps') {
     path(refId: 'testPath', classpath: 'test')
   }
   ant.junitlauncher(haltOnFailure: true, printSummary: true) {
@@ -186,6 +208,16 @@ def createPom() {
         <groupId>org.apache.maven.resolver</groupId>
         <artifactId>maven-resolver-ant-tasks</artifactId>
         <version>1.5.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>4.0.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>4.0.5</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ant</groupId>
