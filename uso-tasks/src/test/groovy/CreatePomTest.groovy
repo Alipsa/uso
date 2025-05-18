@@ -97,6 +97,7 @@ class CreatePomTest {
       taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom', classpathref: 'libpath')
       typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
       typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+
       antProject.setProperty('groupId', 'se.alipsa.uso')
       antProject.setProperty('artifactId', 'CreatePomTest')
       antProject.setProperty('version', '1.0.0')
@@ -115,7 +116,35 @@ class CreatePomTest {
       }
       def pomFile = new File(outDir, "${antProject.getProperty('artifactId')}-${antProject.getProperty('version')}.pom")
       createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
-          name: 'publish-example', description: "A simple example of a publishable library")
+          name: 'publish-example', description: "A simple example of a publishable library"){
+        licenses {
+          license {
+            name("The Apache Software License, Version 2.0")
+            url("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            distribution("repo")
+          }
+          license {
+            name("MIT")
+            url("https://opensource.org/license/mit")
+          }
+        }
+        repositories {
+          repository(id:'jitpack.io', url: 'https://jitpack.io')
+        }
+        developers {
+          developer (
+              name: 'Per Nyfelt',
+              email: 'per.nyfelt@alipsa.se',
+              organization: 'Alipsa HB',
+              organizationUrl: 'http://www.alipsa.se'
+          )
+        }
+        scm (
+            connection: 'scm:git:https://github.com/Alipsa/journo.git',
+            developerConnection: 'scm:git:https://github.com/Alipsa/journo.git',
+            url: 'https://github.com/Alipsa/journo/tree/main'
+        )
+      }
       def content = pomFile.text
       def expected = ('''\
         |<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
@@ -151,6 +180,33 @@ class CreatePomTest {
         |      <scope>test</scope>
         |    </dependency>
         |  </dependencies>
+        |  <licenses>
+        |  <license>
+        |      <name>The Apache Software License, Version 2.0</name>
+        |      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        |      <distribution>repo</distribution>
+        |  </license>
+          <license>
+            name("MIT")
+            url("https://opensource.org/license/mit")
+          </license>
+        </licenses>
+        repositories {
+          repository(id:'jitpack.io', url: 'https://jitpack.io')
+        }
+        developers {
+          developer (
+              name: 'Per Nyfelt',
+              email: 'per.nyfelt@alipsa.se',
+              organization: 'Alipsa HB',
+              organizationUrl: 'http://www.alipsa.se\'
+          )
+        }
+        scm (
+            connection: 'scm:git:https://github.com/Alipsa/journo.git',
+            developerConnection: 'scm:git:https://github.com/Alipsa/journo.git',
+            url: 'https://github.com/Alipsa/journo/tree/main\'
+        )
         |</project>
         '''.trim().stripMargin())
 

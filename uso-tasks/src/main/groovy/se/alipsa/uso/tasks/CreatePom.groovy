@@ -1,13 +1,13 @@
 package se.alipsa.uso.tasks
 
-import groovy.xml.XmlNodePrinter
-import groovy.xml.XmlParser
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
+import org.apache.tools.ant.types.DataType
 import se.alipsa.uso.model.MavenProject
+import se.alipsa.uso.model.Model
 import se.alipsa.uso.types.DependencyManagement
 
 import javax.xml.XMLConstants
@@ -32,6 +32,10 @@ class CreatePom extends Task {
   private String version
   private String name
   private String description
+  private Licenses licenses
+  private Repositories repositories
+  private Developers developers
+  private Scm scm
 
   void setPomTarget(String pomTarget) {
     pomFile = new File(pomTarget)
@@ -97,11 +101,27 @@ class CreatePom extends Task {
     return description ?: super.getDescription()
   }
 
+  void addLicenses(Licenses licenses) {
+    this.licenses = licenses
+  }
+
+  void addRepositories(Repositories repositories) {
+    this.repositories = repositories
+  }
+
+  void addDevelopers(Developers developers) {
+    this.developers = developers
+  }
+
+  void addScm(Scm scm) {
+    this.scm = scm
+  }
+
 
   @Override
   void execute() {
     log("createPom: groupId: ${getGroupId()} artifactId: ${getArtifactId()} version: ${getVersion()}", Project.MSG_VERBOSE)
-
+    log("licenses: ${licenses}, repositories: ${repositories}, developers: ${developers}, scm: ${scm}")
     if(!pomFile.getParentFile().exists()) {
       pomFile.getParentFile().mkdirs()
     }
@@ -122,6 +142,50 @@ class CreatePom extends Task {
     dependencies.setRefid(ref)
 
     appendDependencies(dependencies, pom)
+
+    if (licenses != null ) {
+      licenses.getLicenses().each { license ->
+        pom.addLicense(license.name, license.url)
+      }
+    }
+    if (developers != null) {
+      if (pom.model.getDevelopers() == null) {
+        pom.model.setDevelopers(new Model.Developers())
+      }
+      developers.getDevelopers().each { developer ->
+        def dev = new se.alipsa.uso.model.Developer()
+        dev.setName(developer.name)
+        dev.setEmail(developer.email)
+        dev.setOrganization(developer.organization)
+        dev.setOrganizationUrl(developer.organizationUrl)
+        pom.model.getDevelopers().developer.add(dev)
+      }
+    }
+
+    if (scm != null) {
+      def scmModel = new se.alipsa.uso.model.Scm()
+      scmModel.setConnection(scm.connection)
+      scmModel.setDeveloperConnection(scm.developerConnection)
+      scmModel.setUrl(scm.url)
+      pom.model.setScm(scmModel)
+    }
+
+    if (repositories != null) {
+      if (pom.model.getRepositories() == null) {
+        pom.model.setRepositories(new Model.Repositories())
+      }
+      repositories.getRepositories().each { repository ->
+        def repo = new se.alipsa.uso.model.Repository()
+        repo.setId(repository.id)
+        repo.setName(repository.name)
+        repo.setUrl(repository.url)
+        repo.setLayout(repository.layout)
+        // TODO: handle releases and snapshots
+        //repo.setReleases(repository.releases)
+        //repo.setSnapshots(repository.snapshots)
+        pom.model.getRepositories().repository.add(repo)
+      }
+    }
 
     try (FileWriter fw = new FileWriter(pomFile)) {
       pom.toPom(fw)
@@ -184,6 +248,200 @@ class CreatePom extends Task {
           .validate(new StreamSource(new StringReader(content)))
     } catch (Exception e) {
       throw new BuildException("Failed to validate pom: ${e.message}", e)
+    }
+  }
+
+  static class Licenses extends DataType {
+
+    private List<License> licenses = []
+
+    List<License> getLicenses() {
+      return licenses
+    }
+
+    void addLicense(License license) {
+      if (license == null) {
+        throw new IllegalArgumentException("License cannot be null")
+      }
+      licenses << license
+    }
+  }
+
+  static class License extends DataType {
+    String name
+    String url
+    String comments
+    String distribution
+
+    void addName(Name name) {
+      this.name = name.name
+    }
+
+    void addUrl(Url url) {
+      this.url = url.url
+    }
+
+    void addComments(Comments comments) {
+      this.comments = comments.comments
+    }
+
+    void addDistribution(Distribution distribution) {
+      this.distribution = distribution.distribution
+    }
+
+    static class Name {
+      String name
+
+      Name() {}
+
+      void addText(String name) {
+        this.name = name
+      }
+    }
+
+    static class Url {
+      String url
+
+      Url() {}
+
+      void addText(String url) {
+        this.url = url
+      }
+    }
+
+    static class Comments {
+      String comments
+
+      Comments() {}
+
+      void addText(String comments) {
+        this.comments = comments
+      }
+    }
+
+    static class Distribution {
+      String distribution
+
+      Distribution() {}
+
+      void addText(String distribution) {
+        this.distribution = distribution
+      }
+    }
+  }
+
+  static class Developers extends DataType {
+
+    private List<Developer> developers = []
+
+    List<Developer> getDevelopers() {
+      return developers
+    }
+
+    void addDeveloper(Developer developer) {
+      if (developer == null) {
+        throw new IllegalArgumentException("Developer cannot be null")
+      }
+      developers << developer
+    }
+  }
+
+  static class Developer extends DataType {
+    String name
+    String email
+    String organization
+    String organizationUrl
+
+    Developer() {
+      super()
+    }
+
+    void setName(String name) {
+      this.name = name
+    }
+
+    void setEmail(String email) {
+      this.email = email
+    }
+
+    void setOrganization(String organization) {
+      this.organization = organization
+    }
+
+    void setOrganizationUrl(String organizationUrl) {
+      this.organizationUrl = organizationUrl
+    }
+
+    @Override
+    String toString() {
+      return "Developer(name: $name, email: $email, organization: $organization, organizationUrl: $organizationUrl)"
+    }
+  }
+
+  static class Repositories extends DataType {
+
+    private List<Repository> repositories = []
+
+    List<Repository> getRepositories() {
+      return repositories
+    }
+
+    void addRepository(Repository repository) {
+      if (repository == null) {
+        throw new IllegalArgumentException("Repository cannot be null")
+      }
+      repositories << repository
+    }
+  }
+
+  static class Repository extends DataType {
+    String id
+    String name
+    String url
+    String layout
+    String releases
+    String snapshots
+
+    void setId(String id) {
+      this.id = id
+    }
+
+    void setName(String name) {
+      this.name = name
+    }
+
+    void setUrl(String url) {
+      this.url = url
+    }
+
+    void setLayout(String layout) {
+      this.layout = layout
+    }
+
+    void setReleases(String releases) {
+      this.releases = releases
+    }
+
+    void setSnapshots(String snapshots) {
+      this.snapshots = snapshots
+    }
+  }
+
+  static class Scm extends DataType {
+    String connection
+    String developerConnection
+    String url
+
+    void setConnection(String connection) {
+      this.connection = connection
+    }
+
+    void setDeveloperConnection(String developerConnection) {
+      this.developerConnection = developerConnection
+    }
+
+    void setUrl(String url) {
+      this.url = url
     }
   }
 }
