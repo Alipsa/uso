@@ -103,7 +103,7 @@ project.with {
     artifact(file:jarFile, type:"jar", id:"jar")
   }
 
-  target(name: 'deployLocal', depends: 'jar') {
+  target(name: 'publishLocal', depends: 'jar') {
     echo "Deploying to local maven repository"
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'

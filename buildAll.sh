@@ -24,19 +24,19 @@ pushd uso-tasks
   echo "********************"
   echo "Building uso-tasks..."
   echo "********************"
-  ./build deployLocal
+  ./build publishLocal
 popd
 pushd uso-core
   echo ""
   echo "********************"
   echo "Building uso-core..."
   echo "********************"
-  ./build deployLocal
+  ./build publishLocal
 popd
 buildExample examples/simpleExample clean compile
 buildExample examples/dependencies clean jar
-buildExample examples/publish clean deployLocal
-buildExample examples/boms clean deployLocal
+buildExample examples/publish clean publishLocal
+buildExample examples/boms clean publishLocal
 echo ""
 echo "*****"
 echo "Done!"

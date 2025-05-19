@@ -127,11 +127,34 @@ project.with {
     pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
     echo "Creating pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',
-        name: 'publish-example', description: "A simple example of a publishable library")
+        name: 'publish-example', description: "A simple example of a publishable library") {
+      licenses {
+        license (
+            name:"MIT",
+            url:"https://opensource.org/license/mit"
+        )
+      }
+      repositories {
+        repository(id:'jitpack.io', url: 'https://jitpack.io')
+      }
+      developers {
+        developer (
+            name: 'Per Nyfelt',
+            email: 'per.nyfelt@alipsa.se',
+            organization: 'Alipsa HB',
+            organizationUrl: 'http://www.alipsa.se'
+        )
+      }
+      scm (
+          connection: 'scm:git:https://github.com/Alipsa/publish-example.git',
+          developerConnection: 'scm:git:https://github.com/Alipsa/publish-example.git',
+          url: 'https://github.com/Alipsa/publish-example/tree/main'
+      )
+    }
   }
 
-  target(name: 'deployLocal', depends: 'jar, pom') {
-    echo "Deploying to local maven repository"
+  target(name: 'publishLocal', depends: 'jar, pom') {
+    echo "Publishing to local maven repository"
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'
     }

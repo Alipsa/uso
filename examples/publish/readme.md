@@ -5,7 +5,7 @@ The publish example shows a simple Groovy project with one source file and two j
 To build and publish the project to the local maven repository, run the following command:
 
 ```bash
-./uso deployLocal
+./uso publishLocal
 ```
 
 To publish the project to the remote maven repository (a nexus server running locally in this case), run the following command:
@@ -13,7 +13,7 @@ To publish the project to the remote maven repository (a nexus server running lo
 ```bash
 ./startNexus.sh
 sleep 5
-./uso deployRemote
+./uso publishRemote
 ```
 
 ### The key concepts to pay attention to in the build script are:
@@ -70,7 +70,7 @@ target(name: 'jar', depends: 'compile') {
   artifact(file:jarFile, type:"jar", id:"jar")
 }
 
-target(name: 'deployLocal', depends: 'jar, pom') {
+target(name: 'publishLocal', depends: 'jar, pom') {
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'
     }
@@ -79,13 +79,16 @@ target(name: 'deployLocal', depends: 'jar, pom') {
     }
   }
 ```
-You must also define the artifacts to publish in the artifacts task. We could have defined it in the directly in yh deployLocal task but since we also want to refer to it when publishing remotely, we define it in the jar task and only reference it in the deployLocal task.
+You must also define the artifacts to publish in the artifacts task. We could have defined it in the directly in the 
+publishLocal task but since we also want to refer to it when publishing remotely, we define it in the jar task and only 
+reference it in the publishLocal task.
 
 ### publish remotely (a.k.a. deploy)
-The deploy task publishes the project to the remote maven repository. The remote maven repository is usually a nexus or artifactory server. The deploy task uses the pom.xml file created in the createPom task.
+The deploy task publishes the project to the remote maven repository. The remote maven repository is usually a nexus 
+or artifactory server. The deploy task uses the pom.xml file created in the createPom task.
 
 ```groovy
-target(name: 'deployRemote', depends: 'jar, sourceJar, groovydocJar, pom') {
+target(name: 'publishRemote', depends: 'jar, sourceJar, groovydocJar, pom') {
   artifacts(id: 'remoteArtifacts') {
     artifact refid: 'jar'
     artifact refid: 'sourceJar'

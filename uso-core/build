@@ -40,7 +40,7 @@ if (args.contains('jar')) {
   jar()
 }
 
-if (args.contains('deployLocal')) {
+if (args.contains('publishLocal')) {
   clean()
   createProjectLayout()
   compile()
@@ -48,7 +48,7 @@ if (args.contains('deployLocal')) {
   test()
   jar()
   createPom()
-  deployLocal()
+  publishLocal()
 }
 
 if (args.contains('deploy')) {
@@ -202,9 +202,9 @@ def createPom() {
   ant.echo "created $pomFile"
 }
 
-def deployLocal() {
-  if (hasRan('isDeployedLocal')) return
-  println "\n[deployLocal]"
+def publishLocal() {
+  if (hasRan('isPublishedLocal')) return
+  println "\n[publishLocal]"
   def m2HomeDir = System.getProperty("M2_HOME") ?: System.getProperty("user.home") + "/.m2"
   def m2Home = new File(m2HomeDir)
   if (!m2Home.exists()) {

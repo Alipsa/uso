@@ -145,7 +145,7 @@ project.with {
         name: 'publish-example', description: "A simple example of a publishable library")
   }
 
-  target(name: 'deployLocal', depends: 'jar, pom') {
+  target(name: 'publishLocal', depends: 'jar, pom') {
     echo "Deploying to local maven repository"
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'
