@@ -12,7 +12,7 @@ class PomModelTest {
     project.setVersion('0.0.1')
     project.setName('uso-core')
     project.setDescription('A core library for uso')
-    project.addLicense('Apache License, Version 2.0', 'http://www.apache.org/licenses/LICENSE-2.0')
+    project.addLicense(name: 'Apache License, Version 2.0', url: 'http://www.apache.org/licenses/LICENSE-2.0')
 
     project.addToDependencyManagement(groupId: 'se.alipsa.matrix', artifactId: 'matrix-bom', version: '2.2.0', type: 'pom', scope: 'import')
     project.addDependency(groupId:'se.alipsa.matrix', artifactId:'matrix-core')

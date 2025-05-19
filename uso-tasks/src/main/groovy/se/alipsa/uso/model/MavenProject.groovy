@@ -12,15 +12,18 @@ class MavenProject {
   }
 
   void addLicense(String name, String url) {
+    addLicense(name: name, url: url)
+  }
+
+  void addLicense(Map params) {
     def licenses = model.getLicenses()
     if (licenses == null) {
       licenses = new Model.Licenses()
       model.setLicenses(licenses)
     }
-    def license = new License()
-    license.name = name
-    license.url = url
+    def license = new License(params)
     licenses.license << license
+    license
   }
 
   void addToDependencyManagement(Map dependencyProps) {
@@ -72,7 +75,6 @@ class MavenProject {
     }
     def dependency = new Dependency(dependencyProps)
     dependencies.dependency << dependency
-
   }
 
   Model getModel() {

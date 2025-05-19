@@ -83,6 +83,9 @@ class CreatePomTest {
     }
   }
 
+  /**
+   * This test creates a pom file suitable for publishing using the CreatePom task.
+   */
   @Test
   void testCreatePom() {
 
@@ -118,15 +121,15 @@ class CreatePomTest {
       createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
           name: 'publish-example', description: "A simple example of a publishable library"){
         licenses {
-          license {
-            name("The Apache Software License, Version 2.0")
-            url("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution("repo")
-          }
-          license {
-            name("MIT")
-            url("https://opensource.org/license/mit")
-          }
+          license(
+            name: "The Apache Software License, Version 2.0",
+            url: "http://www.apache.org/licenses/LICENSE-2.0.txt",
+            distribution: "repo"
+          )
+          license (
+            name:"MIT",
+            url:"https://opensource.org/license/mit"
+          )
         }
         repositories {
           repository(id:'jitpack.io', url: 'https://jitpack.io')
@@ -155,6 +158,30 @@ class CreatePomTest {
         |  <packaging>jar</packaging>
         |  <name>publish-example</name>
         |  <description>A simple example of a publishable library</description>
+        |  <licenses>
+        |    <license>
+        |      <name>The Apache Software License, Version 2.0</name>
+        |      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        |      <distribution>repo</distribution>
+        |    </license>
+        |    <license>
+        |      <name>MIT</name>
+        |      <url>https://opensource.org/license/mit</url>
+        |    </license>
+        |  </licenses>
+        |  <developers>
+        |    <developer>
+        |      <name>Per Nyfelt</name>
+        |      <email>per.nyfelt@alipsa.se</email>
+        |      <organization>Alipsa HB</organization>
+        |      <organizationUrl>http://www.alipsa.se</organizationUrl>
+        |    </developer>
+        |  </developers>
+        |  <scm>
+        |    <connection>scm:git:https://github.com/Alipsa/journo.git</connection>
+        |    <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
+        |    <url>https://github.com/Alipsa/journo/tree/main</url>
+        |  </scm>
         |  <dependencyManagement>
         |    <dependencies>
         |      <dependency>
@@ -180,35 +207,17 @@ class CreatePomTest {
         |      <scope>test</scope>
         |    </dependency>
         |  </dependencies>
-        |  <licenses>
-        |  <license>
-        |      <name>The Apache Software License, Version 2.0</name>
-        |      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        |      <distribution>repo</distribution>
-        |  </license>
-          <license>
-            name("MIT")
-            url("https://opensource.org/license/mit")
-          </license>
-        </licenses>
-        repositories {
-          repository(id:'jitpack.io', url: 'https://jitpack.io')
-        }
-        developers {
-          developer (
-              name: 'Per Nyfelt',
-              email: 'per.nyfelt@alipsa.se',
-              organization: 'Alipsa HB',
-              organizationUrl: 'http://www.alipsa.se\'
-          )
-        }
-        scm (
-            connection: 'scm:git:https://github.com/Alipsa/journo.git',
-            developerConnection: 'scm:git:https://github.com/Alipsa/journo.git',
-            url: 'https://github.com/Alipsa/journo/tree/main\'
-        )
+        |  <repositories>
+        |    <repository>
+        |      <id>jitpack.io</id>
+        |      <url>https://jitpack.io</url>
+        |    </repository>
+        |  </repositories>
         |</project>
         '''.trim().stripMargin())
+
+      println "Expected: $expected"
+      println "Content: $content"
 
       MatcherAssert.assertThat(
           new WhitespaceStrippedSource(Input.from(content).build()),

@@ -145,7 +145,7 @@ class CreatePom extends Task {
 
     if (licenses != null ) {
       licenses.getLicenses().each { license ->
-        pom.addLicense(license.name, license.url)
+        pom.addLicense(license.toMap())
       }
     }
     if (developers != null) {
@@ -273,6 +273,10 @@ class CreatePom extends Task {
     String comments
     String distribution
 
+    License() {
+      super()
+    }
+
     void addName(Name name) {
       this.name = name.name
     }
@@ -287,6 +291,23 @@ class CreatePom extends Task {
 
     void addDistribution(Distribution distribution) {
       this.distribution = distribution.distribution
+    }
+
+    Map toMap() {
+      Map params = [:]
+      if (name) {
+        params.put('name', name)
+      }
+      if (url) {
+        params.put('url', url)
+      }
+      if (comments) {
+        params.put('comments', comments)
+      }
+      if (distribution) {
+        params.put('distribution', distribution)
+      }
+      params
     }
 
     static class Name {
