@@ -124,8 +124,8 @@ project.with {
   }
 
   target(name: 'pom') {
-    pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
-    echo "Creating pom file ${pomFile.canonicalPath}"
+    def pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
+    echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',
         name: 'publish-example', description: "A simple example of a publishable library") {
       licenses {
@@ -158,12 +158,10 @@ project.with {
     artifacts(id: 'localArtifacts') {
       artifact refid: 'jar'
     }
-    install(artifactsref:"localArtifacts") {
-      pom file: pomFile
-    }
+    install(artifactsref:"localArtifacts")
   }
 
-  target(name: 'deployRemote', depends: 'jar, sourceJar, groovydocJar, pom') {
+  target(name: 'publishRemote', depends: 'jar, sourceJar, groovydocJar, pom') {
     echo "Deploying to remote maven repository"
     artifacts(id: 'remoteArtifacts') {
       artifact refid: 'jar'
@@ -171,7 +169,6 @@ project.with {
       artifact refid: 'javadocJar'
     }
     deploy(artifactsref: "remoteArtifacts") {
-      pom file: pomFile
       remoteRepo(id: 'localNexus', url: 'http://localhost:8081/repository/repo/')
     }
   }

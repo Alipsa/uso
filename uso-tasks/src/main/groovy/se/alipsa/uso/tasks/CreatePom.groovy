@@ -2,12 +2,14 @@ package se.alipsa.uso.tasks
 
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.apache.maven.resolver.internal.ant.types.Dependency
+import org.apache.maven.resolver.internal.ant.types.Pom
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.DataType
 import se.alipsa.uso.model.MavenProject
 import se.alipsa.uso.model.Model
+import se.alipsa.uso.model.RepositoryPolicy
 import se.alipsa.uso.types.DependencyManagement
 
 import javax.xml.XMLConstants
@@ -16,10 +18,37 @@ import javax.xml.validation.SchemaFactory
 
 /**
  * Creates a Maven pom file with the specified dependencies and dependency management.
- * The pom file is created in the specified target directory. This is useful for dependecy resolving in ant but
- * if you want to publish then artifact with the pom, you should consider using the CreatePom task instead since that
- * will enable you to add license, developer meta-data etc.
+ * The pom file is created in the specified target directory. The pom() task is also called
+ * to register the pom file in the project.
+ * Usage:
+ * <pre><code>
+ *  createPom(pomTarget: pomFile, dependenciesRef: 'compile',
+ *    dependencyManagementRef: 'dm' name: 'publish-example',
+ *    description: "A simple example") {
  *
+ *    licenses {
+ *      license (name:"MIT", url:"https://opensource.org/license/mit")
+ *    }
+ *    repositories {
+ *      repository(id:'jitpack.io', url: 'https://jitpack.io')
+ *    }
+ *    developers {
+ *      developer (
+ *        name: 'Per Nyfelt',
+ *        email: 'per.nyfelt@alipsa.se',
+ *        organization: 'Alipsa HB',
+ *        organizationUrl: 'http://www.alipsa.se'
+ *      )
+ *    }
+ *    scm (
+ *      connection: 'scm:git:https://github.com/x/example.git',
+ *      developerConnection: 'scm:git:https://github.com/x/example.git',
+ *      url: 'https://github.com/Alipsa/x/tree/main'
+ *    )
+ *  }
+ * </code></pre>
+ * The only required attributes are pomTarget. groupId, artifactId and version should have been set in the build script
+ * already but can be overridden here. The pom file will be created in the specified target directory.
  * @since 0.0.1
  */
 class CreatePom extends Task {
@@ -121,7 +150,7 @@ class CreatePom extends Task {
   @Override
   void execute() {
     log("createPom: groupId: ${getGroupId()} artifactId: ${getArtifactId()} version: ${getVersion()}", Project.MSG_VERBOSE)
-    log("licenses: ${licenses}, repositories: ${repositories}, developers: ${developers}, scm: ${scm}")
+    log("licenses: ${licenses}, repositories: ${repositories}, developers: ${developers}, scm: ${scm}", Project.MSG_VERBOSE)
     if(!pomFile.getParentFile().exists()) {
       pomFile.getParentFile().mkdirs()
     }
@@ -177,12 +206,19 @@ class CreatePom extends Task {
       repositories.getRepositories().each { repository ->
         def repo = new se.alipsa.uso.model.Repository()
         repo.setId(repository.id)
-        repo.setName(repository.name)
+        if (repository.name) repo.setName(repository.name)
         repo.setUrl(repository.url)
-        repo.setLayout(repository.layout)
-        // TODO: handle releases and snapshots
-        //repo.setReleases(repository.releases)
-        //repo.setSnapshots(repository.snapshots)
+        if (repository.layout) repo.setLayout(repository.layout)
+        if (repository.releases) {
+          def policy = new RepositoryPolicy()
+          policy.setEnabled(repository.releases)
+          repo.setReleases(policy)
+        }
+        if (repository.snapshots) {
+          def policy = new RepositoryPolicy()
+          policy.setEnabled(repository.snapshots)
+          repo.setSnapshots(policy)
+        }
         pom.model.getRepositories().repository.add(repo)
       }
     }
@@ -193,6 +229,19 @@ class CreatePom extends Task {
       throw new BuildException("Failed to create pom file: ${e.message}", e)
     }
     log("Created pom file ${pomFile.canonicalPath}", Project.MSG_VERBOSE)
+    Map<String, Class<?>> taskDefs = getProject().getTaskDefinitions()
+    if (!taskDefs.containsKey('pom')) {
+      try {
+        project.addTaskDefinition('pom', Pom)
+      } catch (ClassNotFoundException e) {
+        log("Failed to load Pom class: ${e.message}, you need to call the pom task in your build script instead!")
+      }
+    }
+    Pom pomType = getProject().createTask('pom') as Pom
+    pomType.setProject(project)
+    pomType.setFile(pomFile)
+    pomType.execute()
+    log("Created and registered the pom file.", Project.MSG_INFO)
   }
 
   static void appendDependencies(Dependencies dependencies, MavenProject pom) {
@@ -312,9 +361,7 @@ class CreatePom extends Task {
 
     static class Name {
       String name
-
       Name() {}
-
       void addText(String name) {
         this.name = name
       }
@@ -322,9 +369,7 @@ class CreatePom extends Task {
 
     static class Url {
       String url
-
       Url() {}
-
       void addText(String url) {
         this.url = url
       }
@@ -332,9 +377,7 @@ class CreatePom extends Task {
 
     static class Comments {
       String comments
-
       Comments() {}
-
       void addText(String comments) {
         this.comments = comments
       }
@@ -342,9 +385,7 @@ class CreatePom extends Task {
 
     static class Distribution {
       String distribution
-
       Distribution() {}
-
       void addText(String distribution) {
         this.distribution = distribution
       }
@@ -352,7 +393,6 @@ class CreatePom extends Task {
   }
 
   static class Developers extends DataType {
-
     private List<Developer> developers = []
 
     List<Developer> getDevelopers() {
@@ -420,8 +460,8 @@ class CreatePom extends Task {
     String name
     String url
     String layout
-    String releases
-    String snapshots
+    String releases // actually a boolean
+    String snapshots // actually a boolean
 
     void setId(String id) {
       this.id = id

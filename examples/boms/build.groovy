@@ -24,11 +24,11 @@ project.with {
   target('init') {
     echo "Initializing project..."
     // Since we need to resolve dependencies based on dependency management, we need to create the pom file first
-    pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
+    def pomFile = new File(buildDir, "libs/${artifactId}-${version}.pom")
     echo "Creating pom file ${pomFile.canonicalPath}"
+    // create and register the pom file
     createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
         name: 'publish-example', description: "A simple example of a publishable library")
-    pom( file: pomFile) // THis makes maven ant tasks aware of the pom file
     resolve { // resolve will use the pom file we just declared
       path(refId: 'compilePath', classpath: 'compile')
       path(refId: 'testPath', classpath: 'test')
