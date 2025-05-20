@@ -27,6 +27,7 @@ class CreatePomTest {
       taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom', classpathref: 'libpath')
       typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
       typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
+      antProject.setProperty('grp', 'se.alipsa.uso.tasks') // Test that groups can be overridden
       antProject.setProperty('groupId', 'se.alipsa.uso')
       antProject.setProperty('artifactId', 'CreateDependencyPomTest')
       antProject.setProperty('version', '1.0.0')
@@ -44,12 +45,12 @@ class CreatePomTest {
         outDir.mkdirs()
       }
       def pomFile = new File(outDir, "${antProject.getProperty('artifactId')}-${antProject.getProperty('version')}.pom")
-      createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm')
+      createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm', groupId: '${grp}')
       def content = pomFile.text
       Assertions.assertEquals('''\
         |<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         |    <modelVersion>4.0.0</modelVersion>
-        |    <groupId>se.alipsa.uso</groupId>
+        |    <groupId>se.alipsa.uso.tasks</groupId>
         |    <artifactId>CreateDependencyPomTest</artifactId>
         |    <version>1.0.0</version>
         |    <packaging>jar</packaging>
@@ -101,9 +102,11 @@ class CreatePomTest {
       typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
       typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
 
+      antProject.setProperty('author', 'Per Nyfelt') // Test that properties are resolved in the additional pom content
       antProject.setProperty('groupId', 'se.alipsa.uso')
-      antProject.setProperty('artifactId', 'CreatePomTest')
+      antProject.setProperty('artifactId', 'create-pom-test')
       antProject.setProperty('version', '1.0.0')
+      antProject.name = 'CreatePomTest'
       dependencyManagement(id: 'dm') {
         dependencies {
           dependency(groupId: 'org.junit', artifactId: 'junit-bom', version:'5.12.2', type: 'pom', scope: 'import')
@@ -119,7 +122,7 @@ class CreatePomTest {
       }
       def pomFile = new File(outDir, "${antProject.getProperty('artifactId')}-${antProject.getProperty('version')}.pom")
       createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
-          name: 'publish-example', description: "A simple example of a publishable library"){
+          name: '${ant.project.name}', description: "A simple example of a publishable library"){
         licenses {
           license(
             name: "The Apache Software License, Version 2.0",
@@ -136,7 +139,7 @@ class CreatePomTest {
         }
         developers {
           developer (
-              name: 'Per Nyfelt',
+              name: '${author}',
               email: 'per.nyfelt@alipsa.se',
               organization: 'Alipsa HB',
               organizationUrl: 'http://www.alipsa.se'
@@ -153,10 +156,10 @@ class CreatePomTest {
         |<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
         |  <modelVersion>4.0.0</modelVersion>
         |  <groupId>se.alipsa.uso</groupId>
-        |  <artifactId>CreatePomTest</artifactId>
+        |  <artifactId>create-pom-test</artifactId>
         |  <version>1.0.0</version>
         |  <packaging>jar</packaging>
-        |  <name>publish-example</name>
+        |  <name>CreatePomTest</name>
         |  <description>A simple example of a publishable library</description>
         |  <licenses>
         |    <license>

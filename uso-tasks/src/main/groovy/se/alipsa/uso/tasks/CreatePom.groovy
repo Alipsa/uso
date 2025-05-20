@@ -65,36 +65,37 @@ class CreatePom extends Task {
   private Repositories repositories
   private Developers developers
   private Scm scm
+  private Boolean skipPomRegistration = false
 
   void setPomTarget(String pomTarget) {
-    pomFile = new File(pomTarget)
+    pomFile = new File(project.replaceProperties(pomTarget))
   }
   void setPomTarget(File pomTarget) {
     pomFile = pomTarget
   }
 
   void setDependencyManagementRef(String dependencyManagementRef) {
-    this.dependencyManagementRef = dependencyManagementRef
+    this.dependencyManagementRef = project.replaceProperties(dependencyManagementRef)
   }
 
   void setDependenciesRef(String dependenciesRef) {
-    this.dependenciesRef = dependenciesRef
+    this.dependenciesRef = project.replaceProperties(dependenciesRef)
   }
 
   void setGroupId(String groupId) {
-    this.groupId = groupId
+    this.groupId = project.replaceProperties(groupId)
   }
 
   void setArtifactId(String artifactId) {
-    this.artifactId = artifactId
+    this.artifactId = project.replaceProperties(artifactId)
   }
 
   void setVersion(String version) {
-    this.version = version
+    this.version = project.replaceProperties(version)
   }
 
   void setName(String name) {
-    this.name = name
+    this.name = project.replaceProperties(name)
   }
 
   String getName() {
@@ -102,7 +103,11 @@ class CreatePom extends Task {
   }
 
   void setDescription(String description) {
-    this.description = description
+    this.description = project.replaceProperties(description)
+  }
+
+  void setSkipPomRegistration(Boolean skipPomRegistration) {
+    this.skipPomRegistration = skipPomRegistration
   }
 
   String getGroupId() {
@@ -228,8 +233,16 @@ class CreatePom extends Task {
     } catch (IOException e) {
       throw new BuildException("Failed to create pom file: ${e.message}", e)
     }
-    log("Created pom file ${pomFile.canonicalPath}", Project.MSG_VERBOSE)
-    Map<String, Class<?>> taskDefs = getProject().getTaskDefinitions()
+
+    if (!skipPomRegistration) {
+      registerPom()
+    } else {
+      log("Created pom file ${pomFile.canonicalPath}", Project.MSG_INFO)
+    }
+  }
+
+  private registerPom() {
+    Map<String, Class<?>> taskDefs = project.getTaskDefinitions()
     if (!taskDefs.containsKey('pom')) {
       try {
         project.addTaskDefinition('pom', Pom)
@@ -237,11 +250,11 @@ class CreatePom extends Task {
         log("Failed to load Pom class: ${e.message}, you need to call the pom task in your build script instead!")
       }
     }
-    Pom pomType = getProject().createTask('pom') as Pom
-    pomType.setProject(project)
-    pomType.setFile(pomFile)
-    pomType.execute()
-    log("Created and registered the pom file.", Project.MSG_INFO)
+    Pom pomTask = project.createTask('pom') as Pom
+    pomTask.setProject(project)
+    pomTask.setFile(pomFile)
+    pomTask.execute()
+    log("Created and registered the pom file ${pomFile.canonicalPath}.", Project.MSG_INFO)
   }
 
   static void appendDependencies(Dependencies dependencies, MavenProject pom) {
@@ -363,7 +376,7 @@ class CreatePom extends Task {
       String name
       Name() {}
       void addText(String name) {
-        this.name = name
+        this.name = getProject().replaceProperties(name)
       }
     }
 
@@ -371,7 +384,7 @@ class CreatePom extends Task {
       String url
       Url() {}
       void addText(String url) {
-        this.url = url
+        this.url = getProject().replaceProperties(url)
       }
     }
 
@@ -379,7 +392,7 @@ class CreatePom extends Task {
       String comments
       Comments() {}
       void addText(String comments) {
-        this.comments = comments
+        this.comments = getProject().replaceProperties(comments)
       }
     }
 
@@ -387,7 +400,7 @@ class CreatePom extends Task {
       String distribution
       Distribution() {}
       void addText(String distribution) {
-        this.distribution = distribution
+        this.distribution = getProject().replaceProperties(distribution)
       }
     }
   }
@@ -418,19 +431,19 @@ class CreatePom extends Task {
     }
 
     void setName(String name) {
-      this.name = name
+      this.name = getProject().replaceProperties(name)
     }
 
     void setEmail(String email) {
-      this.email = email
+      this.email = getProject().replaceProperties(email)
     }
 
     void setOrganization(String organization) {
-      this.organization = organization
+      this.organization = getProject().replaceProperties(organization)
     }
 
     void setOrganizationUrl(String organizationUrl) {
-      this.organizationUrl = organizationUrl
+      this.organizationUrl = getProject().replaceProperties(organizationUrl)
     }
 
     @Override
@@ -468,23 +481,23 @@ class CreatePom extends Task {
     }
 
     void setName(String name) {
-      this.name = name
+      this.name = getProject().replaceProperties(name)
     }
 
     void setUrl(String url) {
-      this.url = url
+      this.url = getProject().replaceProperties(url)
     }
 
     void setLayout(String layout) {
-      this.layout = layout
+      this.layout = getProject().replaceProperties(layout)
     }
 
     void setReleases(String releases) {
-      this.releases = releases
+      this.releases = getProject().replaceProperties(releases)
     }
 
     void setSnapshots(String snapshots) {
-      this.snapshots = snapshots
+      this.snapshots = getProject().replaceProperties(snapshots)
     }
   }
 
@@ -494,15 +507,15 @@ class CreatePom extends Task {
     String url
 
     void setConnection(String connection) {
-      this.connection = connection
+      this.connection = getProject().replaceProperties(connection)
     }
 
     void setDeveloperConnection(String developerConnection) {
-      this.developerConnection = developerConnection
+      this.developerConnection = getProject().replaceProperties(developerConnection)
     }
 
     void setUrl(String url) {
-      this.url = url
+      this.url = getProject().replaceProperties(url)
     }
   }
 }
