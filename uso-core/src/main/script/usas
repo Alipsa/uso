@@ -53,5 +53,14 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   println projectBuilder.targets.keySet()
   return
 } else {
+  if (projectBuilder.groupId == null) {
+    projectBuilder.echo("No groupId set.")
+  }
+  if (projectBuilder.artifactId == null) {
+    projectBuilder.echo("No artifactId set.")
+  }
+  if (projectBuilder.version == null) {
+    projectBuilder.echo("No version set.")
+  }
   projectBuilder.execute(params.targets)
 }

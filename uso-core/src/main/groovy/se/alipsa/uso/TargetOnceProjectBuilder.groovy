@@ -44,9 +44,11 @@ class TargetOnceProjectBuilder extends ProjectBuilder {
         executedTargets << targetName
       }
     } catch (Exception e) {
+      String projectName = project.name ?: name ?: "build.groovy"
       String errorMessage = e.message
-          .replace(" class: se.alipsa.uso.TargetOnceProjectBuilder", " script $name")
-          .replace("se.alipsa.uso.TargetOnceProjectBuilder", name)
+          .replace(" class: se.alipsa.uso.TargetOnceProjectBuilder", " script $projectName")
+          .replace("se.alipsa.uso.TargetOnceProjectBuilder", projectName)
+      e.printStackTrace()
       System.err.println "Error executing target '$targetName': ${errorMessage}"
       System.exit(1)
     }

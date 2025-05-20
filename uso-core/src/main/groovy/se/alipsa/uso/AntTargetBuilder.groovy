@@ -58,9 +58,11 @@ class AntTargetBuilder extends ProjectBuilder {
         project.executeTargets(targets as Vector)
       }
     } catch (Exception e) {
+      String projectName = project.name ?: name ?: "build.groovy"
       String errorMessage = e.message
-          .replace(" class: se.alipsa.uso.AntTargetBuilder", " script $project.name")
-          .replace("se.alipsa.uso.AntTargetBuilder", project.name)
+          .replace(" class: se.alipsa.uso.AntTargetBuilder", " script $projectName")
+          .replace("se.alipsa.uso.AntTargetBuilder", projectName)
+      e.printStackTrace()
       System.err.println "Error executing target(s) '$targets': ${errorMessage}"
       System.exit(1)
     }

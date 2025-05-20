@@ -7,11 +7,11 @@ abstract class ProjectBuilder extends AntBuilder {
   String artifactId
   String version
   String defaultTarget
-  String baseDir
+
 
   ProjectBuilder() {
     super()
-    this.baseDir = System.getProperty("user.dir")
+    //basedir = System.getProperty("user.dir")
     taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')
     //taskdef(uri:"antlib:org.apache.maven.resolver.ant", resource:"org/apache/maven/resolver/ant/antlib.xml")
 
@@ -33,6 +33,7 @@ abstract class ProjectBuilder extends AntBuilder {
 
     typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
     taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
+    taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
   }
 
   abstract void target(Map<String, String> params, Closure closure)
@@ -63,14 +64,6 @@ abstract class ProjectBuilder extends AntBuilder {
   void setDefaultTarget(String defaultTarget) {
     this.defaultTarget = defaultTarget
     project.setDefault(defaultTarget)
-  }
-
-  String getBaseDir() {
-    return baseDir
-  }
-
-  void setBaseDir(String baseDir) {
-    this.baseDir = baseDir
   }
 
   String getGroupId() {
@@ -136,6 +129,36 @@ abstract class ProjectBuilder extends AntBuilder {
   void setVersion(String version) {
     this.version = version
     property('version', version)
+  }
+
+  /**
+   * The baseDir of the project determines the base directory for the project.
+   * It is used to resolve relative paths in the project.
+   * Note: In Ant the baseDir is a File whereas the basedir is a String but both refer to the same
+   * property.
+   */
+  void setBaseDir(File baseDir) {
+    project.setBaseDir(baseDir)
+    property('basedir', baseDir.canonicalPath)
+  }
+
+  /**
+   * The basedir of the project determines the base directory for the project.
+   * It is used to resolve relative paths in the project.
+   * Note: In Ant the baseDir is a File whereas the basedir is a String but both refer to the same
+   * property.
+   */
+  void setBasedir(String basedir) {
+    project.setBasedir(basedir)
+    property('basedir', basedir)
+  }
+
+  String getBasedir() {
+    return project.getBaseDir()?.canonicalPath
+  }
+
+  File getBaseDir() {
+    return project.getBaseDir()
   }
 
   /**
