@@ -44,3 +44,5 @@ bin/
 /examples/parentChild/subA/subA.iml
 /examples/multimodule/subB/subB.iml
 /examples/parentChild/subB/subB.iml
+/examples/boms/build/
+/examples/publish/build/
