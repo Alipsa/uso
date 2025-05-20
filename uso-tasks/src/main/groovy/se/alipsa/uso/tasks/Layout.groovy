@@ -19,4 +19,18 @@ package se.alipsa.uso.tasks
  *
  */
 class Layout {
+ /*
+ [INFO] [echoproperties] project.artifactId=journo-runtime
+[INFO] [echoproperties] project.build.directory=/Users/pernyf/project/journo/runtime/target
+[INFO] [echoproperties] project.build.outputDirectory=/Users/pernyf/project/journo/runtime/target/classes
+[INFO] [echoproperties] project.build.sourceDirectory=/Users/pernyf/project/journo/runtime/src/main/java
+[INFO] [echoproperties] project.build.sourceEncoding=UTF-8
+[INFO] [echoproperties] project.build.testOutputDirectory=/Users/pernyf/project/journo/runtime/target/test-classes
+[INFO] [echoproperties] project.build.testSourceDirectory=/Users/pernyf/project/journo/runtime/src/test/java
+[INFO] [echoproperties] project.description=Create PDF documents from Freemarker markup
+[INFO] [echoproperties] project.groupId=se.alipsa.journo
+[INFO] [echoproperties] project.name=Journo Runtime
+[INFO] [echoproperties] project.packaging=jar
+[INFO] [echoproperties] project.version=0.7.1
+  */
 }
