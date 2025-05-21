@@ -5,9 +5,7 @@ project.with {
 
   target('init') {
     // Set all magic properties for the layout
-    layout(type: 'maven', language: 'groovy')
-    // print all properties so its is more clear whats going on
-    echoproperties()
+    layout(type: 'maven', language: 'groovy', logLevel: org.apache.tools.ant.Project.MSG_VERBOSE)
   }
 
   target(name: 'clean', depends: 'init') {

@@ -2,11 +2,14 @@
 @Grab('se.alipsa.uso:uso-core:0.0.1')
 @Grab('org.slf4j:slf4j-simple:2.0.17')
 @GrabConfig(systemClassLoader=true)
+import org.apache.tools.ant.BuildException
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl
 import se.alipsa.uso.ProjectBuilder
 import se.alipsa.uso.AntTargetBuilder
+import se.alipsa.uso.ErrorReportingListener
 
 ProjectBuilder projectBuilder = new AntTargetBuilder()
+projectBuilder.project.addBuildListener(new ErrorReportingListener())
 GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
 
 def parseArgs() {
@@ -44,6 +47,14 @@ params.systemProperties.each {
 }
 scriptEngine.put("project", projectBuilder)
 // Eval phase
+try {
+} catch (ScriptException e) {
+  println "Syntax error in build script:"
+  println "  Message: ${e.message}"
+  println "  File: ${e.fileName ?: 'unknown'}"
+  println "  Line: ${e.lineNumber}, Column: ${e.columnNumber}"
+  throw new RuntimeException("Script evaluation failed due to syntax error.", e)
+}
 scriptEngine.eval(params.buildFile.text)
 if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   println projectBuilder.targets.keySet()
@@ -59,5 +70,9 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
     projectBuilder.echo("No version set.")
   }
   // Execute phase
-  projectBuilder.execute(params.targets)
+  try {
+    projectBuilder.execute(params.targets)
+  } catch (BuildException e) {
+    System.err.println "Fatal error during build execution: ${e.message}"
+  }
 }
