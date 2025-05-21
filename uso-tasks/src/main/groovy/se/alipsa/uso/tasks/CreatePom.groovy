@@ -51,6 +51,7 @@ import javax.xml.validation.SchemaFactory
  * already but can be overridden here. The pom file will be created in the specified target directory.
  * @since 0.0.1
  */
+//@CompileStatic
 class CreatePom extends Task {
 
   private String dependenciesRef
@@ -372,7 +373,7 @@ class CreatePom extends Task {
       params
     }
 
-    static class Name {
+    class Name {
       String name
       Name() {}
       void addText(String name) {
@@ -380,7 +381,7 @@ class CreatePom extends Task {
       }
     }
 
-    static class Url {
+    class Url {
       String url
       Url() {}
       void addText(String url) {
@@ -388,7 +389,7 @@ class CreatePom extends Task {
       }
     }
 
-    static class Comments {
+    class Comments {
       String comments
       Comments() {}
       void addText(String comments) {
@@ -396,7 +397,7 @@ class CreatePom extends Task {
       }
     }
 
-    static class Distribution {
+    class Distribution {
       String distribution
       Distribution() {}
       void addText(String distribution) {

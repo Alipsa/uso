@@ -1,5 +1,6 @@
 package se.alipsa.uso.tasks
 
+import groovy.transform.CompileStatic
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
 
@@ -50,6 +51,7 @@ import org.apache.tools.ant.Task
  *   </dl>
  *
  */
+@CompileStatic
 class Layout extends Task {
   String mainSrcDir
   String testSrcDir
