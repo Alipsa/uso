@@ -37,6 +37,7 @@ buildExample examples/simpleExample clean compile
 buildExample examples/dependencies clean jar
 buildExample examples/publish clean publishLocal
 buildExample examples/boms clean publishLocal
+buildExample examples/layout compile
 echo ""
 echo "*****"
 echo "Done!"
