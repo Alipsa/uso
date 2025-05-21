@@ -43,6 +43,7 @@ params.systemProperties.each {
   System.setProperty(keyVal[0], keyVal[1])
 }
 scriptEngine.put("project", projectBuilder)
+// Eval phase
 scriptEngine.eval(params.buildFile.text)
 if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   println projectBuilder.targets.keySet()
@@ -57,5 +58,6 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   if (projectBuilder.version == null) {
     projectBuilder.echo("No version set.")
   }
+  // Execute phase
   projectBuilder.execute(params.targets)
 }
