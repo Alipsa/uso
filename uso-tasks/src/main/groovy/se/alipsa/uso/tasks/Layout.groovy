@@ -37,7 +37,7 @@ class Layout extends Task {
   String distDir
   String type = 'maven'
   String language = 'groovy'
-  Mkdir mkdir
+  File dir
 
   Layout() {
     super()
@@ -47,12 +47,16 @@ class Layout extends Task {
     return project.getBaseDir()?.canonicalPath ?: project.getProperty('basedir') ?: '.'
   }
 
+  File getDir() {
+    return dir ?: new File(getBasedir())
+  }
+
   def mavenLayout() {
-    mainSrcDir = "${getBasedir()}/src/main/$language"
-    testSrcDir = "${getBasedir()}/src/test/$language"
-    mainResourcesDir = "${getBasedir()}/src/main/resources"
-    testResourcesDir = "${getBasedir()}/src/test/resources"
-    buildDir = "${getBasedir()}/target"
+    mainSrcDir = "${getDir()}/src/main/$language"
+    testSrcDir = "${getDir()}/src/test/$language"
+    mainResourcesDir = "${getDir()}/src/main/resources"
+    testResourcesDir = "${getDir()}/src/test/resources"
+    buildDir = "${getDir()}/target"
     mainGeneratedDir = "${buildDir}/generated-sources"
     testGeneratedDir = "${buildDir}/generated-test-sources"
     mainClassesDir = "${buildDir}/classes"
@@ -63,11 +67,11 @@ class Layout extends Task {
   }
 
   def gradleLayout() {
-    mainSrcDir = "${getBasedir()}/src/main/${language}"
-    testSrcDir = "${getBasedir()}/src/test/${language}"
-    mainResourcesDir = "${getBasedir()}/src/main/resources"
-    testResourcesDir = "${getBasedir()}/src/test/resources"
-    buildDir = "${getBasedir()}/build"
+    mainSrcDir = "${getDir()}/src/main/${language}"
+    testSrcDir = "${getDir()}/src/test/${language}"
+    mainResourcesDir = "${getDir()}/src/main/resources"
+    testResourcesDir = "${getDir()}/src/test/resources"
+    buildDir = "${getDir()}/build"
     mainGeneratedDir = "${buildDir}/generated/sources/main/${language}"
     testGeneratedDir = "${buildDir}/generated/sources/test/${language}"
     mainClassesDir = "${buildDir}/classes/${language}/main"
@@ -78,11 +82,11 @@ class Layout extends Task {
   }
 
   def simpleLayout() {
-    mainSrcDir = "${getBasedir()}/src/code"
-    testSrcDir = "${getBasedir()}/test/code"
-    mainResourcesDir = "${getBasedir()}/src/resources"
-    testResourcesDir = "${getBasedir()}/test/resources"
-    buildDir = "${getBasedir()}/out"
+    mainSrcDir = "${getDir()}/src/code"
+    testSrcDir = "${getDir()}/test/code"
+    mainResourcesDir = "${getDir()}/src/resources"
+    testResourcesDir = "${getDir()}/test/resources"
+    buildDir = "${getDir()}/out"
     mainGeneratedDir = "${buildDir}/generated-sources"
     testGeneratedDir = "${buildDir}/generated-test-sources"
     mainClassesDir = "${buildDir}/classes"
@@ -117,9 +121,9 @@ class Layout extends Task {
   }
 
   def createDirAndSetProperty(String name, String value) {
-    File dir = new File(value)
-    if (!dir.exists()) {
-      dir.mkdirs()
+    File targetDir = new File(value)
+    if (!targetDir.exists()) {
+      targetDir.mkdirs()
     }
     project.setProperty(name, value)
     project.log("property: $name = $value", Project.MSG_VERBOSE)
@@ -179,5 +183,9 @@ class Layout extends Task {
 
   void setLanguage(String language) {
     this.language = language
+  }
+
+  void setDir(File dir) {
+    this.dir = dir
   }
 }

@@ -1,31 +1,26 @@
 project.with {
-  //groupId = 'se.alipsa.uso.layout'
-  //artifactId = 'layout-example'
-  //version = '0.0.1'
-  setOutputLevel(3)
+  groupId = 'se.alipsa.uso.layout'
+  artifactId = 'layout-example'
+  version = '0.0.1'
 
-  target('mavenGroovy') {
+  target('init') {
+    // Set all magic properties for the layout
     layout(type: 'maven', language: 'groovy')
+    // print all properties so its is more clear whats going on
+    echoproperties()
   }
 
-  target('mavenJava') {
-    layout(type: 'maven', language: 'java')
+  target(name: 'clean', depends: 'init') {
+    delete dir: '${buildDir}'
+    mkdir dir: '${mainClassesDir}'
   }
 
-  target('gradleGroovy') {
-    layout(type: 'gradle', language: 'groovy')
-  }
-
-  target('gradleJava') {
-    layout(type: 'gradle', language: 'java')
-  }
-
-  target('simpleGroovy') {
-    layout(type: 'simple', language: 'groovy')
-  }
-
-  target('simpleJava') {
-    layout(type: 'simple', language: 'java')
+  target(name: 'compile', depends: 'init') {
+    echo "Compiling main groovy classes"
+    groovyc(
+        srcdir: '${mainSrcDir}',
+        destdir: '${mainClassesDir}'
+    )
   }
 
 }

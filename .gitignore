@@ -46,3 +46,4 @@ bin/
 /examples/parentChild/subB/subB.iml
 /examples/boms/build/
 /examples/publish/build/
+/examples/layout/target/
