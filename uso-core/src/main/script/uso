@@ -3,18 +3,16 @@
 @Grab('org.slf4j:slf4j-simple:2.0.17')
 @GrabConfig(systemClassLoader=true)
 import org.apache.tools.ant.BuildException
-import groovy.lang.Binding
-import groovy.lang.GroovyShell
-import groovy.lang.GroovyCodeSource
 import org.codehaus.groovy.control.CompilationFailedException
-import se.alipsa.uso.ProjectBuilder
 import se.alipsa.uso.AntTargetBuilder
 import se.alipsa.uso.ErrorReportingListener
+import se.alipsa.uso.ProjectBuilder
 
 ProjectBuilder projectBuilder = new AntTargetBuilder()
 def binding = new Binding()
 binding.setVariable("project", projectBuilder)
 def shell = new GroovyShell(binding)
+
 
 def parseArgs() {
   File buildFile
@@ -52,7 +50,7 @@ params.systemProperties.each {
 
 projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
 def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
-
+//def codeSource = new GroovyCodeSource(params.buildFile) // possible charset problem, since systemDefault is used
 def compiledScript
 // Eval phase
 try {
@@ -61,17 +59,15 @@ try {
   // the script might have mutated or replaced the project binding
   projectBuilder = binding.getVariable("project") as ProjectBuilder
 } catch (CompilationFailedException e) {
-  println "Syntax error in build script:"
+  println "Syntax error in build script ${params.buildFile.canonicalPath}:"
   println "  Message: ${e.message}"
-  println "  File: ${e.fileName ?: 'unknown'}"
-  println "  Line: ${e.lineNumber}, Column: ${e.columnNumber}"
-  throw new RuntimeException("Script evaluation failed due to syntax error.", e)
+  System.exit(1)
 } catch (IOException e) {
-  println "Error reading build script: ${e.message}"
-  throw new RuntimeException("Script evaluation failed due to IO error.", e)
+  println "Error reading build script: ${e.toString()}"
+  System.exit(1)
 } catch (Exception e) {
-  println "Error evaluating build script: ${e.message}"
-  throw new RuntimeException("Script evaluation failed due to unexpected error.", e)
+  println "Error evaluating build script: ${e.toString()}"
+  System.exit(1)
 }
 
 if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
@@ -91,7 +87,7 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   try {
     projectBuilder.execute(params.targets)
   } catch (BuildException ignore) {
-    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile}, cannot continue!"
+    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue!"
     System.exit(1)
   }
 }

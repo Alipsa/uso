@@ -189,9 +189,7 @@ To install uso, you need to have Groovy installed. You can use [sdkman](https://
 curl -H 'Cache-Control: no-cache, no-store' \
 -s "https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/installUso.sh" | bash
 ```
-There are two versions of uso scripts:
-- uso: this version uses the default way of how ant is executing targets i.e. for each target supplied to the command line, it will execute all the dependent targets for each one. 
-- usas: this version only executes a target once per build. Note: the targets are not real Ant targets so does not support all the Ant features.
+The uso script uses the default way of how ant is executing targets i.e. for each target supplied to the command line, it will execute all the dependent targets for each one.
 
 Let's say we have 3 targets:
 - init
@@ -200,12 +198,11 @@ Let's say we have 3 targets:
 
 If you run the following commands:
 - `uso clean compile` will execute init -> clean -> init -> compile. (ant style)
-- `usas clean compile` will execute init -> clean -> compile. (maven style). Your targets should be constructed similarly to maven targets (compile, test, package, install, etc) to get the best out of this.
 
 Please see the [examples](examples) directory for more examples of how to use uso.
 A translation of the ant manual into the AntBuilder DSL syntax is also available in the [docs/tasks](docs/tasks) directory.
 
 ### What is the meaning of Uso?
-Uso is a Spanish word meaning "use" (first person; usas is the second person singular form). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
+Uso is a Spanish word meaning "use" (first person). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
 The name was chosen because it is short and easy to remember, and it has a nice ring to it. The project is intended to be a simple and easy-to-use Groovy based build system for jvm languages, so the name fits well.
 

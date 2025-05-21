@@ -43,12 +43,6 @@ class ErrorReportingListener implements BuildListener {
   void taskFinished(BuildEvent event) {
     if (event.exception) {
       println "  !! Task ${event.task.taskName ?: ''} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
-      def userFrame = event.exception.stackTrace.find {
-        it.fileName?.endsWith(".groovy") && it.lineNumber > 0 //.contains(buildScript)
-      }
-      if (userFrame) {
-        println "  -> At: ${userFrame.fileName}, line ${userFrame.lineNumber}"
-      }
     }
   }
 
@@ -58,7 +52,7 @@ class ErrorReportingListener implements BuildListener {
     //println "    [${event.priority}] ${event.message}"
   }
 
-  static void printExceptionDetails(Throwable t) {
+  void printExceptionDetails(Throwable t) {
     def trace = t.stackTrace.find { it.fileName?.contains(buildScript) }
     if (trace) {
       println "  -> Error in ${trace.fileName}, line ${trace.lineNumber}"
