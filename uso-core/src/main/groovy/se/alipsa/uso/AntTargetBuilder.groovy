@@ -45,7 +45,7 @@ class AntTargetBuilder extends ProjectBuilder {
   }
 
   def execute(List<String> targets) {
-    try {
+    //try {
       if (targets.size() == 0) {
         if (defaultTarget == null) {
           throw new IllegalArgumentException("No target specified and no default target set.")
@@ -57,15 +57,16 @@ class AntTargetBuilder extends ProjectBuilder {
       } else {
         project.executeTargets(targets as Vector)
       }
-    } catch (Exception e) {
-      String projectName = project.name ?: name ?: "build.groovy"
+    //} catch (Exception ignore) {
+      /*String projectName = project.name ?: name ?: "build.groovy"
       String errorMessage = e.message
           .replace(" class: se.alipsa.uso.AntTargetBuilder", " script $projectName")
           .replace("se.alipsa.uso.AntTargetBuilder", projectName)
-      e.printStackTrace()
+      //e.printStackTrace()
       System.err.println "Error executing target(s) '$targets': ${errorMessage}"
-      System.exit(1)
-    }
+      */
+      //System.exit(1)
+    //}
   }
 
   Map<String, Target> getTargets() {

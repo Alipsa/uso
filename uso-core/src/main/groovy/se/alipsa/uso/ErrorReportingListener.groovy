@@ -5,6 +5,12 @@ import org.apache.tools.ant.BuildListener
 
 class ErrorReportingListener implements BuildListener {
 
+  String buildScript
+
+  ErrorReportingListener(String buildScript) {
+    this.buildScript = buildScript
+  }
+
   @Override
   void buildStarted(BuildEvent event) {}
 
@@ -24,7 +30,7 @@ class ErrorReportingListener implements BuildListener {
   @Override
   void targetFinished(BuildEvent event) {
     if (event.exception) {
-      println "!! Target ${event.target.name} failed: ${event.exception.message}"
+      println "!! Target ${event.target.name} failed!"
     }
   }
 
@@ -36,7 +42,13 @@ class ErrorReportingListener implements BuildListener {
   @Override
   void taskFinished(BuildEvent event) {
     if (event.exception) {
-      println "  !! Task ${event.task.taskName} failed: ${event.exception.message}"
+      println "  !! Task ${event.task.taskName ?: ''} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+      def userFrame = event.exception.stackTrace.find {
+        it.fileName?.endsWith(".groovy") && it.lineNumber > 0 //.contains(buildScript)
+      }
+      if (userFrame) {
+        println "  -> At: ${userFrame.fileName}, line ${userFrame.lineNumber}"
+      }
     }
   }
 
@@ -47,7 +59,7 @@ class ErrorReportingListener implements BuildListener {
   }
 
   static void printExceptionDetails(Throwable t) {
-    def trace = t.stackTrace.find { it.fileName?.endsWith('.groovy') }
+    def trace = t.stackTrace.find { it.fileName?.contains(buildScript) }
     if (trace) {
       println "  -> Error in ${trace.fileName}, line ${trace.lineNumber}"
     } else {

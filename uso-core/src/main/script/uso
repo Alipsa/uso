@@ -3,14 +3,18 @@
 @Grab('org.slf4j:slf4j-simple:2.0.17')
 @GrabConfig(systemClassLoader=true)
 import org.apache.tools.ant.BuildException
-import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl
+import groovy.lang.Binding
+import groovy.lang.GroovyShell
+import groovy.lang.GroovyCodeSource
+import org.codehaus.groovy.control.CompilationFailedException
 import se.alipsa.uso.ProjectBuilder
 import se.alipsa.uso.AntTargetBuilder
 import se.alipsa.uso.ErrorReportingListener
 
 ProjectBuilder projectBuilder = new AntTargetBuilder()
-projectBuilder.project.addBuildListener(new ErrorReportingListener())
-GroovyScriptEngineImpl scriptEngine = new GroovyScriptEngineImpl()
+def binding = new Binding()
+binding.setVariable("project", projectBuilder)
+def shell = new GroovyShell(binding)
 
 def parseArgs() {
   File buildFile
@@ -45,17 +49,31 @@ params.systemProperties.each {
   def keyVal = it.split('=')
   System.setProperty(keyVal[0], keyVal[1])
 }
-scriptEngine.put("project", projectBuilder)
+
+projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
+def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
+
+def compiledScript
 // Eval phase
 try {
-} catch (ScriptException e) {
+  compiledScript = shell.parse(codeSource)
+  compiledScript.run()
+  // the script might have mutated or replaced the project binding
+  projectBuilder = binding.getVariable("project") as ProjectBuilder
+} catch (CompilationFailedException e) {
   println "Syntax error in build script:"
   println "  Message: ${e.message}"
   println "  File: ${e.fileName ?: 'unknown'}"
   println "  Line: ${e.lineNumber}, Column: ${e.columnNumber}"
   throw new RuntimeException("Script evaluation failed due to syntax error.", e)
+} catch (IOException e) {
+  println "Error reading build script: ${e.message}"
+  throw new RuntimeException("Script evaluation failed due to IO error.", e)
+} catch (Exception e) {
+  println "Error evaluating build script: ${e.message}"
+  throw new RuntimeException("Script evaluation failed due to unexpected error.", e)
 }
-scriptEngine.eval(params.buildFile.text)
+
 if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   println projectBuilder.targets.keySet()
   return
@@ -72,7 +90,8 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   // Execute phase
   try {
     projectBuilder.execute(params.targets)
-  } catch (BuildException e) {
-    System.err.println "Fatal error during build execution: ${e.message}"
+  } catch (BuildException ignore) {
+    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile}, cannot continue!"
+    System.exit(1)
   }
 }

@@ -5,7 +5,7 @@ project.with {
   defaultTarget = 'init'
 
   target('init') {
-    property('buildDir', "build") // define an ant property (value must be a String or GString)
+    propertys('buildDir', "build") // define an ant property (value must be a String or GString)
     mkdir dir: '${buildDir}'
     // Straight Groovy code, we must resolve the property directly
     // property('buildDir') and $('buildDir') are equivalent
