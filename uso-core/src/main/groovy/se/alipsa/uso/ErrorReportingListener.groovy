@@ -54,7 +54,19 @@ class ErrorReportingListener implements BuildListener {
       }
       reportedErrors.add(errorKey)
 
-      println " !! Task ${taskName} failed: ${errorMsg.replace('se.alipsa.uso.ClosureTask.', '')}"
+      // Only show this initial error message if we can't provide better context
+      boolean willShowContext = false;
+      try {
+        File buildFile = new File(buildScript)
+        willShowContext = buildFile.exists();
+      } catch (Exception ignored) {}
+
+      if (!willShowContext) {
+        println " !! Task ${taskName} failed: ${errorMsg.replace('se.alipsa.uso.ClosureTask.', '')}"
+      } else {
+        // Just show a header without the full error message
+        println " !! Task ${taskName} failed:"
+      }
 
       // Get the task line number from the ClosureTask if available
       Integer lineNumber = null
@@ -125,25 +137,21 @@ class ErrorReportingListener implements BuildListener {
 
               // Show the most relevant line first (should be the one with the attribute)
               int mostRelevantLine = relevantLines.get(0)
-              println " >> Line ${mostRelevantLine + 1}: ${lines[mostRelevantLine]}"
 
               // Show context around the most relevant line
               int start = Math.max(0, mostRelevantLine - 2)
               int end = Math.min(lines.size() - 1, mostRelevantLine + 2)
 
-              if (start < mostRelevantLine) {
-                for (int i = start; i < mostRelevantLine; i++) {
-                  println "    Line ${i + 1}: ${lines[i]}"
-                }
+              // Display all lines in order, but highlight the problematic one
+              for (int i = start; i <= end; i++) {
+                String prefix = (i == mostRelevantLine) ? " >> " : "    "
+                println "${prefix}Line ${i + 1}: ${lines[i]}"
               }
 
-              if (end > mostRelevantLine) {
-                for (int i = mostRelevantLine + 1; i <= end; i++) {
-                  println "    Line ${i + 1}: ${lines[i]}"
-                }
+              // Only show error details if they add information beyond what's already shown
+              if (!errorMsg.contains("does not exist") || !errorMsg.startsWith("srcdir")) {
+                println "\nError details: ${errorMsg}"
               }
-
-              println "\nError details: ${errorMsg}"
             }
           }
         } catch (Exception e) {
