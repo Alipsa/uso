@@ -42,7 +42,19 @@ class ErrorReportingListener implements BuildListener {
   @Override
   void taskFinished(BuildEvent event) {
     if (event.exception) {
-      println "  !! Task ${event.task.taskName ?: ''} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+      String taskName = event.task.taskName ?: 'unknown'
+      String location = event.task.location?.toString() ?: ''
+
+      println " !! Task ${taskName} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+
+      if (location) {
+        println " !! Location: ${location}"
+      }
+
+      // Try to extract target information
+      if (event.task.owningTarget) {
+        println " !! In target: ${event.task.owningTarget.name}"
+      }
     }
   }
 
@@ -53,11 +65,50 @@ class ErrorReportingListener implements BuildListener {
   }
 
   void printExceptionDetails(Throwable t) {
-    def trace = t.stackTrace.find { it.fileName?.contains(buildScript) }
-    if (trace) {
-      println "  -> Error in ${trace.fileName}, line ${trace.lineNumber}"
+    def traces = t.stackTrace.findAll { it.fileName?.contains(buildScript) }
+    if (traces) {
+      println " -> Error in ${buildScript}:"
+      traces.each { trace ->
+        println "    at line ${trace.lineNumber}, in ${trace.methodName}()"
+        showSourceContext(buildScript, trace.lineNumber)
+      }
+      Throwable cause = t.cause
+      while (cause != null) {
+        println " -> Caused by: ${cause.class.name}: ${cause.message}"
+        def causeTraces = cause.stackTrace.findAll { it.fileName?.contains(buildScript) }
+        if (causeTraces) {
+          causeTraces.each { trace ->
+            println "    at line ${trace.lineNumber}, in ${trace.methodName}()"
+            showSourceContext(buildScript, trace.lineNumber)
+          }
+        }
+        cause = cause.cause
+      }
     } else {
-      println "  -> Error: ${t.class.name}: ${t.message}"
+      println " -> Error: ${t.class.name}: ${t.message}"
+      if (t.cause) {
+        println " -> Caused by: ${t.cause.class.name}: ${t.cause.message}"
+      }
+    }
+  }
+
+  void showSourceContext(String fileName, int lineNumber) {
+    try {
+      File file = new File(fileName)
+      if (file.exists()) {
+        List<String> lines = file.readLines()
+        int start = Math.max(0, lineNumber - 3)
+        int end = Math.min(lines.size() - 1, lineNumber + 1)
+
+        println "\nSource context:"
+        for (int i = start; i <= end; i++) {
+          String prefix = (i == lineNumber - 1) ? " >> " : "    "
+          println "${prefix}${i + 1}: ${lines[i]}"
+        }
+        println ""
+      }
+    } catch (Exception ignored) {
+      // If we can't read the file, just skip the context display
     }
   }
 }

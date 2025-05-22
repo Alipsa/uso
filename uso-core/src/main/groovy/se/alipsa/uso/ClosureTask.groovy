@@ -26,9 +26,34 @@ class ClosureTask extends Task {
 
   @Override
   void execute() {
+    try {
     action.delegate = this
     action.resolveStrategy = Closure.DELEGATE_FIRST
     action.call()
+    } catch (Exception e) {
+      // Find the stack trace element related to the build script
+      def trace = e.stackTrace.find { it.fileName?.contains(owner.project.name) }
+      if (trace) {
+        // Try to get the source line content
+        String lineContent = ""
+        try {
+          File buildFile = new File(owner.project.baseDir, owner.project.name)
+          if (buildFile.exists()) {
+            lineContent = buildFile.readLines().get(trace.lineNumber - 1)
+          }
+        } catch (Exception ignored) {}
+
+        throw new BuildScriptException(
+            e.message,
+            trace.fileName,
+            trace.lineNumber,
+            lineContent,
+            e
+        )
+      } else {
+        throw e
+      }
+    }
   }
 
   void setOwningTarget(Target target) {

@@ -86,8 +86,20 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   // Execute phase
   try {
     projectBuilder.execute(params.targets)
-  } catch (BuildException ignore) {
-    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue!"
+  } catch (BuildException be) {
+    // BuildException already handled by ErrorReportingListener
+    System.exit(1)
+  } catch (Exception e) {
+    // Handle other exceptions that might not go through the BuildListener
+    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}:"
+    System.err.println " -> ${e.class.name}: ${e.message}"
+
+    // Find build script related stack trace elements
+    def trace = e.stackTrace.find { it.fileName?.contains(params.buildFile.name) }
+    if (trace) {
+      System.err.println " -> Error in ${trace.fileName}, line ${trace.lineNumber}"
+    }
+
     System.exit(1)
   }
 }
