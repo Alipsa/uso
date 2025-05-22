@@ -46,6 +46,7 @@ class ErrorReportingListener implements BuildListener {
       String location = event.task.location?.toString() ?: ''
 
       println " !! Task ${taskName} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+      println " !! Debug: Task class = ${event.task.getClass().getName()}"
 
       if (location) {
         println " !! Location: ${location}"
@@ -54,50 +55,49 @@ class ErrorReportingListener implements BuildListener {
       // Try to extract target information
       if (event.task.owningTarget) {
         println " !! In target: ${event.task.owningTarget.name}"
+      } else {
+        println " !! Debug: No owning target found"
       }
 
       // For Ant task failures, try to find the task in the build script
-      if (event.task instanceof org.apache.tools.ant.Task) {
-        try {
-          File buildFile = new File(buildScript)
-          if (buildFile.exists()) {
-            List<String> lines = buildFile.readLines()
-            // Look for lines containing the task name and the error message keywords
-            String errorMsg = event.exception.message
-            String searchKey = taskName.toLowerCase()
+      println " !! Debug: buildScript = ${buildScript}"
 
-            // Extract key words from the error message
-            List<String> keywords = errorMsg.split(" ")
-                .findAll { it.length() > 3 }
-                .collect { it.replaceAll(/[^a-zA-Z0-9]/, "") }
-                .findAll { it.length() > 3 }
+      try {
+        println " !! Debug: Build file exists: ${buildScript.exists()}"
 
-            // Find potential lines that might contain the task call
-            List<Integer> potentialLines = []
-            for (int i = 0; i < lines.size(); i++) {
-              String line = lines[i].toLowerCase()
-              if (line.contains(searchKey)) {
-                // Check if any keywords from the error are in this line
-                if (keywords.any { line.contains(it.toLowerCase()) }) {
-                  potentialLines.add(i)
-                } else {
-                  // Also add lines that just contain the task name
-                  potentialLines.add(i)
-                }
+        if (buildScript.exists()) {
+          List<String> lines = buildScript.readLines()
+          println " !! Debug: Read ${lines.size()} lines from build file"
+
+          // Look for lines containing the task name
+          String searchKey = taskName.toLowerCase()
+          println " !! Debug: Searching for task name: ${searchKey}"
+
+          // Extract key words from the error message
+          String errorMsg = event.exception.message
+          List<String> keywords = errorMsg.split(" ")
+              .findAll { it.length() > 3 }
+              .collect { it.replaceAll(/[^a-zA-Z0-9]/, "") }
+              .findAll { it.length() > 3 }
+
+          println " !! Debug: Keywords from error: ${keywords}"
+
+          // Find potential lines that might contain the task call
+          for (int i = 0; i < lines.size(); i++) {
+            String line = lines[i].toLowerCase()
+            if (line.contains(searchKey)) {
+              println " !! Debug: Found task name at line ${i+1}: ${lines[i]}"
+
+              // Check if any keywords from the error are in this line
+              if (keywords.any { line.contains(it.toLowerCase()) }) {
+                println " !! Debug: Line also contains error keywords"
+                println " >> Line ${i + 1}: ${lines[i]}"
               }
-            }
-
-            if (potentialLines) {
-              println "\nPotential error locations in ${buildScript}:"
-              potentialLines.each { lineNum ->
-                println " >> Line ${lineNum + 1}: ${lines[lineNum]}"
-              }
-              println ""
             }
           }
-        } catch (Exception ignored) {
-          // If we can't read the file or process it, just skip this enhancement
         }
+      } catch (Exception e) {
+        println " !! Debug: Exception while analyzing build file: ${e.message}"
       }
     }
   }

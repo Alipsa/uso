@@ -13,6 +13,7 @@ import org.apache.tools.ant.Task
 class ClosureTask extends Task {
   Target owner
   Closure action
+  Map<String, Integer> taskLineNumbers = [:]
 
   ClosureTask() {
     super()
@@ -23,34 +24,28 @@ class ClosureTask extends Task {
     this.owner = owner
     this.project = owner.project
     this.action = action
+    // Try to capture line numbers of method calls within the closure
+    try {
+      // Get the source code of the closure
+      def stackTrace = new Exception().getStackTrace()
+      def callerElement = stackTrace.find { it.className.contains('AntTargetBuilder') }
+      if (callerElement) {
+        println "Debug: Closure defined at ${callerElement.fileName}:${callerElement.lineNumber}"
+      }
+    } catch (Exception ignored) {
+      // Ignore if we can't get this information
+    }
   }
 
   @Override
   void execute() {
     try {
-    action.delegate = this
-    action.resolveStrategy = Closure.DELEGATE_FIRST
-    action.call()
+      def interceptor = new TaskInterceptor(this)
+      action.delegate = interceptor
+      action.resolveStrategy = Closure.DELEGATE_FIRST
+      action.call()
     } catch (Exception e) {
-      // Find the stack trace element related to the build script
-      def trace = e.stackTrace.find { it.fileName?.contains(owner.project.name) }
-      if (trace) {
-        // Try to get the source line content
-        String lineContent = ""
-        try {
-          File buildFile = new File(owner.project.baseDir, owner.project.name)
-          if (buildFile.exists()) {
-            lineContent = buildFile.readLines().get(trace.lineNumber - 1)
-          }
-        } catch (Exception ignored) {}
-
-        throw new BuildException(
-            "Error in ${trace.fileName}, line ${trace.lineNumber}: ${e.message}\n>> ${lineContent}",
-            e
-        )
-      } else {
-        throw new BuildException(e.message, e)
-      }
+      throw new BuildException(e.message, e)
     }
   }
 
@@ -61,5 +56,54 @@ class ClosureTask extends Task {
 
   void setAction(Closure action) {
     this.action = action
+  }
+
+  class TaskInterceptor {
+    ClosureTask task
+    Target target
+
+    TaskInterceptor(ClosureTask task) {
+      this.task = task
+      this.target = task.owningTarget
+    }
+
+    // Handle method calls that aren't explicitly defined
+    def methodMissing(String name, args) {
+      // Record the line number where this method was called
+      def stackTrace = new Exception().getStackTrace()
+      def callerElement = stackTrace.find {
+        it.className.contains('Script') || it.fileName?.endsWith('.groovy')
+      }
+
+      if (callerElement) {
+        task.taskLineNumbers[name] = callerElement.lineNumber
+        println "Debug: Task ${name} called at line ${callerElement.lineNumber}"
+      }
+
+      // Forward the call to the project directly since target might be null
+      // This is safer than checking target.metaClass
+      if (task.project != null) {
+        return task.project.invokeMethod(name, args)
+      } else {
+        throw new BuildException("Cannot execute task: project is null")
+      }
+    }
+
+    // Forward property access to the project
+    def propertyMissing(String name) {
+      if (task.project != null && task.project.hasProperty(name)) {
+        return task.project[name]
+      }
+      throw new MissingPropertyException(name, this.class)
+    }
+
+    // Forward property setting to the project
+    def propertyMissing(String name, value) {
+      if (task.project != null && task.project.hasProperty(name)) {
+        task.project[name] = value
+      } else {
+        throw new MissingPropertyException(name, this.class)
+      }
+    }
   }
 }
