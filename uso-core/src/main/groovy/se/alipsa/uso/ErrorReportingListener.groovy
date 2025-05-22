@@ -2,10 +2,9 @@ package se.alipsa.uso
 
 import org.apache.tools.ant.BuildEvent
 import org.apache.tools.ant.BuildListener
-import org.apache.tools.ant.UnknownElement
 
 class ErrorReportingListener implements BuildListener {
-
+  private Set<String> reportedErrors = new HashSet<>()
   File buildScript
 
   ErrorReportingListener(File buildScript) {
@@ -44,12 +43,22 @@ class ErrorReportingListener implements BuildListener {
   void taskFinished(BuildEvent event) {
     if (event.exception) {
       String taskName = event.task.taskName ?: 'unknown'
+      String errorMsg = event.exception.message
 
-      println " !! Task ${taskName} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+      // Create a unique key for this error to avoid duplicates
+      String errorKey = "${taskName}:${errorMsg}"
+
+      // Skip if we've already reported this error
+      if (reportedErrors.contains(errorKey)) {
+        return
+      }
+      reportedErrors.add(errorKey)
+
+      println " !! Task ${taskName} failed: ${errorMsg.replace('se.alipsa.uso.ClosureTask.', '')}"
 
       // Get the task line number from the ClosureTask if available
       Integer lineNumber = null
-      if (event.task instanceof ClosureTask) {
+      if (event.task instanceof se.alipsa.uso.ClosureTask) {
         lineNumber = event.task.taskLineNumbers.get(taskName)
         if (lineNumber != null) {
           println " !! Error at line ${lineNumber} in ${buildScript}"
@@ -80,53 +89,61 @@ class ErrorReportingListener implements BuildListener {
           if (buildScript.exists()) {
             List<String> lines = buildScript.readLines()
 
-            // Extract key words from the error message
-            String errorMsg = event.exception.message
-            List<String> keywords = errorMsg.split(" ")
-                .findAll { it.length() > 3 }
-                .collect { it.replaceAll(/[^a-zA-Z0-9]/, "") }
-                .findAll { it.length() > 3 }
-
             // Find the most relevant line - prioritize lines that contain both the task name and error keywords
             List<Integer> relevantLines = []
 
-            // First, check if we have a record of where this task was called
-            if (event.task instanceof UnknownElement && event.task.getTaskName() == taskName) {
-              // This is the actual task that failed, look for its definition
-              for (int i = 0; i < lines.size(); i++) {
-                String line = lines[i].toLowerCase()
-                if (line.contains(taskName.toLowerCase())) {
-                  // Check if any keywords from the error are in this line or nearby lines
-                  boolean hasKeywords = keywords.any { line.contains(it.toLowerCase()) }
+            // Look for task invocation patterns
+            for (int i = 0; i < lines.size(); i++) {
+              String line = lines[i].trim()
 
-                  // Check nearby lines for srcdir or other relevant attributes
-                  boolean hasNearbyKeywords = false
-                  for (int j = i; j < Math.min(i + 5, lines.size()); j++) {
-                    String nearbyLine = lines[j].toLowerCase()
-                    if (keywords.any { nearbyLine.contains(it.toLowerCase()) }) {
-                      hasNearbyKeywords = true
-                      break
-                    }
+              // Look for patterns like "taskname(" which indicates a task invocation
+              if (line.matches("(?i)\\s*${taskName}\\s*\\(.*")) {
+                relevantLines.add(i)
+
+                // Now look for the attribute mentioned in the error
+                // For example, if error mentions "srcdir", look for that in subsequent lines
+                String attributePattern = errorMsg.find(/\w+dir|\w+file|\w+path/) ?: "srcdir"
+
+                // Check the next few lines for the attribute
+                for (int j = i + 1; j < Math.min(i + 10, lines.size()); j++) {
+                  String nextLine = lines[j].trim()
+                  if (nextLine.contains(attributePattern)) {
+                    // This is likely the actual problematic line
+                    relevantLines.add(0, j) // Add at the beginning to prioritize
+                    break
                   }
-                  if (hasKeywords || hasNearbyKeywords) {
-                    relevantLines.add(i)
+                  // Stop if we reach the end of the task definition
+                  if (nextLine.contains(")") && !nextLine.contains("(")) {
+                    break
                   }
                 }
               }
             }
 
             if (relevantLines) {
-              println "\nPotential error locations:"
-              for (Integer i : relevantLines) {
-                println " >> Line ${i + 1}: ${lines[i]}"
+              println "\nProblem identified in ${buildScript}:"
 
-                // Show a few lines after for context (especially for multi-line task definitions)
-                for (int j = i + 1; j < Math.min(i + 5, lines.size()); j++) {
-                  if (lines[j].trim().startsWith(")")) break; // Stop at closing parenthesis
-                  println "    Line ${j + 1}: ${lines[j]}"
+              // Show the most relevant line first (should be the one with the attribute)
+              int mostRelevantLine = relevantLines.get(0)
+              println " >> Line ${mostRelevantLine + 1}: ${lines[mostRelevantLine]}"
+
+              // Show context around the most relevant line
+              int start = Math.max(0, mostRelevantLine - 2)
+              int end = Math.min(lines.size() - 1, mostRelevantLine + 2)
+
+              if (start < mostRelevantLine) {
+                for (int i = start; i < mostRelevantLine; i++) {
+                  println "    Line ${i + 1}: ${lines[i]}"
                 }
               }
-              println ""
+
+              if (end > mostRelevantLine) {
+                for (int i = mostRelevantLine + 1; i <= end; i++) {
+                  println "    Line ${i + 1}: ${lines[i]}"
+                }
+              }
+
+              println "\nError details: ${errorMsg}"
             }
           }
         } catch (Exception e) {
@@ -135,6 +152,7 @@ class ErrorReportingListener implements BuildListener {
       }
     }
   }
+
 
   @Override
   void messageLogged(BuildEvent event) {

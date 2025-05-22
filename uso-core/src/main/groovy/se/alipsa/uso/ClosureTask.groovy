@@ -14,6 +14,7 @@ class ClosureTask extends Task {
   Target owner
   Closure action
   Map<String, Integer> taskLineNumbers = [:]
+  String lastInvokedTaskName = null
 
   ClosureTask() {
     super()
@@ -47,6 +48,11 @@ class ClosureTask extends Task {
     this.action = action
   }
 
+  @Override
+  String getTaskName() {
+    return lastInvokedTaskName ?: super.getTaskName()
+  }
+
   class TaskInterceptor {
     ClosureTask task
     Target target
@@ -58,6 +64,9 @@ class ClosureTask extends Task {
 
     // Handle method calls that aren't explicitly defined
     def methodMissing(String name, args) {
+      // Record the task name for better error reporting
+      task.lastInvokedTaskName = name
+
       // Record the line number where this method was called
       def stackTrace = new Exception().getStackTrace()
       def callerElement = stackTrace.find {
