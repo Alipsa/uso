@@ -82,7 +82,7 @@ class TargetBuilderTest {
     assert compileDeps[1].artifactId == 'matrix-csv'
   }
 
-  //@Test
+  @Test
   void testQuiet() {
     PrintStream console = System.out
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); PrintStream ps = new PrintStream(baos)) {

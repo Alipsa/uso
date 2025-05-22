@@ -55,11 +55,8 @@ class ErrorReportingListener implements BuildListener {
       reportedErrors.add(errorKey)
 
       // Only show this initial error message if we can't provide better context
-      boolean willShowContext = false;
-      try {
-        File buildFile = new File(buildScript)
-        willShowContext = buildFile.exists();
-      } catch (Exception ignored) {}
+      boolean willShowContext = buildScript.exists()
+
 
       if (!willShowContext) {
         println " !! Task ${taskName} failed: ${errorMsg.replace('se.alipsa.uso.ClosureTask.', '')}"
@@ -68,15 +65,49 @@ class ErrorReportingListener implements BuildListener {
         println " !! Task ${taskName} failed:"
       }
 
+      // For property errors, try to find the property name in the build script
+      if (errorMsg.contains("No such property:")) {
+        String propertyName = errorMsg.replaceAll(".*No such property: ([^ ]+).*", "\$1")
+        try {
+
+          if (buildScript.exists()) {
+            List<String> lines = buildScript.readLines()
+
+            // Look for the property name in the build script
+            for (int i = 0; i < lines.size(); i++) {
+              if (lines[i].contains(propertyName)) {
+                println "\nProblem identified in ${buildScript.name}:"
+
+                // Show context around the line with the property
+                int start = Math.max(0, i - 2)
+                int end = Math.min(lines.size() - 1, i + 2)
+
+                for (int j = start; j <= end; j++) {
+                  String prefix = (j == i) ? " >> " : "    "
+                  println "${prefix}Line ${j + 1}: ${lines[j]}"
+                }
+
+                // Don't continue with the regular error reporting
+                return
+              }
+            }
+          }
+        } catch (Exception e) {
+          // Fall back to regular error reporting
+          println " !! Exception while analyzing build file: ${e.message}"
+        }
+      }
+
       // Get the task line number from the ClosureTask if available
       Integer lineNumber = null
-      if (event.task instanceof se.alipsa.uso.ClosureTask) {
+      if (event.task instanceof ClosureTask) {
         lineNumber = event.task.taskLineNumbers.get(taskName)
         if (lineNumber != null) {
-          println " !! Error at line ${lineNumber} in ${buildScript}"
+          println " !! Error at line ${lineNumber} in ${buildScript instanceof File ? buildScript.name : buildScript}"
 
           // Show source context
           try {
+
             if (buildScript.exists()) {
               List<String> lines = buildScript.readLines()
               int start = Math.max(0, lineNumber - 3)
@@ -85,7 +116,7 @@ class ErrorReportingListener implements BuildListener {
               println "\nSource context:"
               for (int i = start; i <= end; i++) {
                 String prefix = (i == lineNumber - 1) ? " >> " : "    "
-                println "${prefix}${i + 1}: ${lines[i]}"
+                println "${prefix}Line ${i + 1}: ${lines[i]}"
               }
               println ""
             }
@@ -98,6 +129,7 @@ class ErrorReportingListener implements BuildListener {
       // If we couldn't get the line number directly, try to find it in the build file
       if (lineNumber == null) {
         try {
+
           if (buildScript.exists()) {
             List<String> lines = buildScript.readLines()
 
@@ -133,12 +165,12 @@ class ErrorReportingListener implements BuildListener {
             }
 
             if (relevantLines) {
-              println "\nProblem identified in ${buildScript}:"
+              println "\nProblem identified in ${buildScript.name}:"
 
               // Show the most relevant line first (should be the one with the attribute)
               int mostRelevantLine = relevantLines.get(0)
 
-              // Show context around the most relevant line
+              // Show context around the most relevant line in proper order
               int start = Math.max(0, mostRelevantLine - 2)
               int end = Math.min(lines.size() - 1, mostRelevantLine + 2)
 
@@ -155,11 +187,12 @@ class ErrorReportingListener implements BuildListener {
             }
           }
         } catch (Exception e) {
-          println " !! Debug: Exception while analyzing build file: ${e.message}"
+          println " !! Exception while analyzing build file: ${e.message}"
         }
       }
     }
   }
+
 
 
   @Override

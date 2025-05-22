@@ -10,7 +10,7 @@ project.with {
     // Straight Groovy code, we must resolve the property directly
     // property('buildDir') and $('buildDir') are equivalent
     mainBuildDir = new File($('buildDir'), "main")
-    mkdir dir: mainBuildDir
+    mkdir dirf: mainBuildDir
   }
 
   target(name: 'clean', depends: 'init') {
@@ -30,7 +30,7 @@ project.with {
   target(name: 'compile', depends: 'init') {
     def groovyHome = System.getenv("GROOVY_HOME")
     def groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
-    echo "Compiling main groovy classes" 123
+    echo "Compiling main groovy classes"
     groovyc(
         srcdir: 'src/test/groovy',
         destdir: mainBuildDir,

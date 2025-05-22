@@ -35,6 +35,22 @@ class ClosureTask extends Task {
       action.resolveStrategy = Closure.DELEGATE_FIRST
       action.call()
     } catch (Exception e) {
+      if (e.message.contains("No such property:")) {
+        // Try to get the actual line from the build script
+        def stackTrace = e.getStackTrace()
+        def scriptElement = stackTrace.find {
+          it.fileName?.endsWith("build.groovy") ||
+              it.className.contains("Script")
+        }
+
+        if (scriptElement) {
+          throw new BuildException(
+              "Error in ${lastInvokedTaskName ?: 'unknown'} task at line ${scriptElement.lineNumber}: ${e.message}",
+              e
+          )
+        }
+      }
+
       throw new BuildException(e.message, e)
     }
   }
@@ -62,23 +78,40 @@ class ClosureTask extends Task {
       this.target = task.owningTarget
     }
 
-    // Handle method calls that aren't explicitly defined
     def methodMissing(String name, args) {
       // Record the task name for better error reporting
       task.lastInvokedTaskName = name
 
       // Record the line number where this method was called
       def stackTrace = new Exception().getStackTrace()
+
+      // Look specifically for the build script in the stack trace
       def callerElement = stackTrace.find {
-        it.className.contains('Script') || it.fileName?.endsWith('.groovy')
+        it.fileName?.endsWith(task.project.name) ||
+            it.fileName?.endsWith("build.groovy") ||
+            it.className.contains("Script")
       }
 
       if (callerElement) {
         task.taskLineNumbers[name] = callerElement.lineNumber
+        // Debug output to verify we're getting the right line
+        //println "Debug: Task ${name} called at line ${callerElement.lineNumber} in ${callerElement.fileName}"
+      } else {
+        // If we can't find a direct reference, search more broadly
+        callerElement = stackTrace.find {
+          !it.className.contains("AntTargetBuilder") &&
+              !it.className.contains("ClosureTask") &&
+              !it.className.contains("java.lang.reflect") &&
+              !it.className.contains("groovy.lang")
+        }
+
+        if (callerElement) {
+          task.taskLineNumbers[name] = callerElement.lineNumber
+          //println "Debug: Task ${name} called at line ${callerElement.lineNumber} in ${callerElement.fileName} (fallback)"
+        }
       }
 
       // Forward the call to the project directly since target might be null
-      // This is safer than checking target.metaClass
       if (task.project != null) {
         return task.project.invokeMethod(name, args)
       } else {
