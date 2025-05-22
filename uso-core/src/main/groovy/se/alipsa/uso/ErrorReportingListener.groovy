@@ -6,6 +6,7 @@ import org.apache.tools.ant.BuildListener
 class ErrorReportingListener implements BuildListener {
 
   String buildScript
+  Set errorMsgs = new HashSet()
 
   ErrorReportingListener(String buildScript) {
     this.buildScript = buildScript
@@ -41,8 +42,9 @@ class ErrorReportingListener implements BuildListener {
 
   @Override
   void taskFinished(BuildEvent event) {
-    if (event.exception) {
+    if (event.exception && !errorMsgs.contains(event.exception.message)) {
       println "  !! Task ${event.task.taskName ?: ''} failed: ${event.exception.message.replace('se.alipsa.uso.ClosureTask.', '')}"
+      errorMsgs << event.exception.message
     }
   }
 
