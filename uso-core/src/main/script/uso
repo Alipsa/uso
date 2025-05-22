@@ -48,7 +48,7 @@ params.systemProperties.each {
   System.setProperty(keyVal[0], keyVal[1])
 }
 
-projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
+projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile))
 def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
 //def codeSource = new GroovyCodeSource(params.buildFile) // possible charset problem, since systemDefault is used
 def compiledScript

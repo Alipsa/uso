@@ -1,5 +1,6 @@
 package se.alipsa.uso
 
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Target
 import org.apache.tools.ant.Task
 
@@ -43,15 +44,12 @@ class ClosureTask extends Task {
           }
         } catch (Exception ignored) {}
 
-        throw new BuildScriptException(
-            e.message,
-            trace.fileName,
-            trace.lineNumber,
-            lineContent,
+        throw new BuildException(
+            "Error in ${trace.fileName}, line ${trace.lineNumber}: ${e.message}\n>> ${lineContent}",
             e
         )
       } else {
-        throw e
+        throw new BuildException(e.message, e)
       }
     }
   }
