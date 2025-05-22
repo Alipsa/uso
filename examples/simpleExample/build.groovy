@@ -30,9 +30,9 @@ project.with {
   target(name: 'compile', depends: 'init') {
     def groovyHome = System.getenv("GROOVY_HOME")
     def groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
-    echo "Compiling main groovy classes"
+    echo "Compiling main groovy classes" 123
     groovyc(
-        srcdir: 'src/test/groovy2',
+        srcdir: 'src/test/groovy',
         destdir: mainBuildDir,
         classpath: groovyClasspath,
         targetBytecode: "21"
