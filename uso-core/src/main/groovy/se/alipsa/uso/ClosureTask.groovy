@@ -24,17 +24,6 @@ class ClosureTask extends Task {
     this.owner = owner
     this.project = owner.project
     this.action = action
-    // Try to capture line numbers of method calls within the closure
-    try {
-      // Get the source code of the closure
-      def stackTrace = new Exception().getStackTrace()
-      def callerElement = stackTrace.find { it.className.contains('AntTargetBuilder') }
-      if (callerElement) {
-        println "Debug: Closure defined at ${callerElement.fileName}:${callerElement.lineNumber}"
-      }
-    } catch (Exception ignored) {
-      // Ignore if we can't get this information
-    }
   }
 
   @Override
@@ -77,7 +66,6 @@ class ClosureTask extends Task {
 
       if (callerElement) {
         task.taskLineNumbers[name] = callerElement.lineNumber
-        println "Debug: Task ${name} called at line ${callerElement.lineNumber}"
       }
 
       // Forward the call to the project directly since target might be null
@@ -105,5 +93,9 @@ class ClosureTask extends Task {
         throw new MissingPropertyException(name, this.class)
       }
     }
+  }
+
+  Map<String, Integer> getTaskLineNumbers() {
+    return taskLineNumbers
   }
 }
