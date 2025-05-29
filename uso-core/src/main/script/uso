@@ -7,6 +7,7 @@ import org.codehaus.groovy.control.CompilationFailedException
 import se.alipsa.uso.AntTargetBuilder
 import se.alipsa.uso.ErrorReportingListener
 import se.alipsa.uso.ProjectBuilder
+import se.alipsa.uso.tasks.Layout
 
 ProjectBuilder projectBuilder = new AntTargetBuilder()
 def binding = new Binding()
@@ -48,6 +49,24 @@ params.systemProperties.each {
   System.setProperty(keyVal[0], keyVal[1])
 }
 
+if (params.targets.contains('-layout')) {
+  // uso -layout maven groovy
+  def type = params.targets[1]
+  def language = params.targets[2]
+  Layout layout = new Layout(type: type, language: language)
+  layout.setProject(projectBuilder.antProject)
+  layout.execute()
+  return
+} else if (params.targets.contains('--layout')) {
+  // uso --layout type=maven language=groovy
+  def type = params.targets[1].substring('type='.length())
+  def language = params.targets[2].substring('language='.length())
+  Layout layout = new Layout(type: type, language: language)
+  layout.setProject(projectBuilder.antProject)
+  layout.execute()
+  return
+}
+
 projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
 def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
 //def codeSource = new GroovyCodeSource(params.buildFile) // possible charset problem, since systemDefault is used
@@ -86,8 +105,9 @@ if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
   // Execute phase
   try {
     projectBuilder.execute(params.targets)
-  } catch (BuildException ignore) {
-    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue!"
+  } catch (BuildException e) {
+    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue! ${e.message}"
+    //e.printStackTrace()
     System.exit(1)
   }
 }

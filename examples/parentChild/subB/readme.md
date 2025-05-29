@@ -1,1 +1,0 @@
-# The subB sub projects of the parentChild project

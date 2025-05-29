@@ -1,6 +1,7 @@
 package se.alipsa.uso
 import groovy.ant.AntBuilder
 import org.apache.tools.ant.DefaultLogger
+import org.codehaus.groovy.control.CompilationFailedException
 
 abstract class ProjectBuilder extends AntBuilder {
   String groupId
@@ -34,6 +35,7 @@ abstract class ProjectBuilder extends AntBuilder {
     typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
     taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
     taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
+    taskdef(name: 'uso', classname: 'se.alipsa.uso.tasks.Uso')
   }
 
   abstract void target(Map<String, String> params, Closure closure)
@@ -188,5 +190,68 @@ abstract class ProjectBuilder extends AntBuilder {
      it instanceof DefaultLogger
     } as DefaultLogger
     return listener.getMessageOutputLevel()
+  }
+
+  void runProject(Map params) {
+    if (params.file == null) {
+      throw new IllegalArgumentException("File parameter is required")
+    }
+    File file
+    if (!(params.file instanceof File)) {
+      file = new File(String.valueOf(params.file))
+    } else {
+      file = params.file as File
+    }
+    runProject(file, params.target as String, params.unless as String)
+  }
+
+  void runProject(String file, String target = null, String unless = null) {
+    runProject(new File(file), target, unless)
+  }
+  /**
+   * Enable multimodule projects.
+   *
+   * @param file the project file to run
+   * @param unless a property that if set will prevent the project from running.
+   * @param target the target to run or a comma separated list of targets if multiple targets are to be run.
+   */
+  void runProject(File file, String target = null, String unless = null) {
+    if (property(unless)) {
+      return
+    }
+    if (file == null || !file.exists()) {
+      throw new IllegalArgumentException("File does not exist: ${file?.canonicalPath}")
+    }
+    def binding = new Binding()
+    binding.setVariable("project", this)
+
+
+    GroovyShell shell = new GroovyShell(binding)
+    def codeSource = new GroovyCodeSource(file.text, file.name, file.absoluteFile.getParent())
+    def compiledScript
+    File baseDir = antProject.getBaseDir()
+    binding.getVariable('project').antProject.setBaseDir(file.getParentFile())
+    try {
+      compiledScript = shell.parse(codeSource)
+      compiledScript.run()
+    } catch (CompilationFailedException e) {
+      println "Syntax error in build script ${file.canonicalPath}:"
+      println "  Message: ${e.message}"
+      System.exit(1)
+    } catch (IOException e) {
+      println "Error reading build script: ${e.toString()}"
+      System.exit(1)
+    } catch (Exception e) {
+      println "Error evaluating build script: ${e.toString()}"
+      System.exit(1)
+    }
+    if (target == null) {
+      // do nothing
+    } else if (!target.contains(',')) {
+      binding.getVariable('project').execute(target)
+    } else {
+      binding.getVariable('project').execute(target.split(',').collect { it.trim() })
+    }
+    binding.getVariable('project').antProject.setBaseDir(baseDir)
   }
 }

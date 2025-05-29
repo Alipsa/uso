@@ -42,6 +42,10 @@ import org.apache.tools.ant.Task
  *     <dd>the directory for main classes</dd>
  *     <dt>testClassesDir</dt>
  *     <dd>the directory for test classes</dd>
+ *     <dt>testOutputDir</dt>
+ *     <dd>the directory for test output (e.g. surefire reports)</dd>
+ *     <dt>testReportDir</dt>
+ *     <dd>the directory for test reports</dd>
  *     <dt>mainDocDir</dt>
  *     <dd>the directory for main documentation</dd>
  *     <dt>testDocDir</dt>
@@ -62,6 +66,8 @@ class Layout extends Task {
   String testGeneratedDir
   String mainClassesDir
   String testClassesDir
+  String testResultDir
+  String testReportDir
   String mainDocDir
   String testDocDir
   String distDir
@@ -92,6 +98,8 @@ class Layout extends Task {
     testGeneratedDir = "${buildDir}/generated-test-sources"
     mainClassesDir = "${buildDir}/classes"
     testClassesDir = "${buildDir}/test-classes"
+    testResultDir = "${buildDir}/surefire-reports"
+    testReportDir = "${buildDir}/site"
     mainDocDir = "${buildDir}/${language}doc"
     testDocDir = "${buildDir}/test-${language}doc"
     distDir = "${buildDir}"
@@ -107,6 +115,8 @@ class Layout extends Task {
     testGeneratedDir = "${buildDir}/generated/sources/test/${language}"
     mainClassesDir = "${buildDir}/classes/${language}/main"
     testClassesDir = "${buildDir}/classes/${language}/test"
+    testResultDir = "${buildDir}/test-results/test"
+    testReportDir = "${buildDir}/test-results/report"
     mainDocDir = "${buildDir}/docs/${language}doc"
     testDocDir = "${buildDir}/docs/test-${language}doc"
     distDir = "${buildDir}/libs"
@@ -122,6 +132,8 @@ class Layout extends Task {
     testGeneratedDir = "${buildDir}/generated-test-sources"
     mainClassesDir = "${buildDir}/classes"
     testClassesDir = "${buildDir}/test-classes"
+    testResultDir = "${buildDir}/test-results"
+    testReportDir = "${buildDir}/test-reports"
     mainDocDir = "${buildDir}/${language}doc"
     testDocDir = "${buildDir}/test-${language}doc"
     distDir = "${buildDir}"
@@ -146,6 +158,8 @@ class Layout extends Task {
     createDirAndSetProperty('testGeneratedDir', testGeneratedDir)
     createDirAndSetProperty('mainClassesDir', mainClassesDir)
     createDirAndSetProperty('testClassesDir', testClassesDir)
+    createDirAndSetProperty('testResultDir', testResultDir)
+    createDirAndSetProperty('testReportDir', testReportDir)
     createDirAndSetProperty('mainDocDir', mainDocDir)
     createDirAndSetProperty('testDocDir', testDocDir)
     createDirAndSetProperty('distDir', distDir)
@@ -222,5 +236,13 @@ class Layout extends Task {
 
   void setLogLevel(int logLevel) {
     this.logLevel = logLevel
+  }
+
+  void setTestResultDir(String testResultDir) {
+    this.testResultDir= testResultDir
+  }
+
+  void setTestReportDir(String testReportDir) {
+    this.testReportDir = testReportDir
   }
 }
