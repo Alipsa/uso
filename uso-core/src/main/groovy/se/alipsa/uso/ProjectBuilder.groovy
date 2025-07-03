@@ -1,7 +1,11 @@
 package se.alipsa.uso
 import groovy.ant.AntBuilder
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.DefaultLogger
 import org.codehaus.groovy.control.CompilationFailedException
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 abstract class ProjectBuilder extends AntBuilder {
   String groupId
@@ -56,20 +60,28 @@ abstract class ProjectBuilder extends AntBuilder {
   abstract Map<String, ?> getTargets()
 
   String getName() {
-    return "$groupId:$artifactId:$version"
+    return antProject.name ?: getCoords()
+  }
+
+  void setName(String name) {
+    antProject.setName(name)
+  }
+
+  String getCoords() {
+    "$groupId:$artifactId:$version"
   }
 
   String getDefaultTarget() {
-    return defaultTarget
+    return defaultTarget ?: antProject.getDefaultTarget()
   }
 
   void setDefaultTarget(String defaultTarget) {
     this.defaultTarget = defaultTarget
-    project.setDefault(defaultTarget)
+    antProject.setDefault(defaultTarget)
   }
 
   String getGroupId() {
-    return groupId
+    return groupId ?: property('groupId')
   }
 
   void setGroupId(String groupId) {
@@ -115,13 +127,12 @@ abstract class ProjectBuilder extends AntBuilder {
    * @return The artifactId of the project.
    */
   String getArtifactId() {
-    return artifactId
+    return artifactId ?: property("artifactId")
   }
 
   void setArtifactId(String artifactId) {
     this.artifactId = artifactId
     property('artifactId', artifactId)
-    project.name = artifactId
   }
 
   String getVersion() {
@@ -140,7 +151,7 @@ abstract class ProjectBuilder extends AntBuilder {
    * property.
    */
   void setBaseDir(File baseDir) {
-    project.setBaseDir(baseDir)
+    antProject.setBaseDir(baseDir)
     property('basedir', baseDir.canonicalPath)
   }
 
@@ -151,16 +162,16 @@ abstract class ProjectBuilder extends AntBuilder {
    * property.
    */
   void setBasedir(String basedir) {
-    project.setBasedir(basedir)
+    antProject.setBasedir(basedir)
     property('basedir', basedir)
   }
 
   String getBasedir() {
-    return project.getBaseDir()?.canonicalPath
+    return antProject.getBaseDir()?.canonicalPath
   }
 
   File getBaseDir() {
-    return project.getBaseDir()
+    return antProject.getBaseDir()
   }
 
   /**
@@ -186,7 +197,7 @@ abstract class ProjectBuilder extends AntBuilder {
   }
 
   int getOutputLevel() {
-    DefaultLogger listener = project.getBuildListeners().find{
+    DefaultLogger listener = antProject.getBuildListeners().find{
      it instanceof DefaultLogger
     } as DefaultLogger
     return listener.getMessageOutputLevel()
@@ -216,21 +227,34 @@ abstract class ProjectBuilder extends AntBuilder {
    * @param target the target to run or a comma separated list of targets if multiple targets are to be run.
    */
   void runProject(File file, String target = null, String unless = null) {
+    Path first = antProject.baseDir?.canonicalFile?.toPath()
+    Path second = file.canonicalFile?.toPath()
+
+    if (first == null || second == null) {
+      throw new BuildException("Base project path is $first, target project file is $second, neither of them can be null")
+    }
+    String msg = "* runProject ${antProject.baseDir.name}/${first.relativize(second)} $target *".toString()
+    println('')
+    println('*'.repeat(msg.length()))
+    println(msg)
+    println('*'.repeat(msg.length()))
     if (property(unless)) {
+      println("the 'unless' property $unless is '${property(unless)}' skipping further execution.")
       return
     }
     if (file == null || !file.exists()) {
-      throw new IllegalArgumentException("File does not exist: ${file?.canonicalPath}")
+      throw new BuildException("File does not exist: ${file?.canonicalPath}")
     }
     def binding = new Binding()
-    binding.setVariable("project", this)
-
+    ProjectBuilder projectBuilder = new AntTargetBuilder()
+    binding.setVariable("project", projectBuilder)
+    projectBuilder.antProject.addBuildListener(new ErrorReportingListener(file.name))
 
     GroovyShell shell = new GroovyShell(binding)
     def codeSource = new GroovyCodeSource(file.text, file.name, file.absoluteFile.getParent())
     def compiledScript
-    File baseDir = antProject.getBaseDir()
-    binding.getVariable('project').antProject.setBaseDir(file.getParentFile())
+    File baseDir = file.getParentFile()
+    binding.getVariable('project').antProject.setBaseDir(baseDir)
     try {
       compiledScript = shell.parse(codeSource)
       compiledScript.run()

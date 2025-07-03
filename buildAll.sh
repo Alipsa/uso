@@ -35,5 +35,6 @@ buildExample examples/dependencies clean jar
 buildExample examples/publish clean publishLocal
 buildExample examples/boms clean publishLocal
 buildExample examples/layout compile
+buildExample examples/multimodule buildAll
 echo ""
 banner "Done!"

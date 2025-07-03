@@ -242,7 +242,7 @@ class CreatePom extends Task {
     }
   }
 
-  private registerPom() {
+  private void registerPom() {
     Map<String, Class<?>> taskDefs = project.getTaskDefinitions()
     if (!taskDefs.containsKey('pom')) {
       try {

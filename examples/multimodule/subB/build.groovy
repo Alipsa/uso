@@ -2,17 +2,18 @@ project.with {
   artifactId = 'multimodule-subB'
   version = '1.0.0'
   defaultTarget = 'init'
+  property(file: '../multimodule.properties')
 
-  runProject(file: '../build.groovy', unless: 'groupId')
-  dependencies(id: 'compile') {
+  dependencies(id: 'deps') {
     dependency(coords: '${groupId}:multimodule-common:1.0.0')
   }
+
   target('init') {
     echo "Subproject B initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}"
     layout(type: 'maven', language: 'groovy', logLevel: 2)
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
-    createPom(pomTarget: pomFile, dependenciesRef: 'compile',
+    createPom(pomTarget: pomFile, dependenciesRef: 'deps',
         name: '${artifactId}', description: "Subproject B for multimodule example") {
       licenses {
         license (
@@ -24,6 +25,10 @@ project.with {
     resolve {
       path(refId: 'compilePath', classpath: 'compile')
       path(refId: 'testPath', classpath: 'test')
+    }
+    path(id: 'testClassPath') {
+      path refid: 'testPath'
+      pathelement location: '${mainClassesDir}'
     }
   }
 

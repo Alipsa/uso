@@ -1,11 +1,11 @@
 project.with {
+  name = 'common'
   artifactId = 'multimodule-common'
   version = '1.0.0'
-
   defaultTarget = 'init'
+  property(file: '../multimodule.properties')
   echo 'Multimodule common, before calling base, groupId: ${groupId}'
-  runProject(file: '../build.groovy', unless: 'groupId')
-  echo 'Multimodule common, after calling base, groupId: ${groupId}'
+  //runProject(file: '../build.groovy', unless: 'groupId')
 
   dependencies(id: 'compile') {
     dependency(coords: 'org.apache.commons:commons-lang3:3.17.0')
