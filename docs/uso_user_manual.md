@@ -94,13 +94,13 @@ dependencies(id: 'test') {
 
 Then generate and register a POM using then `createPom` task before resolving. See [the bom example](../examples/boms) for an example.
 
-### Using Ivy with AntBuilder
+### Using Ivy with Uso
 
 Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
 
 #### 1. Add Ivy to Your Classpath
 
-If not using `@Grab`, make sure Ivy is available to Ant:
+Make sure Ivy is available to Ant:
 
 ```groovy
 project.with {
