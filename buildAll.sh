@@ -19,6 +19,11 @@ function buildExample() {
     ./uso "$@"
   popd
 }
+LOCAL_REPO=$(mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout)
+if [ -n "$LOCAL_REPO" ] && [ -d "$LOCAL_REPO" ]; then
+  echo "Removing published artifacts..."
+  rm -rf "$LOCAL_REPO/se/alipsa/uso"
+fi
 
 pushd uso-tasks
   echo ""

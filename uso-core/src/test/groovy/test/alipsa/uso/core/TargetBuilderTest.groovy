@@ -3,14 +3,14 @@ package test.alipsa.uso.core
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import se.alipsa.uso.core.AntTargetBuilder
+import se.alipsa.uso.core.ProjectBuilder
 
 class TargetBuilderTest {
 
   @Test
   void testTargetBuilder() {
     // Arrange
-    def targetBuilder = new AntTargetBuilder()
+    def targetBuilder = new ProjectBuilder()
     targetBuilder.artifactId = "TargetBuilderTest"
     def targetName = "testTarget"
 
@@ -25,7 +25,7 @@ class TargetBuilderTest {
   @Test
   void testTargetsAreRegisteredProperly() {
     // Arrange
-    def targetBuilder = new AntTargetBuilder()
+    def targetBuilder = new ProjectBuilder()
     targetBuilder.artifactId = "TargetBuilderTest"
     def targetName1 = "testTarget1"
     def targetName2 = "testTarget2"
@@ -42,7 +42,7 @@ class TargetBuilderTest {
   @Test
   void testDependsTask() {
     // Arrange
-    def targetBuilder = new AntTargetBuilder()
+    def targetBuilder = new ProjectBuilder()
     targetBuilder.artifactId = "TargetBuilderTest"
     def initTarget = "init"
     def targetName1 = "testTarget1"
@@ -66,7 +66,7 @@ class TargetBuilderTest {
 
   @Test
   void testDependencies() {
-    def targetBuilder = new AntTargetBuilder("se.alipsa.uso", "TargetBuilderTest", "1.0")
+    def targetBuilder = new ProjectBuilder("se.alipsa.uso", "TargetBuilderTest", "1.0")
     targetBuilder.dependencies(id: 'compile') {
       dependency(coords: 'se.alipsa.matrix:matrix-core:3.2.0')
       dependency(coords: 'se.alipsa.matrix:matrix-csv:2.1.0')
@@ -87,7 +87,7 @@ class TargetBuilderTest {
     PrintStream console = System.out
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); PrintStream ps = new PrintStream(baos)) {
       System.setOut(ps)
-      def p = new AntTargetBuilder("se.alipsa.uso", "testQuiet", "1.0")
+      def p = new ProjectBuilder("se.alipsa.uso", "testQuiet", "1.0")
       p.target('testQuiet') {
         p.echo(message: "Hello from testQuiet!")
         int level = p.setOutputLevel(0)

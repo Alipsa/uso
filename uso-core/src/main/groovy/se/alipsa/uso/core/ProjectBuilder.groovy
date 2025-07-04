@@ -2,16 +2,24 @@ package se.alipsa.uso.core
 import groovy.ant.AntBuilder
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.DefaultLogger
+import org.apache.tools.ant.Target
 import org.codehaus.groovy.control.CompilationFailedException
 
 import java.nio.file.Path
 
-abstract class ProjectBuilder extends AntBuilder {
+class ProjectBuilder extends AntBuilder {
   String groupId
   String artifactId
   String version
   String defaultTarget
 
+
+  ProjectBuilder(String groupId, String artifactId, String version) {
+    this()
+    this.groupId = groupId
+    this.artifactId = artifactId
+    this.version = version
+  }
 
   ProjectBuilder() {
     super()
@@ -41,9 +49,51 @@ abstract class ProjectBuilder extends AntBuilder {
     //taskdef(name: 'uso', classname: 'se.alipsa.uso.core.tasks.Uso')
   }
 
-  abstract void target(Map<String, String> params, Closure closure)
-  abstract void target(String name, Closure closure)
-  abstract void target(String name, String depends, Closure closure)
+  void target(Map<String, String> params, Closure closure) {
+    Target antTarget = new Target()
+    params.each {
+      if (antTarget.hasProperty(it.key)) {
+        antTarget[it.key] = it.value
+      } else {
+        project.log("Unknown property '${it.key}' for target '${params.name}'", 1)
+      }
+    }
+    antTarget.project = project
+    antTarget.addTask(new ClosureTask(antTarget, closure))
+    project.addTarget(antTarget)
+    antTarget
+  }
+
+  void target(String name, Closure closure) {
+    target(name: name, closure)
+  }
+
+  void target(String name, String depends, Closure closure) {
+    target(name: name, depends: depends, closure)
+  }
+
+  Map<String, Target> getTargets() {
+    Map<String, Target> targetMap = [:]
+    project.getTargets().each { k, v ->
+      targetMap.put(String.valueOf(k),  v as Target)
+    }
+    targetMap
+  }
+
+  def execute(List<String> targets) {
+    //try {
+    if (targets.size() == 0) {
+      if (defaultTarget == null) {
+        throw new IllegalArgumentException("No target specified and no default target set.")
+      }
+      project.executeTarget(defaultTarget)
+    }
+    if (targets.size() == 1) {
+      project.executeTarget(targets[0])
+    } else {
+      project.executeTargets(targets as Vector)
+    }
+  }
 
   def execute() {
     if (defaultTarget == null) {
@@ -54,9 +104,6 @@ abstract class ProjectBuilder extends AntBuilder {
   def execute(String targetName) {
     execute([targetName])
   }
-  abstract def execute(List<String> targets)
-
-  abstract Map<String, ?> getTargets()
 
   String getName() {
     return antProject.name ?: getCoords()
@@ -247,7 +294,7 @@ abstract class ProjectBuilder extends AntBuilder {
       throw new BuildException("File does not exist: ${file?.canonicalPath}")
     }
     def binding = new Binding()
-    ProjectBuilder projectBuilder = new AntTargetBuilder()
+    ProjectBuilder projectBuilder = new ProjectBuilder()
     binding.setVariable("project", projectBuilder)
     projectBuilder.antProject.addBuildListener(new ErrorReportingListener(file.name))
 
