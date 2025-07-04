@@ -81,16 +81,6 @@ if (params.targets.contains('-h') || params.targets.contains('--help')) {
   return
 }
 
-if (projectBuilder.groupId == null) {
-  projectBuilder.echo("No groupId set.")
-}
-if (projectBuilder.artifactId == null) {
-  projectBuilder.echo("No artifactId set.")
-}
-if (projectBuilder.version == null) {
-  projectBuilder.echo("No version set.")
-}
-
 projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
 def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
 //def codeSource = new GroovyCodeSource(params.buildFile) // possible charset problem, since systemDefault is used
@@ -101,6 +91,15 @@ try {
   compiledScript.run()
   // the script might have mutated or replaced the project binding
   projectBuilder = binding.getVariable("project") as ProjectBuilder
+  if (projectBuilder.groupId == null) {
+    projectBuilder.echo("No groupId set.")
+  }
+  if (projectBuilder.artifactId == null) {
+    projectBuilder.echo("No artifactId set.")
+  }
+  if (projectBuilder.version == null) {
+    projectBuilder.echo("No version set.")
+  }
   projectBuilder.execute(params.targets)
 } catch (CompilationFailedException e) {
   println "Syntax error in build script ${params.buildFile.canonicalPath}:"
