@@ -72,11 +72,11 @@ target('resolveDeps') {
 
 This downloads dependencies and makes them available via a named classpath.
 
-## Using Ivy with AntBuilder
+### Using Ivy with AntBuilder
 
 Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) d as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
 
-### 1. Add Ivy to Your Classpath
+#### 1. Add Ivy to Your Classpath
 
 If not using `@Grab`, make sure Ivy is available to Ant:
 
@@ -91,7 +91,7 @@ project.with {
 }
 ```
 
-### 2. Provide an `ivy.xml` File
+#### 2. Provide an `ivy.xml` File
 
 ```xml
 <ivy-module version="2.0">
@@ -102,7 +102,7 @@ project.with {
 </ivy-module>
 ```
 
-### 3. Resolve Dependencies and Use Classpath
+#### 3. Resolve Dependencies and Use Classpath
 
 ```groovy
 target('resolveIvy') {
