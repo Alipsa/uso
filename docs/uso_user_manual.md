@@ -72,6 +72,28 @@ target('resolveDeps') {
 
 This downloads dependencies and makes them available via a named classpath.
 
+### Using BOMs
+
+For dependency version alignment:
+
+```groovy
+dependencyManagement(id: 'bom') {
+  dependencies {
+    dependency(groupId: 'org.junit', artifactId: 'junit-bom', version: '5.9.2', type: 'pom', scope: 'import')
+  }
+}
+```
+
+Declare dependencies without versions:
+
+```groovy
+dependencies(id: 'test') {
+  dependency(groupId: 'org.junit.jupiter', artifactId: 'junit-jupiter')
+}
+```
+
+Then generate and register a POM using `createPom` and `pom()` before resolving.
+
 ### Using Ivy with AntBuilder
 
 Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) d as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
@@ -159,28 +181,6 @@ target('jar', depends: 'compile') {
   }
 }
 ```
-
-## Using BOMs
-
-For dependency version alignment:
-
-```groovy
-dependencyManagement(id: 'bom') {
-  dependencies {
-    dependency(groupId: 'org.junit', artifactId: 'junit-bom', version: '5.9.2', type: 'pom', scope: 'import')
-  }
-}
-```
-
-Declare dependencies without versions:
-
-```groovy
-dependencies(id: 'test') {
-  dependency(groupId: 'org.junit.jupiter', artifactId: 'junit-jupiter')
-}
-```
-
-Then generate and register a POM using `createPom` and `pom()` before resolving.
 
 ## Publishing Artifacts
 
