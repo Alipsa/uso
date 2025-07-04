@@ -199,8 +199,10 @@ Let's say we have 3 targets:
 If you run the following commands:
 - `uso clean compile` will execute init -> clean -> init -> compile. (ant style)
 
-Please see the [examples](examples) directory for more examples of how to use uso.
-A translation of the ant manual into the AntBuilder DSL syntax is also available in the [docs/tasks](docs/tasks) directory.
+### Documentation
+- The [user manual](docs/uso_user_manual.md) is a good start.
+- The [examples](examples) directory contains more examples of how to use uso.
+- The [tasks manual](docs/manual/00-Introduction_Groovy_Ant_Manual.md) is basically a translation of the ant manual into the AntBuilder DSL syntax.
 
 ### What is the meaning of Uso?
 Uso is a Spanish word meaning "use" (first person). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
