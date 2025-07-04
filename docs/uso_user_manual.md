@@ -70,7 +70,7 @@ target('resolveDeps') {
 }
 ```
 
-This downloads dependencies and makes them available via a named classpath.
+This downloads dependencies and makes them available via a named classpath. See the [dependencies example](../examples/dependencies) for details.
 
 ### Using BOMs
 
@@ -92,11 +92,11 @@ dependencies(id: 'test') {
 }
 ```
 
-Then generate and register a POM using `createPom` and `pom()` before resolving.
+Then generate and register a POM using then `createPom` task before resolving. See [the bom example](../examples/boms) for an example.
 
 ### Using Ivy with AntBuilder
 
-Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) d as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
+Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
 
 #### 1. Add Ivy to Your Classpath
 
@@ -203,6 +203,7 @@ target('deploy') {
   }
 }
 ```
+See [the publish example](../examples/publish) for details.
 
 ## Layout Task
 
@@ -215,6 +216,8 @@ target('init') {
 ```
 
 This sets up standard directories and variables like `srcDir`, `mainClassesDir`, etc.
+
+See [the layout example](../examples/layout) for details.
 
 ## Troubleshooting
 
