@@ -65,6 +65,31 @@ if (params.targets.contains('-layout')) {
   layout.execute()
   return
 }
+if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
+  println projectBuilder.targets.keySet()
+  return
+}
+if (params.targets.contains('-h') || params.targets.contains('--help')) {
+  println "usage: uso [target1] [target2]"
+  println "other parameters can be: "
+  println "buildFile - to specify another name than build.groovy"
+  println "-D[systemproperty=value] - to define a system property"
+  println "the order is 'uso [buildFile] [targets separated by space] [system properties]"
+  println "Other (terminating) commands are:"
+  println "--projecthelp  - to get a list of available targets"
+  println "--layout [type] [language] - to create a dir structure suitable for your project"
+  return
+}
+
+if (projectBuilder.groupId == null) {
+  projectBuilder.echo("No groupId set.")
+}
+if (projectBuilder.artifactId == null) {
+  projectBuilder.echo("No artifactId set.")
+}
+if (projectBuilder.version == null) {
+  projectBuilder.echo("No version set.")
+}
 
 projectBuilder.project.addBuildListener(new ErrorReportingListener(params.buildFile.name))
 def codeSource = new GroovyCodeSource(params.buildFile.text, params.buildFile.name, params.buildFile.absoluteFile.getParent())
@@ -76,6 +101,7 @@ try {
   compiledScript.run()
   // the script might have mutated or replaced the project binding
   projectBuilder = binding.getVariable("project") as ProjectBuilder
+  projectBuilder.execute(params.targets)
 } catch (CompilationFailedException e) {
   println "Syntax error in build script ${params.buildFile.canonicalPath}:"
   println "  Message: ${e.message}"
@@ -83,30 +109,11 @@ try {
 } catch (IOException e) {
   println "Error reading build script: ${e.toString()}"
   System.exit(1)
+} catch (BuildException e) {
+  System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue! ${e.message}"
+  //e.printStackTrace()
+  System.exit(1)
 } catch (Exception e) {
   println "Error evaluating build script: ${e.toString()}"
   System.exit(1)
-}
-
-if (params.targets.contains('-p') || params.targets.contains('--projecthelp')) {
-  println projectBuilder.targets.keySet()
-  return
-} else {
-  if (projectBuilder.groupId == null) {
-    projectBuilder.echo("No groupId set.")
-  }
-  if (projectBuilder.artifactId == null) {
-    projectBuilder.echo("No artifactId set.")
-  }
-  if (projectBuilder.version == null) {
-    projectBuilder.echo("No version set.")
-  }
-  // Execute phase
-  try {
-    projectBuilder.execute(params.targets)
-  } catch (BuildException e) {
-    System.err.println "Fatal error when executing targets ${params.targets} in ${params.buildFile.canonicalPath}, cannot continue! ${e.message}"
-    //e.printStackTrace()
-    System.exit(1)
-  }
 }

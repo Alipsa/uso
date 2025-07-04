@@ -21,12 +21,12 @@ Uso requires **Groovy** to be installed on your system and available on the PATH
 curl -H 'Cache-Control: no-cache, no-store' -s   "https://raw.githubusercontent.com/Alipsa/uso/refs/heads/main/uso-core/src/main/script/installUso.sh" | bash
 ```
 
-Running the above command in your project directory will download and set up the `uso` command for that project. This typically places an executable script (and necessary Uso JARs) into your project (similar to a Gradle wrapper). Ensure the script has execute permission. After installation, you should see an `uso` file (and possibly a `.uso` or `uso` directory for support files) in your project.
+Running the above command in your project directory will download and set up the `uso` command for that project. This typically places an executable script (and necessary Uso JARs) into your project (similar to a Gradle wrapper). Ensure the script has execute permission. After installation, you should see an `uso` file in your project.
 
 **Verifying Installation:** Open a new terminal in your project directory and run:
 
 ```bash
-uso --version
+uso --help
 ```
 
 If Uso is set up, this should print the Uso version (or help text). You can also run `uso` without arguments to execute the default target of your build.
@@ -56,7 +56,7 @@ This will execute the `hello` target. Targets can depend on each other and use A
 
 ## Dependency Management
 
-Uso allows Maven-style dependency management:
+Uso supports Maven-style dependency management out of the box:
 
 ```groovy
 dependencies(id: 'compile') {
@@ -71,6 +71,52 @@ target('resolveDeps') {
 ```
 
 This downloads dependencies and makes them available via a named classpath.
+
+## Using Ivy with AntBuilder
+
+Although Uso focuses on Maven-based dependency resolution, you can also use [Apache Ivy](https://ant.apache.org/ivy/) d as the dependency management framework. Ivy is a flexible dependency manager integrated into the Ant ecosystem.
+
+### 1. Add Ivy to Your Classpath
+
+If not using `@Grab`, make sure Ivy is available to Ant:
+
+```groovy
+project.with {
+  taskdef(name: 'ivyConfigure', classname: 'org.apache.ivy.ant.IvyConfigure',
+          classpath: 'lib/ivy-2.5.1.jar')
+  taskdef(name: 'ivyResolve', classname: 'org.apache.ivy.ant.IvyResolve',
+          classpath: 'lib/ivy-2.5.1.jar')
+  taskdef(name: 'ivyCachePath', classname: 'org.apache.ivy.ant.IvyCachePath',
+          classpath: 'lib/ivy-2.5.1.jar')
+}
+```
+
+### 2. Provide an `ivy.xml` File
+
+```xml
+<ivy-module version="2.0">
+  <info organisation="org.example" module="demo"/>
+  <dependencies>
+    <dependency org="junit" name="junit" rev="4.13.2"/>
+  </dependencies>
+</ivy-module>
+```
+
+### 3. Resolve Dependencies and Use Classpath
+
+```groovy
+target('resolveIvy') {
+  ivyConfigure()
+  ivyResolve(file: 'ivy.xml')
+  ivyCachePath(pathid: 'ivy.classpath')
+}
+
+target('compileWithIvy', depends: 'resolveIvy') {
+  groovyc(srcdir: 'src', destdir: 'build/classes', classpathref: 'ivy.classpath')
+}
+```
+
+Using Ivy this way gives you full Ant compatibility for projects that already use Ivy or where Maven isn't preferred.
 
 ## Compilation
 
