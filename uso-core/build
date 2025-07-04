@@ -27,6 +27,11 @@ if (args.contains('compile')) {
   compile()
 }
 
+if (args.contains('compileTests')) {
+  compile()
+  compileTest()
+}
+
 if (args.contains('test')) {
   compile()
   compileTest()
@@ -113,8 +118,8 @@ def test() {
   }
   ant.junitlauncher(haltOnFailure: true, printSummary: true) {
     classpath {
-      pathelement location: mainBuildDir
-      pathelement location: testBuildDir
+      pathelement location: '${mainBuildDir}'
+      pathelement location: '${testBuildDir}'
       groovyClasspath.each { jar ->
         pathelement location: jar
       }
@@ -269,10 +274,12 @@ def createProjectLayout() {
     mainBuildDir.mkdirs()
   }
   binding.mainBuildDir = mainBuildDir
+  ant.antProject.setProperty("mainBuildDir", mainBuildDir.absolutePath)
 
   def testBuildDir = new File(buildDir, "testClasses")
   if (!testBuildDir.exists()) {
     testBuildDir.mkdirs()
   }
   binding.testBuildDir = testBuildDir
+  ant.antProject.setProperty("testBuildDir", testBuildDir.absolutePath)
 }

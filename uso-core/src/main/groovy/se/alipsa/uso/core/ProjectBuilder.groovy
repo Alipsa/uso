@@ -1,11 +1,10 @@
-package se.alipsa.uso
+package se.alipsa.uso.core
 import groovy.ant.AntBuilder
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.DefaultLogger
 import org.codehaus.groovy.control.CompilationFailedException
 
 import java.nio.file.Path
-import java.nio.file.Paths
 
 abstract class ProjectBuilder extends AntBuilder {
   String groupId
@@ -39,7 +38,7 @@ abstract class ProjectBuilder extends AntBuilder {
     typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
     taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
     taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
-    taskdef(name: 'uso', classname: 'se.alipsa.uso.tasks.Uso')
+    //taskdef(name: 'uso', classname: 'se.alipsa.uso.core.tasks.Uso')
   }
 
   abstract void target(Map<String, String> params, Closure closure)
@@ -203,7 +202,7 @@ abstract class ProjectBuilder extends AntBuilder {
     return listener.getMessageOutputLevel()
   }
 
-  void runProject(Map params) {
+  void uso(Map params) {
     if (params.file == null) {
       throw new IllegalArgumentException("File parameter is required")
     }
@@ -213,27 +212,29 @@ abstract class ProjectBuilder extends AntBuilder {
     } else {
       file = params.file as File
     }
-    runProject(file, params.target as String, params.unless as String)
+    uso(file, params.target as String, params.unless as String)
   }
 
-  void runProject(String file, String target = null, String unless = null) {
-    runProject(new File(file), target, unless)
+  void uso(String file, String target = null, String unless = null) {
+    uso(new File(file), target, unless)
   }
+
   /**
-   * Enable multimodule projects.
+   * This is more or less equivalent to the ant task i.e. it enables an uso build to execute another build.
+   * This is useful for e.g. multimodule projects.
    *
-   * @param file the project file to run
+   * @param file the project build file to run, e.g. subprojectA/build.groovy
    * @param unless a property that if set will prevent the project from running.
    * @param target the target to run or a comma separated list of targets if multiple targets are to be run.
    */
-  void runProject(File file, String target = null, String unless = null) {
+  void uso(File file, String target = null, String unless = null) {
     Path first = antProject.baseDir?.canonicalFile?.toPath()
     Path second = file.canonicalFile?.toPath()
 
     if (first == null || second == null) {
       throw new BuildException("Base project path is $first, target project file is $second, neither of them can be null")
     }
-    String msg = "* runProject ${antProject.baseDir.name}/${first.relativize(second)} $target *".toString()
+    String msg = "* uso ${antProject.baseDir.name}/${first.relativize(second)} $target *".toString()
     println('')
     println('*'.repeat(msg.length()))
     println(msg)
@@ -276,6 +277,5 @@ abstract class ProjectBuilder extends AntBuilder {
     } else {
       binding.getVariable('project').execute(target.split(',').collect { it.trim() })
     }
-    binding.getVariable('project').antProject.setBaseDir(baseDir)
   }
 }

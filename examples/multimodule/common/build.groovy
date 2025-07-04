@@ -5,7 +5,6 @@ project.with {
   defaultTarget = 'init'
   property(file: '../multimodule.properties')
   echo 'Multimodule common, before calling base, groupId: ${groupId}'
-  //runProject(file: '../build.groovy', unless: 'groupId')
 
   dependencies(id: 'compile') {
     dependency(coords: 'org.apache.commons:commons-lang3:3.17.0')
@@ -16,8 +15,7 @@ project.with {
 
   target('init') {
     echo "Initializing project common..."
-    layout(type: 'maven', language: 'groovy', logLevel: 2)
-    //echoproperties()
+    layout(type: 'maven', language: 'groovy', logLevel: 3)
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',

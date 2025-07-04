@@ -1,9 +1,9 @@
-package test.alipsa.uso
+package test.alipsa.uso.core
 
 import org.apache.maven.resolver.internal.ant.types.Dependencies
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import se.alipsa.uso.AntTargetBuilder
+import se.alipsa.uso.core.AntTargetBuilder
 
 class TargetBuilderTest {
 

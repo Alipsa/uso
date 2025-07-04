@@ -4,9 +4,9 @@
 @GrabConfig(systemClassLoader=true)
 import org.apache.tools.ant.BuildException
 import org.codehaus.groovy.control.CompilationFailedException
-import se.alipsa.uso.AntTargetBuilder
-import se.alipsa.uso.ErrorReportingListener
-import se.alipsa.uso.ProjectBuilder
+import se.alipsa.uso.core.AntTargetBuilder
+import se.alipsa.uso.core.ErrorReportingListener
+import se.alipsa.uso.core.ProjectBuilder
 import se.alipsa.uso.tasks.Layout
 
 ProjectBuilder projectBuilder = new AntTargetBuilder()

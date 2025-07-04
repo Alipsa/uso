@@ -10,7 +10,7 @@ project.with {
 
   target('init') {
     echo "Subproject B initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}"
-    layout(type: 'maven', language: 'groovy', logLevel: 2)
+    layout(type: 'maven', language: 'groovy')
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'deps',

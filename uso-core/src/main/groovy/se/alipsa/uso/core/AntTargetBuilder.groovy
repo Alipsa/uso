@@ -1,4 +1,4 @@
-package se.alipsa.uso
+package se.alipsa.uso.core
 
 import org.apache.tools.ant.Target
 
