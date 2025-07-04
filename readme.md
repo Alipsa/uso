@@ -176,7 +176,7 @@ This is executed using the uso command, e.g. to run the clean and compile target
 uso clean compile
 ```
 
-The build script is executed in the context of a ProjectBuilder instance running in the jsr233 [GroovyScriptEngineImpl](https://docs.groovy-lang.org/latest/html/api/org/codehaus/groovy/jsr223/GroovyScriptEngineImpl.html), which means that:
+The build script is executed in the context of a ProjectBuilder instance running in the [GroovyShell](https://docs.groovy-lang.org/docs/latest/html/documentation/#integ-groovyshell), which means that:
 - The ProjectBuilder is injected into the build script with the name project. It extends the [AntBuilder](https://docs.groovy-lang.org/latest/html/api/groovy/ant/AntBuilder.html) so by doing `project.with {}` you can use all AntBuilder methods as well as the additional target methods in Project builder without having to reference the project object.
 - variables that are declared without a type are global. You can use ant properties if you prefer, but it is not necessary.
 - variables that are declared with a type or with def are local
