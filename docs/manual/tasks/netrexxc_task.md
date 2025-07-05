@@ -32,17 +32,17 @@ target('compileAllNetRexx') {
 
 ## Attributes
 
-| Attribute     | Description                                                                                   | Required                                |
-|--------------:|-----------------------------------------------------------------------------------------------|-----------------------------------------|
-| `src`         | Path to a single NetRexx source file (e.g., `.nrx`)                                          | One of `src` or `srcdir`                |
-| `srcdir`      | Directory containing NetRexx source files                                                    | One of `src` or `srcdir`                |
-| `destdir`     | Directory where compiled class files will be placed                                           | Yes                                     |
-| `classpath`   | Classpath for finding required libraries (colon- or semicolon-separated)                     | No (if needed for external .jar support)|
-| `classpathref`| Reference to an Ant `<path>` element for classpath                                            | No                                      |
-| `debug`       | Include debugging information (`true`/`false`, default: `false`)                              | No                                      |
-| `optimize`    | Enable compiler optimizations (`true`/`false`, default: `false`)                              | No                                      |
-| `failonerror` | Fail the build if compilation errors occur (`true`/`false`, default: `true`)                 | No                                      |
-| `verbose`     | Show verbose compiler output (`true`/`false`, default: `false`)                               | No                                      |
+|      Attribute | Description                                                                  | Required                                 |
+|---------------:|------------------------------------------------------------------------------|------------------------------------------|
+|          `src` | Path to a single NetRexx source file (e.g., `.nrx`)                          | One of `src` or `srcdir`                 |
+|       `srcdir` | Directory containing NetRexx source files                                    | One of `src` or `srcdir`                 |
+|      `destdir` | Directory where compiled class files will be placed                          | Yes                                      |
+|    `classpath` | Classpath for finding required libraries (colon- or semicolon-separated)     | No (if needed for external .jar support) |
+| `classpathref` | Reference to an Ant `<path>` element for classpath                           | No                                       |
+|        `debug` | Include debugging information (`true`/`false`, default: `false`)             | No                                       |
+|     `optimize` | Enable compiler optimizations (`true`/`false`, default: `false`)             | No                                       |
+|  `failonerror` | Fail the build if compilation errors occur (`true`/`false`, default: `true`) | No                                       |
+|      `verbose` | Show verbose compiler output (`true`/`false`, default: `false`)              | No                                       |
 
 ## Nested Elements
 

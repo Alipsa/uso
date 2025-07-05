@@ -43,17 +43,17 @@ target('flattenMove') {
 
 ## Attributes
 
-| Attribute               | Description                                                                                                      | Required                |
-|------------------------:|------------------------------------------------------------------------------------------------------------------|-------------------------|
-| `file`                  | Single file to move (use `tofile`)                                                                               | One of `file` or resource collection |
-| `tofile`                | Destination file path                                                                                             | Required if `file` used |
-| `todir`                 | Destination directory for moved files                                                                             | Required if resource collection used |
-| `flatten`               | If `true`, places all files directly into `todir`, ignoring directory structure (`false` by default)             | No                      |
-| `preservelastmodified`  | Preserve last modified timestamp on moved files (`false` by default)                                              | No                      |
-| `overwrite`             | Overwrite existing files in the destination (`true` by default)                                                   | No                      |
-| `verbose`               | Log detailed file-by-file operations (`false` by default)                                                         | No                      |
-| `failonerror`           | Fail the build if a move operation fails (`true` by default)                                                     | No                      |
-| `filtering`             | Apply filterchain to file content during the move (uses nested `<filterchain>`)                                   | No                      |
+|              Attribute | Description                                                                                          | Required                             |
+|-----------------------:|------------------------------------------------------------------------------------------------------|--------------------------------------|
+|                 `file` | Single file to move (use `tofile`)                                                                   | One of `file` or resource collection |
+|               `tofile` | Destination file path                                                                                | Required if `file` used              |
+|                `todir` | Destination directory for moved files                                                                | Required if resource collection used |
+|              `flatten` | If `true`, places all files directly into `todir`, ignoring directory structure (`false` by default) | No                                   |
+| `preservelastmodified` | Preserve last modified timestamp on moved files (`false` by default)                                 | No                                   |
+|            `overwrite` | Overwrite existing files in the destination (`true` by default)                                      | No                                   |
+|              `verbose` | Log detailed file-by-file operations (`false` by default)                                            | No                                   |
+|          `failonerror` | Fail the build if a move operation fails (`true` by default)                                         | No                                   |
+|            `filtering` | Apply filterchain to file content during the move (uses nested `<filterchain>`)                      | No                                   |
 
 ## Nested Elements
 

@@ -8,6 +8,8 @@ In Groovy AntBuilder, the `ant` task is invoked as `ant.ant(...)`, with its attr
 
 **Important Note from Ant Manual:** This task must not be used outside of a `target` if it invokes the same build file it is part of.
 
+Note: in an uso build you use the [`uso`](uso_task.md) task to execute another build (as the equivalent to the `ant` task)
+
 ### Parameters
 
 Common Ant attributes for the `ant` task and their Groovy AntBuilder DSL mapping:

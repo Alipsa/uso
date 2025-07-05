@@ -39,14 +39,14 @@ target('replaceWithBackup') {
 
 ## Attributes
 
-| Attribute       | Description                                                                                         | Required                                                          |
-|----------------:|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| `file`          | Path to a single file to process                                                                    | One of `file` or nested resource                                  |
-| `token`         | The string to search for                                                                           | One of `token` or `<replacefilter>` nested element                |
-| `value`         | Replacement string                                                                                  | Yes (unless using nested `<replacefilter>` with its own `replace` rule) |
-| `backupPrefix`  | Prefix for backup files (default: none)                                                             | No                                                                |
-| `backupSuffix`  | Suffix for backup files (default: none)                                                             | No                                                                |
-| `encoding`      | Character encoding to use when reading/writing files (default: platform encoding)                  | No                                                                |
+|      Attribute | Description                                                                       | Required                                                                |
+|---------------:|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+|         `file` | Path to a single file to process                                                  | One of `file` or nested resource                                        |
+|        `token` | The string to search for                                                          | One of `token` or `<replacefilter>` nested element                      |
+|        `value` | Replacement string                                                                | Yes (unless using nested `<replacefilter>` with its own `replace` rule) |
+| `backupPrefix` | Prefix for backup files (default: none)                                           | No                                                                      |
+| `backupSuffix` | Suffix for backup files (default: none)                                           | No                                                                      |
+|     `encoding` | Character encoding to use when reading/writing files (default: platform encoding) | No                                                                      |
 
 ## Nested Elements
 

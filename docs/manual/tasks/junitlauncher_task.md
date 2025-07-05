@@ -14,14 +14,14 @@ To use the `junitlauncher` Ant task within a Groovy script via `AntBuilder`, you
 
 ### Key Parameters (and their Groovy equivalents):
 
-| Ant Attribute     | Groovy Parameter Type | Description                                                                                                | Required |
-|-------------------|-----------------------|------------------------------------------------------------------------------------------------------------|----------|
-| `haltOnFailure`   | `boolean`             | Stop the build if any test fails (assertion failures or exceptions). Default: `false`.                       | No       |
-| `failureProperty` | `String`              | Property to set if a test fails.                                                                           | No       |
-| `printSummary`    | `boolean`             | Print a summary of test execution to System.out. Default: `false`.                                         | No       |
-| `includeTags`     | `String`              | Comma-separated list of JUnit 5 tags to include. (Since Ant 1.10.7)                                        | No       |
-| `excludeTags`     | `String`              | Comma-separated list of JUnit 5 tags to exclude. (Since Ant 1.10.7)                                        | No       |
-| `fork`            | `boolean`             | Run tests in a separate JVM. (Since Ant 1.10.6) Default: `false`.                                          | No       |
+| Ant Attribute     | Groovy Parameter Type | Description                                                                            | Required |
+|-------------------|-----------------------|----------------------------------------------------------------------------------------|----------|
+| `haltOnFailure`   | `boolean`             | Stop the build if any test fails (assertion failures or exceptions). Default: `false`. | No       |
+| `failureProperty` | `String`              | Property to set if a test fails.                                                       | No       |
+| `printSummary`    | `boolean`             | Print a summary of test execution to System.out. Default: `false`.                     | No       |
+| `includeTags`     | `String`              | Comma-separated list of JUnit 5 tags to include. (Since Ant 1.10.7)                    | No       |
+| `excludeTags`     | `String`              | Comma-separated list of JUnit 5 tags to exclude. (Since Ant 1.10.7)                    | No       |
+| `fork`            | `boolean`             | Run tests in a separate JVM. (Since Ant 1.10.6) Default: `false`.                      | No       |
 
 ### Nested Elements in Groovy:
 

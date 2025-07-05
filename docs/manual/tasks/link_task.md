@@ -12,16 +12,16 @@ target('createImage') {
 
 ## Attributes
 
-| Attribute            | Description                                                                 | Required |
-|---------------------|-----------------------------------------------------------------------------|----------|
-| `destDir`           | Target directory where the runtime image will be created                    | Yes      |
-| `modulepath`        | Path containing module definitions (typically `.jmod` files)                 | Yes (or use nested `modulepath`) |
-| `modules`           | Comma-separated list of modules to include in the image                     | Yes (or use nested `module`) |
-| `observableModules` | Modules visible to the linking process                                      | No       |
-| `launchers`         | Launcher commands (e.g. `name=module[/mainclass]`)                          | No       |
-| `locales`           | Locales to include (e.g. `en`, `fr`, or wildcard like `fr*`)                | No       |
-| `excludeResources`  | Files or patterns of resources to exclude                                   | No       |
-| `excludeFiles`      | Files or patterns of files to exclude                                       | No       |
+| Attribute           | Description                                                  | Required                         |
+|---------------------|--------------------------------------------------------------|----------------------------------|
+| `destDir`           | Target directory where the runtime image will be created     | Yes                              |
+| `modulepath`        | Path containing module definitions (typically `.jmod` files) | Yes (or use nested `modulepath`) |
+| `modules`           | Comma-separated list of modules to include in the image      | Yes (or use nested `module`)     |
+| `observableModules` | Modules visible to the linking process                       | No                               |
+| `launchers`         | Launcher commands (e.g. `name=module[/mainclass]`)           | No                               |
+| `locales`           | Locales to include (e.g. `en`, `fr`, or wildcard like `fr*`) | No                               |
+| `excludeResources`  | Files or patterns of resources to exclude                    | No                               |
+| `excludeFiles`      | Files or patterns of files to exclude                        | No                               |
 
 ## Nested Elements
 

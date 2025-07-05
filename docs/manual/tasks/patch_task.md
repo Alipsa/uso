@@ -28,14 +28,14 @@ target('applyPatches') {
 
 ## Attributes
 
-| Attribute     | Description                                                                | Required                                                   |
-|--------------:|----------------------------------------------------------------------------|------------------------------------------------------------|
-| `patchfile`   | Path to the patch file (unified diff format)                               | Yes                                                        |
-| `reversed`    | Apply patch in reverse (undo) (`true`/`false`, default: `false`)           | No                                                         |
-| `strip`       | Number of leading path components to strip from file paths (default: 0)    | No                                                         |
-| `input`       | Single file to patch (use with `output` when not using nested resources)   | One of `input` or nested resource                          |
-| `output`      | Destination for patched output; if omitted, patches are applied in place   | No                                                         |
-| `failOnError` | Fail the build if the patch cannot be applied (`true`/`false`, default: `true`) | No                                                     |
+|     Attribute | Description                                                                     | Required                          |
+|--------------:|---------------------------------------------------------------------------------|-----------------------------------|
+|   `patchfile` | Path to the patch file (unified diff format)                                    | Yes                               |
+|    `reversed` | Apply patch in reverse (undo) (`true`/`false`, default: `false`)                | No                                |
+|       `strip` | Number of leading path components to strip from file paths (default: 0)         | No                                |
+|       `input` | Single file to patch (use with `output` when not using nested resources)        | One of `input` or nested resource |
+|      `output` | Destination for patched output; if omitted, patches are applied in place        | No                                |
+| `failOnError` | Fail the build if the patch cannot be applied (`true`/`false`, default: `true`) | No                                |
 
 ## Nested Elements
 

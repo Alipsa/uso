@@ -23,15 +23,15 @@ target('loadFromUrl') {
 
 ## Attributes
 
-| Attribute     | Description                                                                    | Required |
-|---------------|--------------------------------------------------------------------------------|----------|
-| `property`    | Name of the property to set with the resource contents                         | Yes      |
-| `srcFile`     | File to read from                                                              | One of `srcFile`, `resource`, `url`, or nested resource |
-| `resource`    | Classpath resource name                                                        | One of `srcFile`, `resource`, `url`, or nested resource |
-| `url`         | URL to fetch content from                                                      | One of `srcFile`, `resource`, `url`, or nested resource |
-| `encoding`    | Character encoding to use when reading text                                    | No       |
-| `charset`     | Alias for `encoding`                                                           | No       |
-| `failonerror` | Whether to fail the build if loading fails (default: `true`)                   | No       |
+| Attribute     | Description                                                  | Required                                                |
+|---------------|--------------------------------------------------------------|---------------------------------------------------------|
+| `property`    | Name of the property to set with the resource contents       | Yes                                                     |
+| `srcFile`     | File to read from                                            | One of `srcFile`, `resource`, `url`, or nested resource |
+| `resource`    | Classpath resource name                                      | One of `srcFile`, `resource`, `url`, or nested resource |
+| `url`         | URL to fetch content from                                    | One of `srcFile`, `resource`, `url`, or nested resource |
+| `encoding`    | Character encoding to use when reading text                  | No                                                      |
+| `charset`     | Alias for `encoding`                                         | No                                                      |
+| `failonerror` | Whether to fail the build if loading fails (default: `true`) | No                                                      |
 
 ## Nested Elements
 

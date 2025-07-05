@@ -8,34 +8,34 @@ This task only invokes JavaCC if the grammar file is newer than the generated `.
 
 ## Parameters
 
-| Attribute             | Description                                                                                                | Required |
-|-----------------------|------------------------------------------------------------------------------------------------------------|----------|
-| `target`              | The grammar file to process.                                                                               | Yes      |
-| `javacchome`          | The directory containing the JavaCC distribution.                                                          | Yes      |
-| `outputdirectory`     | The directory to write the generated files to. If not set, the files are written to the directory containing the grammar file. | No       |
-| `buildparser`         | Sets the `BUILD_PARSER` grammar option. This is a boolean option.                                            | No       |
-| `buildtokenmanager`   | Sets the `BUILD_TOKEN_MANAGER` grammar option. This is a boolean option.                                     | No       |
-| `cachetokens`         | Sets the `CACHE_TOKENS` grammar option. This is a boolean option.                                            | No       |
-| `choiceambiguitycheck`| Sets the `CHOICE_AMBIGUITY_CHECK` grammar option. This is an integer option.                               | No       |
-| `commontokenaction`   | Sets the `COMMON_TOKEN_ACTION` grammar option. This is a boolean option.                                     | No       |
-| `debuglookahead`      | Sets the `DEBUG_LOOKAHEAD` grammar option. This is a boolean option.                                         | No       |
-| `debugparser`         | Sets the `DEBUG_PARSER` grammar option. This is a boolean option.                                            | No       |
-| `debugtokenmanager`   | Sets the `DEBUG_TOKEN_MANAGER` grammar option. This is a boolean option.                                     | No       |
-| `errorreporting`      | Sets the `ERROR_REPORTING` grammar option. This is a boolean option.                                         | No       |
-| `forcelacheck`        | Sets the `FORCE_LA_CHECK` grammar option. This is a boolean option.                                          | No       |
-| `ignorecase`          | Sets the `IGNORE_CASE` grammar option. This is a boolean option.                                             | No       |
-| `javaunicodeescape`   | Sets the `JAVA_UNICODE_ESCAPE` grammar option. This is a boolean option.                                     | No       |
-| `jdkversion`          | Sets the `JDK_VERSION` option. This is a string option.                                                      | No       |
-| `keeplinecolumn`      | Sets the `KEEP_LINE_COLUMN` grammar option. This is a boolean option.                                        | No       |
-| `lookahead`           | Sets the `LOOKAHEAD` grammar option. This is an integer option.                                              | No       |
-| `optimizetokenmanager`| Sets the `OPTIMIZE_TOKEN_MANAGER` grammar option. This is a boolean option.                                  | No       |
-| `otherambiguitycheck` | Sets the `OTHER_AMBIGUITY_CHECK` grammar option. This is an integer option.                                | No       |
-| `sanitycheck`         | Sets the `SANITY_CHECK` grammar option. This is a boolean option.                                            | No       |
-| `static`              | Sets the `STATIC` grammar option. This is a boolean option.                                                  | No       |
-| `unicodeinput`        | Sets the `UNICODE_INPUT` grammar option. This is a boolean option.                                           | No       |
-| `usercharstream`      | Sets the `USER_CHAR_STREAM` grammar option. This is a boolean option.                                        | No       |
-| `usertokenmanager`    | Sets the `USER_TOKEN_MANAGER` grammar option. This is a boolean option.                                      | No       |
-| `maxmemory`           | Max amount of memory to allocate to the forked JVM. *Since Ant 1.8.3*                                      | No       |
+| Attribute              | Description                                                                                                                    | Required |
+|------------------------|--------------------------------------------------------------------------------------------------------------------------------|----------|
+| `target`               | The grammar file to process.                                                                                                   | Yes      |
+| `javacchome`           | The directory containing the JavaCC distribution.                                                                              | Yes      |
+| `outputdirectory`      | The directory to write the generated files to. If not set, the files are written to the directory containing the grammar file. | No       |
+| `buildparser`          | Sets the `BUILD_PARSER` grammar option. This is a boolean option.                                                              | No       |
+| `buildtokenmanager`    | Sets the `BUILD_TOKEN_MANAGER` grammar option. This is a boolean option.                                                       | No       |
+| `cachetokens`          | Sets the `CACHE_TOKENS` grammar option. This is a boolean option.                                                              | No       |
+| `choiceambiguitycheck` | Sets the `CHOICE_AMBIGUITY_CHECK` grammar option. This is an integer option.                                                   | No       |
+| `commontokenaction`    | Sets the `COMMON_TOKEN_ACTION` grammar option. This is a boolean option.                                                       | No       |
+| `debuglookahead`       | Sets the `DEBUG_LOOKAHEAD` grammar option. This is a boolean option.                                                           | No       |
+| `debugparser`          | Sets the `DEBUG_PARSER` grammar option. This is a boolean option.                                                              | No       |
+| `debugtokenmanager`    | Sets the `DEBUG_TOKEN_MANAGER` grammar option. This is a boolean option.                                                       | No       |
+| `errorreporting`       | Sets the `ERROR_REPORTING` grammar option. This is a boolean option.                                                           | No       |
+| `forcelacheck`         | Sets the `FORCE_LA_CHECK` grammar option. This is a boolean option.                                                            | No       |
+| `ignorecase`           | Sets the `IGNORE_CASE` grammar option. This is a boolean option.                                                               | No       |
+| `javaunicodeescape`    | Sets the `JAVA_UNICODE_ESCAPE` grammar option. This is a boolean option.                                                       | No       |
+| `jdkversion`           | Sets the `JDK_VERSION` option. This is a string option.                                                                        | No       |
+| `keeplinecolumn`       | Sets the `KEEP_LINE_COLUMN` grammar option. This is a boolean option.                                                          | No       |
+| `lookahead`            | Sets the `LOOKAHEAD` grammar option. This is an integer option.                                                                | No       |
+| `optimizetokenmanager` | Sets the `OPTIMIZE_TOKEN_MANAGER` grammar option. This is a boolean option.                                                    | No       |
+| `otherambiguitycheck`  | Sets the `OTHER_AMBIGUITY_CHECK` grammar option. This is an integer option.                                                    | No       |
+| `sanitycheck`          | Sets the `SANITY_CHECK` grammar option. This is a boolean option.                                                              | No       |
+| `static`               | Sets the `STATIC` grammar option. This is a boolean option.                                                                    | No       |
+| `unicodeinput`         | Sets the `UNICODE_INPUT` grammar option. This is a boolean option.                                                             | No       |
+| `usercharstream`       | Sets the `USER_CHAR_STREAM` grammar option. This is a boolean option.                                                          | No       |
+| `usertokenmanager`     | Sets the `USER_TOKEN_MANAGER` grammar option. This is a boolean option.                                                        | No       |
+| `maxmemory`            | Max amount of memory to allocate to the forked JVM. *Since Ant 1.8.3*                                                          | No       |
 
 
 

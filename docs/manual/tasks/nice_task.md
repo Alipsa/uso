@@ -16,11 +16,11 @@ This runs `make all` with a niceness of 10, lowering its scheduling priority.
 
 ## Attributes
 
-| Attribute | Description                                     | Required |
-|----------:|-------------------------------------------------|----------|
-| `nice`    | Numeric niceness value (`-20` to `19`, default: `0`) | Yes      |
-| `executable` | The command to run at the specified niceness        | No*     |
-| `arguments`  | Arguments for the executable (`args` attribute or nested `<arg>`) | No* |
+|    Attribute | Description                                                       | Required |
+|-------------:|-------------------------------------------------------------------|----------|
+|       `nice` | Numeric niceness value (`-20` to `19`, default: `0`)              | Yes      |
+| `executable` | The command to run at the specified niceness                      | No*      |
+|  `arguments` | Arguments for the executable (`args` attribute or nested `<arg>`) | No*      |
 
 :star: Note: Typically used with `<exec>` nested inside the `nice` closure rather than its own attributes.
 

@@ -27,11 +27,11 @@ This runs the `compile.sh`, tests, and resource copy in parallel using up to 4 t
 
 ## Attributes
 
-| Attribute      | Description                                                                       | Required |
-|---------------:|-----------------------------------------------------------------------------------|----------|
-| `threadCount`   | Maximum number of threads to use (default: number of available processors)         | No       |
-| `timeout`       | Maximum time in milliseconds to wait for all threads to finish (default: infinite)| No       |
-| `failonerror`   | Whether to stop all threads on first error (`true`) or continue (`false`)          | No (default: `true`) |
+|     Attribute | Description                                                                        | Required             |
+|--------------:|------------------------------------------------------------------------------------|----------------------|
+| `threadCount` | Maximum number of threads to use (default: number of available processors)         | No                   |
+|     `timeout` | Maximum time in milliseconds to wait for all threads to finish (default: infinite) | No                   |
+| `failonerror` | Whether to stop all threads on first error (`true`) or continue (`false`)          | No (default: `true`) |
 
 ## Notes
 

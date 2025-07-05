@@ -18,17 +18,17 @@ target('createJmod') {
 
 ## Attributes
 
-| Attribute         | Description                                                                                                 | Required |
-|------------------|-------------------------------------------------------------------------------------------------------------|----------|
-| `destFile`        | Path to the `.jmod` file to be created                                                                     | Yes      |
-| `classpath`       | Path(s) to classes or JARs to include in the module                                                        | Yes (or nested classpath) |
-| `modulepath`      | Path(s) to required modules                                                                                 | No       |
-| `version`         | Module version string                                                                                      | No       |
-| `mainclass`       | Entry point class                                                                                          | No       |
-| `platform`        | Target platform for the module                                                                             | No       |
-| `resolveByDefault`| Whether the module is resolved by default                                                                  | No       |
-| `hashModulesPattern` | Pattern of modules whose dependencies should be hashed                                                  | No       |
-| `moduleWarnings`  | Comma-separated list of module warnings to include (e.g. deprecated, incubating)                           | No       |
+| Attribute            | Description                                                                      | Required                  |
+|----------------------|----------------------------------------------------------------------------------|---------------------------|
+| `destFile`           | Path to the `.jmod` file to be created                                           | Yes                       |
+| `classpath`          | Path(s) to classes or JARs to include in the module                              | Yes (or nested classpath) |
+| `modulepath`         | Path(s) to required modules                                                      | No                        |
+| `version`            | Module version string                                                            | No                        |
+| `mainclass`          | Entry point class                                                                | No                        |
+| `platform`           | Target platform for the module                                                   | No                        |
+| `resolveByDefault`   | Whether the module is resolved by default                                        | No                        |
+| `hashModulesPattern` | Pattern of modules whose dependencies should be hashed                           | No                        |
+| `moduleWarnings`     | Comma-separated list of module warnings to include (e.g. deprecated, incubating) | No                        |
 
 ## Nested Elements
 

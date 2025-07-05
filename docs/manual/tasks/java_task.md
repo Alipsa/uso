@@ -8,37 +8,37 @@ It can execute a class by its name or run an executable JAR file. When forking a
 
 ## Parameters
 
-| Attribute          | Description                                                                                                | Required                                                                 |
-|--------------------|------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| `classname`        | The Java class to execute.                                                                                 | Yes, unless `jar` or `module` is specified.                                |
-| `jar`              | The JAR file to execute. Its manifest must specify a `Main-Class`.                                         | Yes, unless `classname` or `module` is specified.                          |
-| `module`           | The Java module to execute (e.g., `com.example.mymodule` or `com.example.mymodule/com.example.MainClass`). | Yes, unless `classname` or `jar` is specified. *Since Ant 1.9.7*       |
-| `args`             | A string of command-line arguments to pass to the Java class.                                              | No                                                                       |
-| `classpath`        | The classpath to use for the execution.                                                                    | No                                                                       |
-| `classpathref`     | Adds a referenced classpath to the classpath.                                                              | No                                                                       |
-| `modulepath`       | The modulepath to use for the execution. *Since Ant 1.9.7*                                                 | No                                                                       |
-| `modulepathref`    | Adds a referenced modulepath to the modulepath. *Since Ant 1.9.7*                                          | No                                                                       |
-| `upgrademodulepath`| The location of modules that replace upgradeable modules in the runtime image. *Since Ant 1.9.7*           | No                                                                       |
-| `fork`             | If `true`, run the Java class in a separate JVM.                                                           | No; defaults to `false`                                                  |
-| `spawn`            | If `true`, run the Java class in a separate JVM but do not wait for it to finish. Implies `fork="true"`.    | No; defaults to `false`. *Since Ant 1.6*                                 |
-| `jvm`              | The command used to invoke the Java Virtual Machine, e.g., `gij` or `d:/java/bin/java`.                    | No; defaults to the `java` command found in `PATH`.                      |
-| `maxmemory`        | Corresponds to `java -Xmx` or `-mx`.                                                                       | No                                                                       |
-| `jvmargs`          | A string of command-line arguments to pass to the JVM.                                                     | No                                                                       |
-| `dir`              | The working directory for the new JVM; ignored if `fork` is `false`.                                       | No; defaults to the project's base directory.                            |
-| `output`           | Name of a file to which to redirect standard output.                                                       | No                                                                       |
-| `input`            | Name of a file from which to redirect standard input.                                                      | No                                                                       |
-| `inputstring`      | A string to use as standard input.                                                                         | No                                                                       |
-| `error`            | Name of a file to which to redirect standard error.                                                        | No                                                                       |
-| `outputproperty`   | The name of a property in which the standard output of the command should be stored.                       | No                                                                       |
-| `errorproperty`    | The name of a property in which the standard error of the command should be stored.                        | No                                                                       |
-| `failonerror`      | If `true`, stop the build if the command exits with a non-zero return code.                                | No; defaults to `false` if `fork` is `false`, `true` if `fork` is `true`.|
-| `resultproperty`   | The name of a property in which the return code of the command should be stored.                           | No                                                                       |
-| `timeout`          | Stop the command if it doesn't finish within the specified time (in milliseconds).                         | No                                                                       |
-| `append`           | If `true`, append output to existing files; otherwise, overwrite.                                          | No; defaults to `false`.                                                 |
-| `newenvironment`   | If `true`, do not propagate the old environment when `fork`ing.                                            | No; defaults to `false`.                                                 |
-| `taskname`         | The name to use for the task in log messages.                                                              | No; defaults to "java".                                                  |
-| `logError`         | If `true`, send output from `stderr` to Ant's logging system.                                              | No; defaults to `false`. *Since Ant 1.6.2*                               |
-| `addsourcefileextensions` | If `true`, try to append <q>.java</q> and <q>.class</q> to the classname.                            | No; defaults to `true`. *Since Ant 1.8.2*                                |
+| Attribute                 | Description                                                                                                | Required                                                                  |
+|---------------------------|------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| `classname`               | The Java class to execute.                                                                                 | Yes, unless `jar` or `module` is specified.                               |
+| `jar`                     | The JAR file to execute. Its manifest must specify a `Main-Class`.                                         | Yes, unless `classname` or `module` is specified.                         |
+| `module`                  | The Java module to execute (e.g., `com.example.mymodule` or `com.example.mymodule/com.example.MainClass`). | Yes, unless `classname` or `jar` is specified. *Since Ant 1.9.7*          |
+| `args`                    | A string of command-line arguments to pass to the Java class.                                              | No                                                                        |
+| `classpath`               | The classpath to use for the execution.                                                                    | No                                                                        |
+| `classpathref`            | Adds a referenced classpath to the classpath.                                                              | No                                                                        |
+| `modulepath`              | The modulepath to use for the execution. *Since Ant 1.9.7*                                                 | No                                                                        |
+| `modulepathref`           | Adds a referenced modulepath to the modulepath. *Since Ant 1.9.7*                                          | No                                                                        |
+| `upgrademodulepath`       | The location of modules that replace upgradeable modules in the runtime image. *Since Ant 1.9.7*           | No                                                                        |
+| `fork`                    | If `true`, run the Java class in a separate JVM.                                                           | No; defaults to `false`                                                   |
+| `spawn`                   | If `true`, run the Java class in a separate JVM but do not wait for it to finish. Implies `fork="true"`.   | No; defaults to `false`. *Since Ant 1.6*                                  |
+| `jvm`                     | The command used to invoke the Java Virtual Machine, e.g., `gij` or `d:/java/bin/java`.                    | No; defaults to the `java` command found in `PATH`.                       |
+| `maxmemory`               | Corresponds to `java -Xmx` or `-mx`.                                                                       | No                                                                        |
+| `jvmargs`                 | A string of command-line arguments to pass to the JVM.                                                     | No                                                                        |
+| `dir`                     | The working directory for the new JVM; ignored if `fork` is `false`.                                       | No; defaults to the project's base directory.                             |
+| `output`                  | Name of a file to which to redirect standard output.                                                       | No                                                                        |
+| `input`                   | Name of a file from which to redirect standard input.                                                      | No                                                                        |
+| `inputstring`             | A string to use as standard input.                                                                         | No                                                                        |
+| `error`                   | Name of a file to which to redirect standard error.                                                        | No                                                                        |
+| `outputproperty`          | The name of a property in which the standard output of the command should be stored.                       | No                                                                        |
+| `errorproperty`           | The name of a property in which the standard error of the command should be stored.                        | No                                                                        |
+| `failonerror`             | If `true`, stop the build if the command exits with a non-zero return code.                                | No; defaults to `false` if `fork` is `false`, `true` if `fork` is `true`. |
+| `resultproperty`          | The name of a property in which the return code of the command should be stored.                           | No                                                                        |
+| `timeout`                 | Stop the command if it doesn't finish within the specified time (in milliseconds).                         | No                                                                        |
+| `append`                  | If `true`, append output to existing files; otherwise, overwrite.                                          | No; defaults to `false`.                                                  |
+| `newenvironment`          | If `true`, do not propagate the old environment when `fork`ing.                                            | No; defaults to `false`.                                                  |
+| `taskname`                | The name to use for the task in log messages.                                                              | No; defaults to "java".                                                   |
+| `logError`                | If `true`, send output from `stderr` to Ant's logging system.                                              | No; defaults to `false`. *Since Ant 1.6.2*                                |
+| `addsourcefileextensions` | If `true`, try to append <q>.java</q> and <q>.class</q> to the classname.                                  | No; defaults to `true`. *Since Ant 1.8.2*                                 |
 
 
 

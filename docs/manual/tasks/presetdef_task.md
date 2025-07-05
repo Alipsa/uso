@@ -23,7 +23,7 @@ target('packageText') {
 
 | Attribute  | Description                                                                  | Required |
 |-----------:|------------------------------------------------------------------------------|----------|
-| `name`     | Name of the new custom task or type to define                                | Yes      |
+|     `name` | Name of the new custom task or type to define                                | Yes      |
 
 ## Nested Elements
 

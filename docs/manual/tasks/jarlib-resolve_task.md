@@ -18,7 +18,7 @@ This will try to resolve a JAR that satisfies the `myExt` extension, and assign 
 ## Attributes
 
 | Attribute        | Description                                                                  | Required |
-|------------------|-------------------------------------------------------------------------------|----------|
+|------------------|------------------------------------------------------------------------------|----------|
 | `property`       | Name of the property to set with the resolved JAR path                       | Yes      |
 | `failOnError`    | If true, fails the build if resolution fails (default: true)                 | No       |
 | `checkExtension` | Whether to verify the resolved JAR satisfies the required extension metadata | No       |

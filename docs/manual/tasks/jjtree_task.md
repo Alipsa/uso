@@ -14,24 +14,24 @@ To use the `jjtree` Ant task within a Groovy script via `AntBuilder`, you can ca
 
 ### Key Parameters (and their Groovy equivalents):
 
-| Ant Attribute     | Groovy Parameter Type | Description                                                                                                                               | Required |
-|-------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------|----------|
-| `target`          | `String`              | The JJTree grammar file to process (e.g., `src/Parser.jjt`).                                                                              | Yes      |
-| `javacchome`      | `String`              | The directory containing the JavaCC distribution.                                                                                         | Yes      |
-| `outputdirectory` | `String`              | The directory to write the generated JavaCC grammar and node files to. If not set, files are written to the directory containing the grammar file. | No       |
-| `outputfile`      | `String`              | The file to write the generated JavaCC grammar file to. If not set, defaults to the input file name with a `.jj` suffix. Relative to `outputdirectory` if specified. | No       |
-| `buildnodefiles`  | `boolean`             | Sets the `BUILD_NODE_FILES` grammar option.                                                                                                 | No       |
-| `multi`           | `boolean`             | Sets the `MULTI` grammar option.                                                                                                            | No       |
-| `nodedefaultvoid` | `boolean`             | Sets the `NODE_DEFAULT_VOID` grammar option.                                                                                              | No       |
-| `nodefactory`     | `boolean`             | Sets the `NODE_FACTORY` grammar option.                                                                                                   | No       |
-| `nodescopehook`   | `boolean`             | Sets the `NODE_SCOPE_HOOK` grammar option.                                                                                                | No       |
-| `nodeusesparser`  | `boolean`             | Sets the `NODE_USES_PARSER` grammar option.                                                                                               | No       |
-| `static`          | `boolean`             | Sets the `STATIC` grammar option.                                                                                                         | No       |
-| `visitor`         | `boolean`             | Sets the `VISITOR` grammar option.                                                                                                        | No       |
-| `nodepackage`     | `String`              | Sets the `NODE_PACKAGE` grammar option (package for generated node classes).                                                              | No       |
-| `visitorexception`| `String`              | Sets the `VISITOR_EXCEPTION` grammar option (exception thrown by visitor methods).                                                        | No       |
-| `nodeprefix`      | `String`              | Sets the `NODE_PREFIX` grammar option (prefix for node class names, e.g., "AST").                                                         | No       |
-| `maxmemory`       | `String`              | Max amount of memory to allocate to the forked JVM (e.g., "128m"). _Since Ant 1.8.3._                                                    | No       |
+| Ant Attribute      | Groovy Parameter Type | Description                                                                                                                                                          | Required |
+|--------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `target`           | `String`              | The JJTree grammar file to process (e.g., `src/Parser.jjt`).                                                                                                         | Yes      |
+| `javacchome`       | `String`              | The directory containing the JavaCC distribution.                                                                                                                    | Yes      |
+| `outputdirectory`  | `String`              | The directory to write the generated JavaCC grammar and node files to. If not set, files are written to the directory containing the grammar file.                   | No       |
+| `outputfile`       | `String`              | The file to write the generated JavaCC grammar file to. If not set, defaults to the input file name with a `.jj` suffix. Relative to `outputdirectory` if specified. | No       |
+| `buildnodefiles`   | `boolean`             | Sets the `BUILD_NODE_FILES` grammar option.                                                                                                                          | No       |
+| `multi`            | `boolean`             | Sets the `MULTI` grammar option.                                                                                                                                     | No       |
+| `nodedefaultvoid`  | `boolean`             | Sets the `NODE_DEFAULT_VOID` grammar option.                                                                                                                         | No       |
+| `nodefactory`      | `boolean`             | Sets the `NODE_FACTORY` grammar option.                                                                                                                              | No       |
+| `nodescopehook`    | `boolean`             | Sets the `NODE_SCOPE_HOOK` grammar option.                                                                                                                           | No       |
+| `nodeusesparser`   | `boolean`             | Sets the `NODE_USES_PARSER` grammar option.                                                                                                                          | No       |
+| `static`           | `boolean`             | Sets the `STATIC` grammar option.                                                                                                                                    | No       |
+| `visitor`          | `boolean`             | Sets the `VISITOR` grammar option.                                                                                                                                   | No       |
+| `nodepackage`      | `String`              | Sets the `NODE_PACKAGE` grammar option (package for generated node classes).                                                                                         | No       |
+| `visitorexception` | `String`              | Sets the `VISITOR_EXCEPTION` grammar option (exception thrown by visitor methods).                                                                                   | No       |
+| `nodeprefix`       | `String`              | Sets the `NODE_PREFIX` grammar option (prefix for node class names, e.g., "AST").                                                                                    | No       |
+| `maxmemory`        | `String`              | Max amount of memory to allocate to the forked JVM (e.g., "128m"). _Since Ant 1.8.3._                                                                                | No       |
 
 ### Example Groovy DSL Usage:
 

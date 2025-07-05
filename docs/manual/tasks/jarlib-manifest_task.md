@@ -18,9 +18,9 @@ This writes `build/myManifest.txt` with entries derived from the referenced exte
 
 ## Attributes
 
-| Attribute | Description                        | Required |
-|----------:|------------------------------------|----------|
-| `destfile`| File to write the generated manifest to | Yes      |
+|  Attribute | Description                             | Required |
+|-----------:|-----------------------------------------|----------|
+| `destfile` | File to write the generated manifest to | Yes      |
 
 ## Nested Elements
 

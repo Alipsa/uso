@@ -22,15 +22,15 @@ target('filesetToProperty') {
 
 ## Attributes
 
-| Attribute   | Description                                                                                | Required |
-|------------:|--------------------------------------------------------------------------------------------|----------|
-| `property`  | Name of the property to set with the converted path                                       | Yes      |
-| `pathref`   | Reference to an existing Ant `Path` or classpath                                           | One of `pathref`, `fileset`, or nested resource |
-| `pathsep`   | String used to separate path elements (default: system path separator)                     | No       |
-| `dirsep`    | Directory separator to normalize paths (default: system file separator)                    | No       |
-| `prefix`    | Prefix added to each path element in the output                                           | No       |
-| `suffix`    | Suffix added to each path element in the output                                           | No       |
-| `targetos`  | If specified (`windows`, `unix`), uses that OS’s separators regardless of current platform | No       |
+|  Attribute | Description                                                                                | Required                                        |
+|-----------:|--------------------------------------------------------------------------------------------|-------------------------------------------------|
+| `property` | Name of the property to set with the converted path                                        | Yes                                             |
+|  `pathref` | Reference to an existing Ant `Path` or classpath                                           | One of `pathref`, `fileset`, or nested resource |
+|  `pathsep` | String used to separate path elements (default: system path separator)                     | No                                              |
+|   `dirsep` | Directory separator to normalize paths (default: system file separator)                    | No                                              |
+|   `prefix` | Prefix added to each path element in the output                                            | No                                              |
+|   `suffix` | Suffix added to each path element in the output                                            | No                                              |
+| `targetos` | If specified (`windows`, `unix`), uses that OS’s separators regardless of current platform | No                                              |
 
 ## Nested Elements
 

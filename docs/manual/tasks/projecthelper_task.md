@@ -24,12 +24,12 @@ target('importWithCustomHelper') {
 
 ## Attributes
 
-| Attribute         | Description                                                                                       | Required |
-|------------------:|---------------------------------------------------------------------------------------------------|----------|
-| `buildfile`       | Path to the external build file to parse                                                          | Yes      |
-| `helperid`        | Registered ProjectHelper ID (e.g., `xml`, `antlib`) to use                                        | No (default: `xml`) |
-| `helperclassname` | Fully qualified class name of a custom `ProjectHelper` implementation                             | No       |
-| `project`         | Reference to the Ant project to configure (defaults to the current project)                       | No       |
+|         Attribute | Description                                                                 | Required            |
+|------------------:|-----------------------------------------------------------------------------|---------------------|
+|       `buildfile` | Path to the external build file to parse                                    | Yes                 |
+|        `helperid` | Registered ProjectHelper ID (e.g., `xml`, `antlib`) to use                  | No (default: `xml`) |
+| `helperclassname` | Fully qualified class name of a custom `ProjectHelper` implementation       | No                  |
+|         `project` | Reference to the Ant project to configure (defaults to the current project) | No                  |
 
 ## Notes
 

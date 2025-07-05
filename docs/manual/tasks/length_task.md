@@ -48,15 +48,15 @@ Sets the property if the file is larger than 0 bytes.
 
 ## Attributes
 
-| Attribute   | Description                                                             | Required |
-|------------:|-------------------------------------------------------------------------|----------|
-| `string`     | String whose length will be computed                                   | One of `string`, `file`, or nested resource |
-| `file`       | File whose size in bytes will be computed                              | One of `string`, `file`, or nested resource |
-| `property`   | Name of the property to assign the computed length                     | No       |
-| `length`     | Length to compare against (used in conditions)                         | No       |
-| `when`       | Comparison operator (`equal`, `gt`, `lt`, `ge`, `le`, `ne`)            | No (used in conditions) |
-| `mode`       | `all` (sum sizes) or `each` (report each resource)                     | No (default: `all`) |
-| `trim`       | Whether to trim whitespace when computing string length                | No (default: `false`) |
+|  Attribute | Description                                                 | Required                                    |
+|-----------:|-------------------------------------------------------------|---------------------------------------------|
+|   `string` | String whose length will be computed                        | One of `string`, `file`, or nested resource |
+|     `file` | File whose size in bytes will be computed                   | One of `string`, `file`, or nested resource |
+| `property` | Name of the property to assign the computed length          | No                                          |
+|   `length` | Length to compare against (used in conditions)              | No                                          |
+|     `when` | Comparison operator (`equal`, `gt`, `lt`, `ge`, `le`, `ne`) | No (used in conditions)                     |
+|     `mode` | `all` (sum sizes) or `each` (report each resource)          | No (default: `all`)                         |
+|     `trim` | Whether to trim whitespace when computing string length     | No (default: `false`)                       |
 
 ## Notes
 

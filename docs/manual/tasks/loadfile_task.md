@@ -14,12 +14,12 @@ This sets the property `version` to the contents of the file `version.txt`.
 
 ## Attributes
 
-| Attribute     | Description                                                    | Required |
-|---------------|----------------------------------------------------------------|----------|
-| `property`     | The name of the property to assign the file contents to        | Yes      |
-| `srcFile`      | The file to read from                                          | Yes      |
-| `encoding`     | The encoding used to read the file                             | No       |
-| `failonerror`  | Whether to fail the build if the file cannot be read           | No (default: true) |
+| Attribute     | Description                                             | Required           |
+|---------------|---------------------------------------------------------|--------------------|
+| `property`    | The name of the property to assign the file contents to | Yes                |
+| `srcFile`     | The file to read from                                   | Yes                |
+| `encoding`    | The encoding used to read the file                      | No                 |
+| `failonerror` | Whether to fail the build if the file cannot be read    | No (default: true) |
 
 ## Notes
 

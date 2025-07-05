@@ -25,13 +25,13 @@ target('convertAllProperties') {
 
 ## Attributes
 
-| Attribute     | Description                                                                  | Required                                                       |
-|--------------:|------------------------------------------------------------------------------|----------------------------------------------------------------|
-| `src`         | Source file to convert                                                       | One of `src` or nested `<fileset>` (when using `destdir`)      |
-| `dest`        | Destination file for the converted output                                    | Required if `src` is used                                       |
-| `destdir`     | Directory to place converted files                                           | Required if nested `<fileset>` is used                          |
-| `encoding`    | Character encoding of input files (default: platform default)                | No                                                             |
-| `propertyfile`| Alias for `src` (supported for backward compatibility)                       | No                                                             |
+|      Attribute | Description                                                   | Required                                                  |
+|---------------:|---------------------------------------------------------------|-----------------------------------------------------------|
+|          `src` | Source file to convert                                        | One of `src` or nested `<fileset>` (when using `destdir`) |
+|         `dest` | Destination file for the converted output                     | Required if `src` is used                                 |
+|      `destdir` | Directory to place converted files                            | Required if nested `<fileset>` is used                    |
+|     `encoding` | Character encoding of input files (default: platform default) | No                                                        |
+| `propertyfile` | Alias for `src` (supported for backward compatibility)        | No                                                        |
 
 ## Nested Elements
 

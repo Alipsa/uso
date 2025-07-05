@@ -40,15 +40,15 @@ Only lines containing the word "database" will be loaded.
 
 ## Attributes
 
-| Attribute       | Description                                                              | Required |
-|----------------|--------------------------------------------------------------------------|----------|
-| `srcFile`       | File to load from                                                        | One of `srcFile`, `resource`, or nested resource |
-| `resource`      | Resource to load from (e.g., from classpath)                             | One of `srcFile`, `resource`, or nested resource |
-| `encoding`      | Encoding of the file or resource                                         | No       |
-| `classpath`     | Classpath for resource loading                                           | No       |
-| `classpathref`  | Reference to a path for classpath                                        | No       |
-| `prefix`        | Prefix to apply to all property names                                    | No       |
-| `prefixValues`  | Whether to prefix values in addition to keys (default: true)             | No       |
+| Attribute      | Description                                                  | Required                                         |
+|----------------|--------------------------------------------------------------|--------------------------------------------------|
+| `srcFile`      | File to load from                                            | One of `srcFile`, `resource`, or nested resource |
+| `resource`     | Resource to load from (e.g., from classpath)                 | One of `srcFile`, `resource`, or nested resource |
+| `encoding`     | Encoding of the file or resource                             | No                                               |
+| `classpath`    | Classpath for resource loading                               | No                                               |
+| `classpathref` | Reference to a path for classpath                            | No                                               |
+| `prefix`       | Prefix to apply to all property names                        | No                                               |
+| `prefixValues` | Whether to prefix values in addition to keys (default: true) | No                                               |
 
 ## Notes
 

@@ -46,7 +46,6 @@ class ProjectBuilder extends AntBuilder {
     typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
     taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
     taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
-    //taskdef(name: 'uso', classname: 'se.alipsa.uso.core.tasks.Uso')
   }
 
   void target(Map<String, String> params, Closure closure) {

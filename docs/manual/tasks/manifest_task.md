@@ -33,10 +33,10 @@ target('generateManifestFile') {
 
 ## Attributes
 
-| Attribute | Description                                                              | Required |
-|----------:|--------------------------------------------------------------------------|----------|
-| `file`    | Path to write the manifest to (if outside a `jar` task); defaults to `META-INF/MANIFEST.MF` inside a JAR | No       |
-| `mode`    | How to handle existing manifests: `update`, `merge`, or `skip`           | No (default: `update`) |
+| Attribute | Description                                                                                              | Required               |
+|----------:|----------------------------------------------------------------------------------------------------------|------------------------|
+|    `file` | Path to write the manifest to (if outside a `jar` task); defaults to `META-INF/MANIFEST.MF` inside a JAR | No                     |
+|    `mode` | How to handle existing manifests: `update`, `merge`, or `skip`                                           | No (default: `update`) |
 
 ## Nested Elements
 

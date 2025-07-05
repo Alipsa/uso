@@ -51,13 +51,13 @@ target('cleanupProperties') {
 
 ## Attributes
 
-| Attribute      | Description                                                       | Required |
-|---------------:|-------------------------------------------------------------------|----------|
-| `file`         | Path to the properties file to read/update                        | Yes      |
-| `encoding`     | Character encoding of the file (default: platform encoding)       | No       |
-| `comment`      | Header comment to add at the top of the file                      | No       |
-| `commentchar`  | Character to use for comment lines (default: `#`)                 | No       |
-| `keepformat`   | Preserve the existing file format and comments (`true`/`false`)   | No (default: `false`) |
+|     Attribute | Description                                                     | Required              |
+|--------------:|-----------------------------------------------------------------|-----------------------|
+|        `file` | Path to the properties file to read/update                      | Yes                   |
+|    `encoding` | Character encoding of the file (default: platform encoding)     | No                    |
+|     `comment` | Header comment to add at the top of the file                    | No                    |
+| `commentchar` | Character to use for comment lines (default: `#`)               | No                    |
+|  `keepformat` | Preserve the existing file format and comments (`true`/`false`) | No (default: `false`) |
 
 ## Nested Elements
 

@@ -46,11 +46,11 @@ For direct execution within a Groovy script that's acting as the main build file
 
 The `include` task in Ant has the following attributes:
 
-| Attribute        | Description                                                                                                                               | Required                                                                                                |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| `file`           | The name of the file to include. The path is resolved relative to the directory of the current build file.                                  | Yes, unless a nested resource collection is used.                                                        |
-| `as`             | The prefix to use for the targets in the included file. If not specified, the `name` attribute of the included file's `<project>` tag is used. | No. If not specified and the included file's `<project>` tag has no `name` attribute, the build will fail. |
-| `optional`       | Specifies whether the include is optional. If `true` and the file is not found, the build will not fail. Defaults to `false`.             | No                                                                                                      |
+| Attribute  | Description                                                                                                                                    | Required                                                                                                   |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `file`     | The name of the file to include. The path is resolved relative to the directory of the current build file.                                     | Yes, unless a nested resource collection is used.                                                          |
+| `as`       | The prefix to use for the targets in the included file. If not specified, the `name` attribute of the included file's `<project>` tag is used. | No. If not specified and the included file's `<project>` tag has no `name` attribute, the build will fail. |
+| `optional` | Specifies whether the include is optional. If `true` and the file is not found, the build will not fail. Defaults to `false`.                  | No                                                                                                         |
 
 ### Parameters as nested elements
 

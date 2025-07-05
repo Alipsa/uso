@@ -28,13 +28,13 @@ target('setupMultipleRecorders') {
 
 ## Attributes
 
-| Attribute   | Description                                                                                                                         | Required |
-|------------:|-------------------------------------------------------------------------------------------------------------------------------------|----------|
-| `name`      | Unique identifier and filename for the recorder (the log file path).                                                               | Yes      |
-| `action`    | Controls the recorder state: `start` or `stop`. Defaults to `start` on first use, and no change on subsequent calls if omitted.    | No       |
-| `append`    | Whether to append to an existing file (`true`) or overwrite it (`false`). Only applies the first time the recorder is created.      | No       |
-| `emacsmode` | If `true`, removes task banners (mimics Ant’s `-emacs` switch).                                                                    | No       |
-| `loglevel`  | Logging level for the recorder: `error`, `warn`, `info`, `verbose`, or `debug`. Defaults to no change on subsequent calls.          | No       |
+|   Attribute | Description                                                                                                                     | Required |
+|------------:|---------------------------------------------------------------------------------------------------------------------------------|----------|
+|      `name` | Unique identifier and filename for the recorder (the log file path).                                                            | Yes      |
+|    `action` | Controls the recorder state: `start` or `stop`. Defaults to `start` on first use, and no change on subsequent calls if omitted. | No       |
+|    `append` | Whether to append to an existing file (`true`) or overwrite it (`false`). Only applies the first time the recorder is created.  | No       |
+| `emacsmode` | If `true`, removes task banners (mimics Ant’s `-emacs` switch).                                                                 | No       |
+|  `loglevel` | Logging level for the recorder: `error`, `warn`, `info`, `verbose`, or `debug`. Defaults to no change on subsequent calls.      | No       |
 
 ## Notes
 

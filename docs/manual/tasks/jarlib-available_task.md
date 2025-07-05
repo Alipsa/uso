@@ -8,10 +8,10 @@ Note that this task works with extensions as defined by the "Optional Package" s
 
 ## Parameters
 
-| Attribute | Description | Required |
-| --- | --- | --- |
-| `property` | The name of property to set if extensions is available | Yes |
-| `file` | The file to check for extension | Yes, unless a nested `<extensionSet>` or `<fileset>` is specified |
+| Attribute  | Description                                            | Required                                                          |
+|------------|--------------------------------------------------------|-------------------------------------------------------------------|
+| `property` | The name of property to set if extensions is available | Yes                                                               |
+| `file`     | The file to check for extension                        | Yes, unless a nested `<extensionSet>` or `<fileset>` is specified |
 
 ### Parameters specified as nested elements
 

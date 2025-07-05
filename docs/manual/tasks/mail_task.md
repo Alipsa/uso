@@ -35,30 +35,30 @@ target('sendMailWithAttachment') {
 
 ## Attributes
 
-| Attribute                  | Description                                                                                          | Required        |
-|---------------------------|------------------------------------------------------------------------------------------------------|----------------|
-| `from`                     | Email address of sender (or nested `<from>` element)                                                 | One of          |
-| `replyto`                  | Reply-to email address (or nested `<replyto>`)                                                       | No             |
-| `tolist`                   | Comma-separated list of recipients (or nested `<to>`)                                                | One of          |
-| `cclist`                   | Comma-separated list of CC recipients (or nested `<cc>`)                                             | No             |
-| `bcclist`                  | Comma-separated list of BCC recipients (or nested `<bcc>`)                                           | No             |
-| `subject`                  | Email subject line                                                                                  | No             |
-| `message`                  | Message body text (or nested `<message>` element)                                                    | One of          |
-| `messagefile`              | Path to file to send as message body                                                                | No             |
-| `messagefileinputencoding` | Encoding of the input message file                                                                  | No             |
-| `messagemimetype`          | Content type of the message (default: `text/plain`)                                                  | No             |
-| `files`                    | Comma- or space-separated list of files to attach (or nested `<attachments>` with `<fileset>`)       | No             |
-| `failonerror`              | Halt build on error (default: `true`)                                                                | No             |
-| `includefilenames`         | Include filenames before attachment contents (default: `false`, plain encoding only)                 | No             |
-| `mailhost`                 | SMTP server hostname (default: `localhost`)                                                          | No             |
-| `mailport`                 | SMTP server TCP port (default: `25`)                                                                 | No             |
-| `user`                     | Username for SMTP authentication (requires JavaMail, MIME only)                                       | No             |
-| `password`                 | Password for SMTP authentication (requires JavaMail, MIME only)                                       | No             |
-| `ssl`                      | Enable SSL/TLS (`true`/`false`, MIME only)                                                          | No             |
-| `encoding`                 | Email content encoding: `mime`, `uu`, `plain`, `auto` (default: `auto`)                              | No             |
-| `charset`                  | Character set of the email (mutually exclusive with nested `<message>`)                              | No             |
-| `ignoreInvalidRecipients`  | Continue sending if some recipients are invalid (default: `false`)                                  | No             |
-| `enableStartTLS`           | Enables STARTTLS encryption (requires JavaMail)                                                      | No             |
+| Attribute                  | Description                                                                                    | Required |
+|----------------------------|------------------------------------------------------------------------------------------------|----------|
+| `from`                     | Email address of sender (or nested `<from>` element)                                           | One of   |
+| `replyto`                  | Reply-to email address (or nested `<replyto>`)                                                 | No       |
+| `tolist`                   | Comma-separated list of recipients (or nested `<to>`)                                          | One of   |
+| `cclist`                   | Comma-separated list of CC recipients (or nested `<cc>`)                                       | No       |
+| `bcclist`                  | Comma-separated list of BCC recipients (or nested `<bcc>`)                                     | No       |
+| `subject`                  | Email subject line                                                                             | No       |
+| `message`                  | Message body text (or nested `<message>` element)                                              | One of   |
+| `messagefile`              | Path to file to send as message body                                                           | No       |
+| `messagefileinputencoding` | Encoding of the input message file                                                             | No       |
+| `messagemimetype`          | Content type of the message (default: `text/plain`)                                            | No       |
+| `files`                    | Comma- or space-separated list of files to attach (or nested `<attachments>` with `<fileset>`) | No       |
+| `failonerror`              | Halt build on error (default: `true`)                                                          | No       |
+| `includefilenames`         | Include filenames before attachment contents (default: `false`, plain encoding only)           | No       |
+| `mailhost`                 | SMTP server hostname (default: `localhost`)                                                    | No       |
+| `mailport`                 | SMTP server TCP port (default: `25`)                                                           | No       |
+| `user`                     | Username for SMTP authentication (requires JavaMail, MIME only)                                | No       |
+| `password`                 | Password for SMTP authentication (requires JavaMail, MIME only)                                | No       |
+| `ssl`                      | Enable SSL/TLS (`true`/`false`, MIME only)                                                     | No       |
+| `encoding`                 | Email content encoding: `mime`, `uu`, `plain`, `auto` (default: `auto`)                        | No       |
+| `charset`                  | Character set of the email (mutually exclusive with nested `<message>`)                        | No       |
+| `ignoreInvalidRecipients`  | Continue sending if some recipients are invalid (default: `false`)                             | No       |
+| `enableStartTLS`           | Enables STARTTLS encryption (requires JavaMail)                                                | No       |
 
 ## Nested Elements
 

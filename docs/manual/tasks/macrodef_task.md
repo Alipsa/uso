@@ -29,7 +29,7 @@ target('createDirs', depends: 'defineMacros') {
 
 | Attribute    | Description                                                | Required |
 |-------------:|------------------------------------------------------------|----------|
-| `name`       | Name of the macro to define                                | Yes      |
+|       `name` | Name of the macro to define                                | Yes      |
 | `attributes` | Comma‑separated list of attribute names for the macro      | No       |
 
 ## Nested Elements

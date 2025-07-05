@@ -8,8 +8,8 @@ Note that this task works with extensions as defined by the "Optional Package" s
 
 ## Parameters
 
-| Attribute | Description                                      | Required                                  |
-|-----------|--------------------------------------------------|-------------------------------------------|
+| Attribute | Description                                          | Required                                      |
+|-----------|------------------------------------------------------|-----------------------------------------------|
 | `file`    | The JAR file to display extension information about. | Yes, unless a nested `<fileset>` is specified |
 
 ### Parameters specified as nested elements

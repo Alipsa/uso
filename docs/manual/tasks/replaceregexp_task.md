@@ -28,16 +28,16 @@ target('batchRegexReplace') {
 
 ## Attributes
 
-| Attribute               | Description                                                                                                                  | Required                                         |
-|------------------------:|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
-| `file`                  | Single file to process                                                                                                       | One of `file` or nested resource                 |
-| `match`                 | Regular expression pattern to search for                                                                                     | Yes                                              |
-| `replace`               | Replacement text (supports backreferences)                                                                                   | Yes                                              |
-| `flags`                 | Semicolon-separated regex flags: `g` (global), `m` (multiline), `c` (case-sensitive default), `i` (case-insensitive)         | No (default: `g` for global replacements)        |
-| `byline`                | Process text one line at a time (`true`) or whole file as one string (`false`)                                              | No (default: `true`)                             |
-| `casesensitive`         | Whether pattern matching is case-sensitive (`true`) or not (`false`)                                                        | No (default: `true`)                             |
-| `encoding`              | Character encoding for reading and writing files                                                                             | No                                               |
-| `failonnoreplacements`  | Whether to fail the build if no replacements are made (`true`) or continue quietly (`false`)                                 | No (default: `false`)                            |
+|              Attribute | Description                                                                                                          | Required                                  |
+|-----------------------:|----------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+|                 `file` | Single file to process                                                                                               | One of `file` or nested resource          |
+|                `match` | Regular expression pattern to search for                                                                             | Yes                                       |
+|              `replace` | Replacement text (supports backreferences)                                                                           | Yes                                       |
+|                `flags` | Semicolon-separated regex flags: `g` (global), `m` (multiline), `c` (case-sensitive default), `i` (case-insensitive) | No (default: `g` for global replacements) |
+|               `byline` | Process text one line at a time (`true`) or whole file as one string (`false`)                                       | No (default: `true`)                      |
+|        `casesensitive` | Whether pattern matching is case-sensitive (`true`) or not (`false`)                                                 | No (default: `true`)                      |
+|             `encoding` | Character encoding for reading and writing files                                                                     | No                                        |
+| `failonnoreplacements` | Whether to fail the build if no replacements are made (`true`) or continue quietly (`false`)                         | No (default: `false`)                     |
 
 ## Nested Elements
 

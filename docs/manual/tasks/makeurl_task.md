@@ -25,12 +25,12 @@ target('setCodebase') {
 
 ## Attributes
 
-| Attribute   | Description                                                          | Required |
-|------------:|----------------------------------------------------------------------|----------|
-| `file`      | Path to a file or directory to convert to a URL (e.g., `/path/to/dir`) | No       |
-| `property`  | Name of the property to set with the resulting URL(s)               | Yes      |
-| `separator` | Separator string between URLs (default: space)                      | No       |
-| `validate`  | Whether to check that each file exists (`true`/`false`, default: `true`) | No       |
+|   Attribute | Description                                                              | Required |
+|------------:|--------------------------------------------------------------------------|----------|
+|      `file` | Path to a file or directory to convert to a URL (e.g., `/path/to/dir`)   | No       |
+|  `property` | Name of the property to set with the resulting URL(s)                    | Yes      |
+| `separator` | Separator string between URLs (default: space)                           | No       |
+|  `validate` | Whether to check that each file exists (`true`/`false`, default: `true`) | No       |
 
 ## Nested Elements
 
