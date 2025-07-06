@@ -23,56 +23,30 @@ When using Groovy with AntBuilder, you can utilize the `buildnumber` task by cal
 
 1.  **Default Behavior (using `build.number` file):**
 
-    *   **Ant XML:**
-        ```xml
-        <project default="main">
-            <target name="main">
-                <buildnumber/>
-                <echo message="Current Build Number: ${build.number}"/>
-            </target>
-        </project>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        // Ensure build.number file exists or will be created
-        // For the first run, if build.number doesn't exist or is empty, ${build.number} will be 0, then 1 after increment.
-        // On subsequent runs, it will read the last number, increment, and update.
+    ```groovy
+    // Ensure build.number file exists or will be created
+    // For the first run, if build.number doesn't exist or is empty, ${build.number} will be 0, then 1 after increment.
+    // On subsequent runs, it will read the last number, increment, and update.
 
-        ant.buildnumber()
-        def currentBuild = ant.project.getProperty("build.number")
-        println "Current Build Number: $currentBuild"
-
-        // To demonstrate subsequent calls:
-        // ant.buildnumber()
-        // currentBuild = ant.project.getProperty("build.number")
-        // println "Next Build Number: $currentBuild"
-        ```
+    buildnumber()
+    echo(message: 'Current Build Number: ${build.number}')
+    ```
 
 2.  **Using a Custom File:**
 
-    *   **Ant XML:**
-        ```xml
-        <project default="main">
-            <target name="main">
-                <buildnumber file="custom_build_count.txt"/>
-                <echo message="Current Custom Build Number: ${build.number}"/>
-            </target>
-        </project>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        // Create the file if it doesn't exist for the first run
-        // new File('custom_build_count.txt').text = '0'
+    ```groovy
+    // Create the file if it doesn't exist for the first run
+    // new File('custom_build_count.txt').text = '0'
 
-        ant.buildnumber(file: "custom_build_count.txt")
-        def customBuild = ant.project.getProperty("build.number") // Still uses 'build.number' property
-        println "Current Custom Build Number: $customBuild"
+    buildnumber(file: "custom_build_count.txt")
+    def customBuild = project.getProperty("build.number") // Still uses 'build.number' property
+    println "Current Custom Build Number: $customBuild"
 
-        // If you run it again:
-        // ant.buildnumber(file: "custom_build_count.txt")
-        // customBuild = ant.project.getProperty("build.number")
-        // println "Next Custom Build Number: $customBuild"
-        ```
+    // If you run it again:
+    // ant.buildnumber(file: "custom_build_count.txt")
+    // customBuild = ant.project.getProperty("build.number")
+    // println "Next Custom Build Number: $customBuild"
+    ```
 
 ### Important Considerations
 

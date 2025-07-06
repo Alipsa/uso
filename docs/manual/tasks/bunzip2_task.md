@@ -27,37 +27,26 @@ However, like many Ant tasks, it can be part of a larger structure involving fil
 
 1.  **Decompressing a specific .bz2 file to a specific location:**
 
-    *   **Ant XML (for context):**
-        ```xml
-        <bunzip2 src="archive.bz2" dest="output_directory/" />
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bunzip2(src: 'archive.bz2', dest: 'output_directory/')
-        // This will create output_directory/archive (if archive.bz2 contained 'archive')
-        ```
+    ```groovy
+    bunzip2(src: 'archive.bz2', dest: 'output_directory/')
+    // This will create output_directory/archive (if archive.bz2 contained 'archive')
+    ```
 
 2.  **Decompressing a .bz2 file and renaming the output:**
 
-    *   **Ant XML (for context):**
-        ```xml
-        <bunzip2 src="data.file.bz2" dest="extracted_data.txt" />
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bunzip2(src: 'data.file.bz2', dest: 'extracted_data.txt')
-        // This will create extracted_data.txt with the contents of data.file.bz2
-        ```
+    ```groovy
+    bunzip2(src: 'data.file.bz2', dest: 'extracted_data.txt')
+    // This will create extracted_data.txt with the contents of data.file.bz2
+    ```
 
 3.  **Decompressing with overwrite disabled (conceptual, assuming a pre-existing file at dest):**
 
-    *   **Groovy AntBuilder:**
-        ```groovy
-        // Assuming 'unpacked_file' already exists
-        ant.bunzip2(src: 'latest_update.bz2', dest: 'unpacked_file', overwrite: false)
-        // If overwrite is false and 'unpacked_file' exists, the task might skip or error
-        // depending on Ant's default behavior for this specific scenario (usually skip/fail).
-        ```
+    ```groovy
+    // Assuming 'unpacked_file' already exists
+    bunzip2(src: 'latest_update.bz2', dest: 'unpacked_file', overwrite: false)
+    // If overwrite is false and 'unpacked_file' exists, the task might skip or error
+    // depending on Ant's default behavior for this specific scenario (usually skip/fail).
+    ```
 
 ### Important Considerations
 

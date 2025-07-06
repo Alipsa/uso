@@ -21,7 +21,7 @@ Common Ant attributes for the `bzip2` task and their Groovy AntBuilder DSL mappi
 *   **Single Element Resource Collection**: _Since Ant 1.7_, you can specify the source file as a nested resource collection (e.g., `<file file="source.txt"/>` or `<url url="http://example.com/data"/>`).
     ```groovy
     // Example with a nested <file> resource
-    ant.bzip2(destfile: 'output.bz2') {
+    bzip2(destfile: 'output.bz2') {
         file(file: 'input.txt') // Specifies the source file
     }
     ```
@@ -30,44 +30,25 @@ Common Ant attributes for the `bzip2` task and their Groovy AntBuilder DSL mappi
 
 1.  **Compressing a TAR file:**
 
-    *   **Ant XML:**
-        ```xml
-        <bzip2 src="myarchive.tar" destfile="myarchive.tar.bz2"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bzip2(src: 'myarchive.tar', destfile: 'myarchive.tar.bz2')
-        ```
+    ```groovy
+    bzip2(src: 'myarchive.tar', destfile: 'myarchive.tar.bz2')
+    ```
 
 2.  **Compressing a file specified by a property:**
 
-    *   **Ant XML:**
-        ```xml
-        <property name="input.file" value="logs/today.log"/>
-        <property name="output.file" value="logs/today.log.bz2"/>
-        <bzip2 src="${input.file}" destfile="${output.file}"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.property(name: 'input.file', value: 'logs/today.log')
-        ant.property(name: 'output.file', value: 'logs/today.log.bz2')
-        ant.bzip2(src: ant.project.getProperty('input.file'), destfile: ant.project.getProperty('output.file'))
-        ```
+    ```groovy
+    property(name: 'input.file', value: 'logs/today.log')
+    property(name: 'output.file', value: 'logs/today.log.bz2')
+    bzip2(src: project.getProperty('input.file'), destfile: project.getProperty('output.file'))
+    ```
 
 3.  **Compressing a resource from a URL (conceptual, using nested resource):**
 
-    *   **Ant XML:**
-        ```xml
-        <bzip2 destfile="downloaded_data.bz2">
-            <url url="https://www.example.com/datafile.txt"/>
-        </bzip2>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bzip2(destfile: 'downloaded_data.bz2') {
-            url(url: 'https://www.example.com/datafile.txt')
-        }
-        ```
+    ```groovy
+    bzip2(destfile: 'downloaded_data.bz2') {
+      url(url: 'https://www.example.com/datafile.txt')
+    }
+    ```
 
 ### Important Considerations
 

@@ -47,63 +47,40 @@ Common Ant attributes for the `available` task and their Groovy AntBuilder DSL m
 
 1.  **Check if a class is available in the classpath:**
 
-    *   **Ant XML:**
-        ```xml
-        <available classname="org.apache.commons.logging.LogFactory" property="commons.logging.present"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.available(classname: "org.apache.commons.logging.LogFactory", property: "commons.logging.present")
-        // Later, you can check this property:
-        // if (ant.project.getProperty("commons.logging.present")) { ... }
-        ```
+    ```groovy
+    ant.available(classname: "org.apache.commons.logging.LogFactory", property: "commons.logging.present")
+    // Later, you can check this property:
+    // if (ant.project.getProperty("commons.logging.present")) { ... }
+    ```
 
 2.  **Check if a specific file exists:**
 
-    *   **Ant XML:**
-        ```xml
-        <available file="src/main/config/app.properties" property="app.config.exists"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.available(file: "src/main/config/app.properties", property: "app.config.exists")
-        ```
+    ```groovy
+    ant.available(file: "src/main/config/app.properties", property: "app.config.exists")
+    ```
 
 3.  **Check if a directory exists and set a custom value:**
 
-    *   **Ant XML:**
-        ```xml
-        <available file="/opt/tomcat" type="dir" property="tomcat.installed" value="yes"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.available(file: "/opt/tomcat", type: "dir", property: "tomcat.installed", value: "yes")
-        ```
+    ```groovy
+    ant.available(file: "/opt/tomcat", type: "dir", property: "tomcat.installed", value: "yes")
+    ```
 
 4.  **Check for a resource in a specific classpath:**
 
-    *   **Ant XML:**
-        ```xml
-        <path id="custom.path">
-            <pathelement location="lib/custom.jar"/>
-        </path>
-        <available resource="com/mycorp/licence.key" property="licence.found" classpathref="custom.path"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.path(id: "custom.path") {
+    ```groovy
+    ant.path(id: "custom.path") {
+        pathelement(location: "lib/custom.jar")
+    }
+    ant.available(resource: "com/mycorp/licence.key", property: "licence.found", classpathref: "custom.path")
+    ```
+    Alternatively, with a nested classpath:
+    ```groovy
+    ant.available(resource: "com/mycorp/licence.key", property: "licence.found") {
+        classpath {
             pathelement(location: "lib/custom.jar")
         }
-        ant.available(resource: "com/mycorp/licence.key", property: "licence.found", classpathref: "custom.path")
-        ```
-        Alternatively, with a nested classpath:
-        ```groovy
-        ant.available(resource: "com/mycorp/licence.key", property: "licence.found") {
-            classpath {
-                pathelement(location: "lib/custom.jar")
-            }
-        }
-        ```
+    }
+    ```
 
 ### Navigation
 

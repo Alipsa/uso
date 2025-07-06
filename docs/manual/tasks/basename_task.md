@@ -19,65 +19,40 @@ Common Ant attributes for the `basename` task and their Groovy AntBuilder DSL ma
 
 1.  **Get the basename of a file path stored in a property:**
 
-    *   **Ant XML:**
-        ```xml
-        <property name="full.path.to.file" value="/opt/app/archive.tar.gz"/>
-        <basename property="archive.name" file="${full.path.to.file}"/>
-        <!-- archive.name will be "archive.tar.gz" -->
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.property(name: "full.path.to.file", value: "/opt/app/archive.tar.gz")
-        ant.basename(property: "archive.name", file: ant.project.getProperty("full.path.to.file"))
-        // To verify or use:
-        // ant.echo(message: "Archive name is: ${ant.project.getProperty('archive.name')}")
-        ```
+    ```groovy
+    property(name: "full.path.to.file", value: "/opt/app/archive.tar.gz")
+    basename(property: "archive.name", file: ant.project.getProperty("full.path.to.file"))
+    // To verify or use:
+    // echo(message: "Archive name is: ${ant.project.getProperty('archive.name')}")
+    ```
 
 2.  **Get the basename and remove a specific suffix:**
 
-    *   **Ant XML:**
-        ```xml
-        <basename property="script.name" file="/usr/local/bin/start_server.sh" suffix=".sh"/>
-        <!-- script.name will be "start_server" -->
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.basename(property: "script.name", file: "/usr/local/bin/start_server.sh", suffix: ".sh")
-        // ant.echo(message: "Script name is: ${ant.project.getProperty('script.name')}")
-        ```
+    ```groovy
+    basename(property: "script.name", file: "/usr/local/bin/start_server.sh", suffix: ".sh")
+    echo(message: "Script name is: ${project.getProperty('script.name')}")
+    // script.name will be "start_server"
+    ```
 
 3.  **Get the basename of a directory path (last directory element):**
 
-    *   **Ant XML:**
-        ```xml
-        <property environment="env"/>
-        <basename property="temp.dir.name" file="${env.TEMP}"/>
-        <!-- Assuming TEMP is /var/folders/xyz/T/, temp.dir.name will be "T" -->
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.property(environment: "env")
-        ant.basename(property: "temp.dir.name", file: ant.project.getProperty("env.TEMP"))
-        // ant.echo(message: "Temp directory name is: ${ant.project.getProperty('temp.dir.name')}")
-        ```
+    ```groovy
+    property(environment: "env")
+    basename(property: "temp.dir.name", file: ant.project.getProperty("env.TEMP"))
+    echo(message: "Temp directory name is: ${ant.project.getProperty('temp.dir.name')}")
+    // Assuming TEMP is /var/folders/xyz/T/, temp.dir.name will be "T"
+    ```
 
 4.  **Using a literal path directly:**
 
-    *   **Ant XML:**
-        ```xml
-        <basename property="config.file.basename" file="project/settings/config.xml" suffix="xml"/>
-        <!-- config.file.basename will be "config." (note the dot if suffix doesn't include it) -->
-        <!-- Better: suffix=".xml" -->
-        <basename property="config.file.basename.correct" file="project/settings/config.xml" suffix=".xml"/>
-        <!-- config.file.basename.correct will be "config" -->
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.basename(property: "config.file.basename", file: "project/settings/config.xml", suffix: "xml")
-        ant.basename(property: "config.file.basename.correct", file: "project/settings/config.xml", suffix: ".xml")
-        // ant.echo(message: "Config basename (suffix 'xml'): ${ant.project.getProperty('config.file.basename')}")
-        // ant.echo(message: "Config basename (suffix '.xml'): ${ant.project.getProperty('config.file.basename.correct')}")
-        ```
+    ```groovy
+    basename(property: "config.file.basename", file: "project/settings/config.xml", suffix: "ml")
+    // config.file.basename will be "config.x"
+    basename(property: "config.file.basename.correct", file: "project/settings/config.xml", suffix: "xml")
+    // config.file.basename.correct will be "config"
+    echo(message: "Config basename (suffix 'xml'): ${project.getProperty('config.file.basename')}")
+    echo(message: "Config basename (suffix '.xml'): ${project.getProperty('config.file.basename.correct')}")
+    ```
 
 ### Important Considerations
 

@@ -19,14 +19,7 @@ The elements nested within an `augment` call depend on the type of reference bei
 
 Let's assume you have a predefined path:
 
-**Ant XML (Original Definition):**
-```xml
-<path id="compile.classpath">
-  <pathelement location="lib/main.jar"/>
-</path>
-```
-
-**Groovy AntBuilder (Original Definition):**
+**Original Definition:**
 ```groovy
 ant.path(id: 'compile.classpath', {
     pathelement(location: 'lib/main.jar')
@@ -37,38 +30,22 @@ Now, you want to augment this classpath with another JAR:
 
 1.  **Augmenting a Path:**
 
-    *   **Ant XML:**
-        ```xml
-        <augment id="compile.classpath">
-          <pathelement location="lib/another.jar"/>
-        </augment>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.augment(id: 'compile.classpath') {
-            pathelement(location: 'lib/another.jar')
-        }
-        ```
+    ```groovy
+    ant.augment(id: 'compile.classpath') {
+        pathelement(location: 'lib/another.jar')
+    }
+    ```
     This would add `lib/another.jar` to the `compile.classpath`.
 
 2.  **Augmenting with a Fileset:**
 
-    *   **Ant XML:**
-        ```xml
-        <augment id="compile.classpath">
-          <fileset dir="ext_lib">
-            <include name="*.jar"/>
-          </fileset>
-        </augment>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.augment(id: 'compile.classpath') {
-            fileset(dir: 'ext_lib') {
-                include(name: '*.jar')
-            }
+    ```groovy
+    ant.augment(id: 'compile.classpath') {
+        fileset(dir: 'ext_lib') {
+            include(name: '*.jar')
         }
-        ```
+    }
+    ```
     This adds all JAR files from the `ext_lib` directory to the `compile.classpath`.
 
 ### Important Considerations

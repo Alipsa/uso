@@ -28,60 +28,31 @@ The `antversion` task itself does not have nested elements when used directly.
 ### Examples
 
 1.  **Store the current Ant version in a property:**
-
-    *   **Ant XML:**
-        ```xml
-        <antversion property="current.ant.version"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.antversion(property: "current.ant.version")
-        // To use it:
-        // ant.echo(message: "Ant version is ${current.ant.version}") // Use single quotes for Ant expansion
-        // Or fetch in Groovy:
-        // def version = ant.project.getProperty("current.ant.version")
-        // ant.echo(message: "Ant version (Groovy): $version")
-        ```
+    ```groovy
+    ant.antversion(property: "current.ant.version")
+    // To use it:
+    ant.echo(message: 'Ant version is ${current.ant.version}') 
+    // Or fetch in Groovy:
+    // def version = ant.project.getProperty("current.ant.version")
+    // ant.echo(message: "Ant version (Groovy): $version")
+    ```
 
 2.  **Store Ant version only if it meets a minimum requirement:**
 
-    *   **Ant XML:**
-        ```xml
-        <antversion property="ant.is.1.8plus" atleast="1.8"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.antversion(property: "ant.is.1.8plus", atleast: "1.8")
-        // Property "ant.is.1.8plus" will be set to the Ant version if current version is >= 1.8
-        ```
+    ```groovy
+    ant.antversion(property: "ant.is.1.8plus", atleast: "1.8")
+    // Property "ant.is.1.8plus" will be set to the Ant version if current version is >= 1.8
+    ```
 
 3.  **Set a property if Ant version is exact:**
 
-    *   **Ant XML:**
-        ```xml
-        <antversion property="ant.is.exactly.1.10.1" exactly="1.10.1"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.antversion(property: "ant.is.exactly.1.10.1", exactly: "1.10.1")
-        // Property "ant.is.exactly.1.10.1" will be set to the Ant version if current version is 1.10.1
-        ```
+    ```groovy
+    ant.antversion(property: "ant.is.exactly.1.10.1", exactly: "1.10.1")
+    // Property "ant.is.exactly.1.10.1" will be set to the Ant version if current version is 1.10.1
+    ```
 
 4.  **Using `antversion` as a condition:**
 
-    *   **Ant XML:**
-        ```xml
-        <condition property="is.ant.modern">
-            <antversion atleast="1.9.0"/>
-        </condition>
-        <fail message="Ant version is too old. Please upgrade to Ant 1.9.0 or later.">
-            <condition>
-                <not>
-                    <isset property="is.ant.modern"/>
-                </not>
-            </condition>
-        </fail>
-        ```
     *   **Groovy AntBuilder (Conceptual - conditions are often handled differently in Groovy scripts):
         ```groovy
         // Direct equivalent of <condition> with <antversion> is less common in pure Groovy.

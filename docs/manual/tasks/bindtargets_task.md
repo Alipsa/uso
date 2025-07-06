@@ -23,26 +23,16 @@ Let's say you have a build process where `compile` and `test` are targets that m
 
 1.  **Basic Usage:**
 
-    *   **Ant XML:**
-        ```xml
-        <bindtargets targets="compile,test" extensionPoint="deploy"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bindtargets(targets: "compile,test", extensionPoint: "deploy")
-        ```
+    ```groovy
+    bindtargets(targets: "compile,test", extensionPoint: "deploy")
+    ```
     This ensures that `compile` and `test` are executed as dependencies if `deploy` is invoked.
 
 2.  **Handling Missing Extension Point (Example):**
 
-    *   **Ant XML:**
-        ```xml
-        <bindtargets targets="preprocess-data" extensionPoint="data-analysis" onMissingExtensionPoint="warn"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.bindtargets(targets: "preprocess-data", extensionPoint: "data-analysis", onMissingExtensionPoint: "warn")
-        ```
+    ```groovy
+    bindtargets(targets: "preprocess-data", extensionPoint: "data-analysis", onMissingExtensionPoint: "warn")
+    ```
     In this case, if the `data-analysis` extension point isn't found, a warning will be issued instead of failing the build.
 
 ### Important Considerations

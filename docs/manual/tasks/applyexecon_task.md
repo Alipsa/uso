@@ -97,68 +97,37 @@ Common Ant attributes for the `apply` task and their Groovy AntBuilder DSL mappi
 
 1.  **Apply `chmod` to all `.sh` files (parallel=false, one by one):**
 
-    *   **Ant XML:**
-        ```xml
-        <apply executable="chmod" parallel="false">
-            <arg value="755"/>
-            <fileset dir="scripts" includes="*.sh"/>
-        </apply>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.apply(executable: 'chmod', parallel: false) {
-            arg(value: '755')
-            fileset(dir: 'scripts', includes: '*.sh')
-        }
-        ```
+    ```groovy
+    ant.apply(executable: 'chmod', parallel: false) {
+        arg(value: '755')
+        fileset(dir: 'scripts', includes: '*.sh')
+    }
+    ```
 
 2.  **Compile all `.java` files in parallel, passing them to `javac`:**
 
-    *   **Ant XML:**
-        ```xml
-        <apply executable="javac" parallel="true" dir="src">
-            <arg value="-d"/>
-            <arg value="../classes"/>
-            <srcfile/> <!-- Placeholder for all source files -->
-            <fileset dir="." includes="**/*.java"/>
-        </apply>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.apply(executable: 'javac', parallel: true, dir: 'src') {
-            arg(value: '-d')
-            arg(path: '../classes') // Using arg(path:...) for file paths is good practice
-            srcfile() // Indicates where the list of source files should be inserted
-            fileset(dir: '.', includes: '**/*.java')
-        }
-        ```
+    ```groovy
+    ant.apply(executable: 'javac', parallel: true, dir: 'src') {
+        arg(value: '-d')
+        arg(path: '../classes') // Using arg(path:...) for file paths is good practice
+        srcfile() // Indicates where the list of source files should be inserted
+        fileset(dir: '.', includes: '**/*.java')
+    }
+    ```
 
 3.  **Convert files using a mapper:**
 
-    *   **Ant XML:**
-        ```xml
-        <apply executable="convertImage" dest="output/pngs">
-            <arg value="--format"/>
-            <arg value="png"/>
-            <srcfile/>
-            <arg value="--output"/>
-            <targetfile/>
-            <fileset dir="input/jpegs" includes="*.jpg"/>
-            <mapper type="glob" from="*.jpg" to="*.png"/>
-        </apply>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.apply(executable: 'convertImage', dest: 'output/pngs') {
-            arg(value: '--format')
-            arg(value: 'png')
-            srcfile()
-            arg(value: '--output')
-            targetfile()
-            fileset(dir: 'input/jpegs', includes: '*.jpg')
-            mapper(type: 'glob', from: '*.jpg', to: '*.png')
-        }
-        ```
+    ```groovy
+    ant.apply(executable: 'convertImage', dest: 'output/pngs') {
+        arg(value: '--format')
+        arg(value: 'png')
+        srcfile()
+        arg(value: '--output')
+        targetfile()
+        fileset(dir: 'input/jpegs', includes: '*.jpg')
+        mapper(type: 'glob', from: '*.jpg', to: '*.png')
+    }
+    ```
 
 ### Navigation
 

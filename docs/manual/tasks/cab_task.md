@@ -35,7 +35,7 @@ Common Ant attributes for the `cab` task and their Groovy AntBuilder DSL mapping
 
 *   **fileset**: A standard Ant `fileset` can be nested to specify the files to be included in the CAB archive. If a nested `fileset` is used, the `basedir`, `includes`, `excludes`, etc., attributes on the `cab` task itself are typically ignored in favor of the `fileset`'s configuration.
     ```groovy
-    ant.cab(cabfile: "myapp.cab") {
+    cab(cabfile: "myapp.cab") {
         fileset(dir: "release_files") {
             include(name: "**/*.exe")
             include(name: "**/*.dll")
@@ -49,54 +49,30 @@ Common Ant attributes for the `cab` task and their Groovy AntBuilder DSL mapping
 
 1.  **Create a CAB file from a directory:**
 
-    *   **Ant XML:**
-        ```xml
-        <cab cabfile="${dist}/manual.cab" basedir="htdocs/manual"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.cab(cabfile: "${ant.project.getProperty('dist')}/manual.cab", basedir: "htdocs/manual")
-        ```
+    ```groovy
+    cab(cabfile: "${ant.project.getProperty('dist')}/manual.cab", basedir: "htdocs/manual")
+    ```
 
 2.  **Create a CAB file with includes and excludes:**
 
-    *   **Ant XML:**
-        ```xml
-        <cab cabfile="${dist}/app.cab"
-             basedir="build/app"
-             includes="**/*.exe, **/*.dll"
-             excludes="**/temp/*, **/*.pdb"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.cab(cabfile: "${ant.project.getProperty('dist')}/app.cab",
-                basedir: "build/app",
-                includes: "**/*.exe, **/*.dll",
-                excludes: "**/temp/*, **/*.pdb")
-        ```
+    ```groovy
+    cab(cabfile: "${project.getProperty('dist')}/app.cab",
+            basedir: "build/app",
+            includes: "**/*.exe, **/*.dll",
+            excludes: "**/temp/*, **/*.pdb")
+    ```
 
 3.  **Create a CAB file using a nested fileset:**
 
-    *   **Ant XML:**
-        ```xml
-        <cab cabfile="${dist}/components.cab">
-            <fileset dir="build/components">
-                <include name="ui/**"/>
-                <include name="core/**"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </cab>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.cab(cabfile: "${ant.project.getProperty('dist')}/components.cab") {
-            fileset(dir: "build/components") {
-                include(name: "ui/**")
-                include(name: "core/**")
-                exclude(name: "**/*.java")
-            }
+    ```groovy
+    cab(cabfile: "${project.getProperty('dist')}/components.cab") {
+        fileset(dir: "build/components") {
+            include(name: "ui/**")
+            include(name: "core/**")
+            exclude(name: "**/*.java")
         }
-        ```
+    }
+    ```
 
 ### Important Considerations
 

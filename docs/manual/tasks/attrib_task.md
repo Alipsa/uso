@@ -36,44 +36,25 @@ These are specified within a closure in the Groovy call.
 
 1.  **Make a single file read-only and hidden:**
 
-    *   **Ant XML:**
-        ```xml
-        <attrib file="mydirectory/myfile.txt" readonly="true" hidden="true"/>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.attrib(file: 'mydirectory/myfile.txt', readonly: true, hidden: true)
-        ```
+    ```groovy
+    ant.attrib(file: 'mydirectory/myfile.txt', readonly: true, hidden: true)
+    ```
 
 2.  **Make all `.xml` files in a directory and its subdirectories writable:**
 
-    *   **Ant XML:**
-        ```xml
-        <attrib readonly="false">
-            <fileset dir="src/main/resources" includes="**/*.xml"/>
-        </attrib>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.attrib(readonly: false) {
-            fileset(dir: 'src/main/resources', includes: '**/*.xml')
-        }
-        ```
+    ```groovy
+    ant.attrib(readonly: false) {
+        fileset(dir: 'src/main/resources', includes: '**/*.xml')
+    }
+    ```
 
 3.  **Apply attributes to files specified in a FileList, on Windows OS only:**
 
-    *   **Ant XML:**
-        ```xml
-        <attrib readonly="true" osfamily="windows">
-            <filelist dir="config" files="settings.conf,user.prefs"/>
-        </attrib>
-        ```
-    *   **Groovy AntBuilder:**
-        ```groovy
-        ant.attrib(readonly: true, osfamily: 'windows') {
-            filelist(dir: 'config', files: 'settings.conf,user.prefs')
-        }
-        ```
+    ```groovy
+    ant.attrib(readonly: true, osfamily: 'windows') {
+        filelist(dir: 'config', files: 'settings.conf,user.prefs')
+    }
+    ```
 
 ### Important Considerations
 
