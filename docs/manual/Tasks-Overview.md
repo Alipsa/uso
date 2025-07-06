@@ -108,8 +108,7 @@
 | [SetProxy](tasks/setproxy_task.md)                   | Configures HTTP/HTTPS proxies for network tasks.                                                    |
 | [SignJar](tasks/signjar_task.md)                     | Signs JARs with `jarsigner`.                                                                        |
 | [Sleep](tasks/sleep_task.md)                         | Pauses execution for a specified time.                                                              |
-| [Sound](tasks/sound_task.md)                         | Plays system beep or sound files.                                                                   |
-| [SourceOffSite](tasks/sourceoffsite_task.md)         | Excludes files from source distributions.                                                           |
+| [Sound](tasks/sound_task.md)                         | Plays system beep or sound files.                                                                   | |
 | [Splash](tasks/splash_task.md)                       | Displays a GUI splash screen during the build.                                                      |
 | [Sql](tasks/sql_task.md)                             | Executes SQL statements via JDBC.                                                                   |
 | [Sshexec](tasks/sshexec_task.md)                     | Executes commands on remote hosts via SSH.                                                          |

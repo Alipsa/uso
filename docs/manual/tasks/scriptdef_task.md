@@ -2,35 +2,13 @@
 
 The `scriptdef` task defines a new Ant task or data type using an embedded script (BSF or JSR-223). It allows you to write custom tasks inline in a scripting language and invoke them like built-in Ant tasks.
 
-## Usage Examples
-
-### Define and use a simple Groovy-based task
-
-```groovy
-project.with {
-  scriptdef(name: 'helloTask', language: 'groovy') {
-    attribute(name: 'greeting', default: 'Hello')
-    element(name: 'names', optional: true)
-    script {
-      def greet = attributes['greeting']
-      elements['names']?.each { name ->
-        project.log("${greet}, ${name}")
-      }
-    }
-  }
-
-  target('sayHello', depends: 'helloTask') {
-    helloTask(greeting: 'Hi') {
-      names('Alice', 'Bob', 'Charlie')
-    }
-  }
-}
-```
+## Usage Example
 
 ### Define and use a JavaScript-based task
 
 ```groovy
 taskdef(name: 'scriptdef', classname: 'org.apache.tools.ant.taskdefs.optional.script.ScriptDef')
+
 target {
   scriptdef(name: 'jsTask', language: 'javascript') {
     attribute(name: 'message', default: 'Hello from JS')
@@ -40,11 +18,11 @@ target {
       project.log('JS says: ' + msg);
     }
   }
+}
 
-  // Define a target to invoke our new jsTask
-  target('runJsTask', depends: 'jsTask') {
-    jsTask(message: 'Custom JS greeting!')
-  }
+// Define a target to invoke our new jsTask
+target('runJsTask', depends: 'jsTask') {
+  jsTask(message: 'Custom JS greeting!')
 }
 ```
 
