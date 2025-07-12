@@ -123,7 +123,6 @@ The availability column indicates whether:
 | [Subant](tasks/subant_task.md)                       | Runs Ant builds in subdirectories for multi-project builds.                                         | core         |
 | [Symlink](tasks/symlink_task.md)                     | Creates filesystem symbolic links.                                                                  | core         |
 | [Sync](tasks/sync_task.md)                           | Synchronizes directories, copying only changed files.                                               | core         |
-| [TStamp](tasks/tstamp_task.md)                       | Generates timestamp properties for builds.                                                          | core         |
 | [Tar](tasks/tar_task.md)                             | Creates or extracts TAR archives.                                                                   | core         |
 | [Taskdef](tasks/taskdef_task.md)                     | Defines new tasks or types by class name and classpath.                                             | core         |
 | [Telnet](tasks/telnet_task.md)                       | Sends commands over Telnet to remote hosts.                                                         | optional     |
@@ -131,19 +130,17 @@ The availability column indicates whether:
 | [Touch](tasks/touch_task.md)                         | Updates file modification timestamps.                                                               | core         |
 | [Translate](tasks/translate_task.md)                 | Translates characters in files or resources.                                                        | core         |
 | [Truncate](tasks/truncate_task.md)                   | Truncates or extends files to a given length.                                                       | core         |
+| [TStamp](tasks/tstamp_task.md)                       | Generates timestamp properties for builds.                                                          | core         |
 | [Typedef](tasks/typedef_task.md)                     | Defines new data types by class name and classpath.                                                 | core         |
+| [Unjar/Untar/Unwar/Unzip](tasks/unjar_task.md)       | Extracts JAR or ZIP archives.                                                                       | core         |
 | [UnXZ](tasks/unxz_task.md)                           | Decompresses `.xz` files.                                                                           | core         |
-| [Unjar](tasks/unjar_task.md)                         | Extracts JAR or ZIP archives.                                                                       | core         |
-| [Untar](tasks/untar_task.md)                         | Extracts TAR archives.                                                                              | core         |
-| [Unwar](tasks/unwar_task.md)                         | Extracts WAR files.                                                                                 | core         |
-| [Unzip](tasks/unzip_task.md)                         | Extracts ZIP archives.                                                                              | core         |
 | [Uptodate](tasks/uptodate_task.md)                   | Checks whether files are up-to-date based on timestamps.                                            | core         |
 | [Uso](tasks/uso_task.md)                             | Invokes another Uso Groovy build script as a sub-build.                                             | uso          |
 | [VerifyJar](tasks/verifyjar_task.md)                 | Verifies JAR contents against manifest checksums.                                                   | core         |
 | [Waitfor](tasks/waitfor_task.md)                     | Pauses until a specified condition is met.                                                          | core         |
 | [War](tasks/war_task.md)                             | Builds WAR archives for Java web applications.                                                      | core         |
 | [WhichResource](tasks/whichresource_task.md)         | Finds and logs resource locations on the classpath.                                                 | core         |
-| [XSLT/Style](tasks/xslt_style_task.md)               | Applies XSLT transformations to XML files.                                                          | core         |
+| [XSLT/Style](tasks/xslt_task.md)                     | Applies XSLT transformations to XML files.                                                          | core         |
 | [XZ](tasks/xz_task.md)                               | Compresses files into the `.xz` format.                                                             | core         |
 | [XmlProperty](tasks/xmlproperty_task.md)             | Extracts XML data via XPath into properties.                                                        | core         |
 | [XmlValidate](tasks/xmlvalidate_task.md)             | Validates XML well-formedness and DTDs.                                                             | core         |
