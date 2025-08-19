@@ -129,27 +129,31 @@ project.with {
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',
         name: 'publish-example', description: "A simple example of a publishable library") {
       licenses {
-        license (
-            name:"MIT",
-            url:"https://opensource.org/license/mit"
-        )
+        license {
+          name("MIT")
+          url("https://opensource.org/license/mit")
+        }
       }
       repositories {
-        repository(id:'jitpack.io', url: 'https://jitpack.io')
+        repository {
+          id('jitpack.io')
+          url('https://jitpack.io')
+        }
       }
+
       developers {
-        developer (
-            name: 'Per Nyfelt',
-            email: 'per.nyfelt@alipsa.se',
-            organization: 'Alipsa HB',
-            organizationUrl: 'http://www.alipsa.se'
-        )
+        developer {
+          name('Per Nyfelt')
+          email('per.nyfelt@alipsa.se')
+          organization('Alipsa HB')
+          organizationUrl('http://www.alipsa.se')
+        }
       }
-      scm (
-          connection: 'scm:git:https://github.com/Alipsa/publish-example.git',
-          developerConnection: 'scm:git:https://github.com/Alipsa/publish-example.git',
-          url: 'https://github.com/Alipsa/publish-example/tree/main'
-      )
+      scm {
+        connection('scm:git:https://github.com/Alipsa/publish-example.git')
+        developerConnection('scm:git:https://github.com/Alipsa/publish-example.git')
+        url('https://github.com/Alipsa/publish-example/tree/main')
+      }
     }
   }
 

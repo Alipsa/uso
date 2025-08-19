@@ -16,10 +16,10 @@ project.with {
     createPom(pomTarget: pomFile, dependenciesRef: 'deps',
         name: '${artifactId}', description: "Subproject B for multimodule example") {
       licenses {
-        license (
-            name:"MIT",
-            url:"https://opensource.org/license/mit"
-        )
+        license {
+            name("MIT")
+            url("https://opensource.org/license/mit")
+        }
       }
     }
     resolve {

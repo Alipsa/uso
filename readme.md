@@ -205,6 +205,9 @@ If you run the following commands:
 - The [tasks manual](docs/manual/00-Introduction_Groovy_Ant_Manual.md) is basically a translation of the ant manual into the AntBuilder DSL syntax.
 
 ### What is the meaning of Uso?
-Uso is a Spanish word meaning "use" (first person). It also refers to Usomyrma mirabilis, an extinct species of ant in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian amber (The project founder is from Scandinavia).
-The name was chosen because it is short and easy to remember, and it has a nice ring to it. The project is intended to be a simple and easy-to-use Groovy based build system for jvm languages, so the name fits well.
+Uso is a Spanish word meaning "use" (first person). It also refers to Usomyrma mirabilis, an extinct species of ant 
+in the formicid subfamily Dolichoderinae, that is known from two Middle Eocene fossils which were found in Scandinavian 
+amber (The project founder is from Scandinavia).
+The name was chosen because it is short and easy to remember, it has a nice ring to it, and it is intended to be a 
+simple and easy-to-use Groovy based build system for jvm languages, so the name fits well.
 

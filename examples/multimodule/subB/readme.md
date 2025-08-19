@@ -1,1 +1,1 @@
-# The subB sub projects of the multmodule project
+# The subB sub projects of the multimodule project

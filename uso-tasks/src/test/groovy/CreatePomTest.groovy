@@ -3,8 +3,9 @@ import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.xmlunit.builder.Input
-import org.xmlunit.input.WhitespaceStrippedSource
 import org.xmlunit.matchers.CompareMatcher
+import org.xmlunit.diff.DefaultNodeMatcher
+import org.xmlunit.diff.ElementSelectors
 
 class CreatePomTest {
 
@@ -23,8 +24,8 @@ class CreatePomTest {
         pathelement location: "out/main"
       }
 
-      typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
-      taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom', classpathref: 'libpath')
+      typedef(name:"dependencyManagement", classname:"org.apache.maven.resolver.internal.ant.types.DependencyManagement")
+      taskdef(name: 'createPom', classname: 'org.apache.maven.resolver.internal.ant.tasks.CreatePom', classpathref: 'libpath')
       typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
       typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
       antProject.setProperty('grp', 'se.alipsa.uso.tasks') // Test that groups can be overridden
@@ -47,13 +48,13 @@ class CreatePomTest {
       def pomFile = new File(outDir, "${antProject.getProperty('artifactId')}-${antProject.getProperty('version')}.pom")
       createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm', groupId: '${grp}')
       def content = pomFile.text
-      Assertions.assertEquals('''\
+      def expected = '''\
+        |<?xml version="1.0" encoding="UTF-8"?>
         |<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         |    <modelVersion>4.0.0</modelVersion>
         |    <groupId>se.alipsa.uso.tasks</groupId>
         |    <artifactId>CreateDependencyPomTest</artifactId>
         |    <version>1.0.0</version>
-        |    <packaging>jar</packaging>
         |    <dependencyManagement>
         |        <dependencies>
         |            <dependency>
@@ -69,18 +70,21 @@ class CreatePomTest {
         |        <dependency>
         |            <groupId>org.junit.jupiter</groupId>
         |            <artifactId>junit-jupiter-engine</artifactId>
-        |            <type>jar</type>
         |            <scope>test</scope>
         |        </dependency>
         |        <dependency>
         |            <groupId>org.junit.platform</groupId>
         |            <artifactId>junit-platform-launcher</artifactId>
-        |            <type>jar</type>
         |            <scope>test</scope>
         |        </dependency>
         |    </dependencies>
         |</project>
-        '''.trim().stripMargin(), content.trim())
+        '''.trim().stripMargin()
+      MatcherAssert.assertThat(
+          Input.from(content).build(),
+          CompareMatcher.isSimilarTo(Input.from(expected).build())
+              .ignoreWhitespace()
+      )
     }
   }
 
@@ -97,8 +101,8 @@ class CreatePomTest {
         pathelement location: "out/main"
       }
 
-      typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
-      taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom', classpathref: 'libpath')
+      typedef(name:"dependencyManagement", classname:"org.apache.maven.resolver.internal.ant.types.DependencyManagement")
+      taskdef(name: 'createPom', classname: 'org.apache.maven.resolver.internal.ant.tasks.CreatePom', classpathref: 'libpath')
       typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")
       typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
 
@@ -113,7 +117,7 @@ class CreatePomTest {
         }
       }
       dependencies(id: 'compile') {
-        dependency(groupId:'org.junit.jupiter', artifactId: 'junit-jupiter-engine', scope: 'test')
+        dependency(groupId:'org.junit.jupiter', artifactId: 'junit-jupiter-engine', scope: 'test', type: 'jar')
         dependency(groupId: 'org.junit.platform', artifactId:'junit-platform-launcher', scope: 'test')
       }
       def outDir = new File("out/testClasses")
@@ -124,41 +128,44 @@ class CreatePomTest {
       createPom(pomTarget: pomFile, dependenciesRef: 'compile', dependencyManagementRef: 'dm',
           name: '${ant.project.name}', description: "A simple example of a publishable library"){
         licenses {
-          license(
-            name: "The Apache Software License, Version 2.0",
-            url: "http://www.apache.org/licenses/LICENSE-2.0.txt",
-            distribution: "repo"
-          )
-          license (
-            name:"MIT",
-            url:"https://opensource.org/license/mit"
-          )
+          license {
+            name  "The Apache Software License, Version 2.0"
+            url  "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution  "repo"
+          }
+          license {
+            name "MIT"
+            url "https://opensource.org/license/mit"
+          }
         }
         repositories {
-          repository(id:'jitpack.io', url: 'https://jitpack.io')
+          repository {
+            id 'jitpack.io'
+            url 'https://jitpack.io'
+          }
         }
         developers {
-          developer (
-              name: '${author}',
-              email: 'per.nyfelt@alipsa.se',
-              organization: 'Alipsa HB',
-              organizationUrl: 'http://www.alipsa.se'
-          )
+          developer {
+              name '${author}'
+              email 'per.nyfelt@alipsa.se'
+              organization 'Alipsa HB'
+              organizationUrl 'http://www.alipsa.se'
+          }
         }
-        scm (
-            connection: 'scm:git:https://github.com/Alipsa/journo.git',
-            developerConnection: 'scm:git:https://github.com/Alipsa/journo.git',
-            url: 'https://github.com/Alipsa/journo/tree/main'
-        )
+        scm {
+            connection 'scm:git:https://github.com/Alipsa/journo.git'
+            developerConnection 'scm:git:https://github.com/Alipsa/journo.git'
+            url 'https://github.com/Alipsa/journo/tree/main'
+        }
       }
       def content = pomFile.text
       def expected = ('''\
+        |<?xml version="1.0" encoding="UTF-8"?>
         |<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
         |  <modelVersion>4.0.0</modelVersion>
         |  <groupId>se.alipsa.uso</groupId>
         |  <artifactId>create-pom-test</artifactId>
         |  <version>1.0.0</version>
-        |  <packaging>jar</packaging>
         |  <name>CreatePomTest</name>
         |  <description>A simple example of a publishable library</description>
         |  <licenses>
@@ -200,13 +207,11 @@ class CreatePomTest {
         |    <dependency>
         |      <groupId>org.junit.jupiter</groupId>
         |      <artifactId>junit-jupiter-engine</artifactId>
-        |      <type>jar</type>
         |      <scope>test</scope>
         |    </dependency>
         |    <dependency>
         |      <groupId>org.junit.platform</groupId>
         |      <artifactId>junit-platform-launcher</artifactId>
-        |      <type>jar</type>
         |      <scope>test</scope>
         |    </dependency>
         |  </dependencies>
@@ -219,12 +224,14 @@ class CreatePomTest {
         |</project>
         '''.trim().stripMargin())
 
-      println "Expected: $expected"
-      println "Content: $content"
-
       MatcherAssert.assertThat(
-          new WhitespaceStrippedSource(Input.from(content).build()),
-          CompareMatcher.isIdenticalTo(new WhitespaceStrippedSource(Input.from(expected).build()))
+          Input.from(content).build(),
+          CompareMatcher.isSimilarTo(Input.from(expected).build())
+              .ignoreWhitespace()
+              .withNodeFilter { node ->
+                node.nodeType != org.w3c.dom.Node.COMMENT_NODE
+              }
+              .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
       )
     }
   }

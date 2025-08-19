@@ -70,7 +70,7 @@ class TargetBuilderTest {
     targetBuilder.dependencies(id: 'compile') {
       dependency(coords: 'se.alipsa.matrix:matrix-core:3.2.0')
       dependency(coords: 'se.alipsa.matrix:matrix-csv:2.1.0')
-      dependency(coords: 'org.apache.maven.resolver:maven-resolver-ant-tasks:1.5.2')
+      dependency(coords: 'org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0')
     }
     def dependencies = new Dependencies()
     dependencies.setProject(targetBuilder.antProject)

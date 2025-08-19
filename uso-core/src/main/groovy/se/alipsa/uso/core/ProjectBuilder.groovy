@@ -38,13 +38,14 @@ class ProjectBuilder extends AntBuilder {
     typedef(name:"artifact", classname:"org.apache.maven.resolver.internal.ant.types.Artifact")
     typedef(name:"artifacts", classname:"org.apache.maven.resolver.internal.ant.types.Artifacts")
     typedef(name:"settings", classname:"org.apache.maven.resolver.internal.ant.types.Settings")
+    typedef(name:"dependencyManagement", classname:"org.apache.maven.resolver.internal.ant.types.DependencyManagement")
+    typedef(name:"pom", classname:"org.apache.maven.resolver.internal.ant.types.Pom")
     taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
     taskdef(name:"install", classname:"org.apache.maven.resolver.internal.ant.tasks.Install")
     taskdef(name:"deploy", classname:"org.apache.maven.resolver.internal.ant.tasks.Deploy")
-    taskdef(name:"pom", classname:"org.apache.maven.resolver.internal.ant.types.Pom")
+    taskdef(name: 'createPom', classname: 'org.apache.maven.resolver.internal.ant.tasks.CreatePom')
 
-    typedef(name:"dependencyManagement", classname:"se.alipsa.uso.types.DependencyManagement")
-    taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')
+    taskdef(name: 'validatePom', classname: 'se.alipsa.uso.tasks.ValidatePom')
     taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
   }
 

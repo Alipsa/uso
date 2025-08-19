@@ -3,8 +3,8 @@
 The `createPom` task generates a Maven POM file based on the current project’s coordinates, dependencies, and additional POM customization. It registers the resulting POM as an Ant property reference for later use (e.g., publishing).
 
 This task is _automatically_ registered when using Uso. If you use Ant or AntBuilder directly, you must first register the task with
-`taskdef(name: 'createPom', classname: 'se.alipsa.uso.tasks.CreatePom')`
-This depends on the jar for the dependency `se.alipsa.uso:uso-tasks:0.0.5` to be available on the classpath.
+`taskdef(name: 'createPom', classname: 'org.apache.maven.resolver.internal.ant.tasks.CreatePom')`
+This depends on the jar for the dependency `org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0` to be available on the classpath.
 
 
 ## Usage Example
@@ -28,27 +28,30 @@ target(name: 'pom') {
     description: 'A simple example of a publishable library'
   ) {
     licenses {
-      license(
-        name: "MIT",
-        url: "https://opensource.org/license/mit"
-      )
+      license {
+        name "MIT"
+        url "https://opensource.org/license/mit"
+      }
     }
     repositories {
-      repository(id: 'jitpack.io', url: 'https://jitpack.io')
+      repository {
+        id 'jitpack.io'
+        url 'https://jitpack.io'
+      }
     }
     developers {
-      developer(
-        name: 'Per Nyfelt',
-        email: 'per.nyfelt@alipsa.se',
-        organization: 'Alipsa HB',
-        organizationUrl: 'http://www.alipsa.se'
-      )
+      developer {
+        name 'Per Nyfelt'
+        email 'per.nyfelt@alipsa.se'
+        organization 'Alipsa HB'
+        organizationUrl 'http://www.alipsa.se'
+      }
     }
-    scm(
-      connection: 'scm:git:https://github.com/Alipsa/publish-example.git',
-      developerConnection: 'scm:git:https://github.com/Alipsa/publish-example.git',
-      url: 'https://github.com/Alipsa/publish-example/tree/main'
-    )
+    scm {
+      connection 'scm:git:https://github.com/Alipsa/publish-example.git'
+      developerConnection 'scm:git:https://github.com/Alipsa/publish-example.git'
+      url 'https://github.com/Alipsa/publish-example/tree/main'
+    }
   }
 }
 ```

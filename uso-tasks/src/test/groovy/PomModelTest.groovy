@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test
 import se.alipsa.uso.model.MavenProject
-import se.alipsa.uso.tasks.CreatePom
+import se.alipsa.uso.tasks.ValidatePom
 
 class PomModelTest {
 
@@ -25,7 +25,7 @@ class PomModelTest {
     assert pom.contains('<artifactId>matrix-bom</artifactId>')
     assert pom.contains('<dependencyManagement>')
     assert pom.contains('</dependencyManagement>')
-    CreatePom.validatePomContent(pom, project.getSchemaLocation())
+    ValidatePom.validatePomContent(pom, project.getSchemaLocation())
 
   }
 }

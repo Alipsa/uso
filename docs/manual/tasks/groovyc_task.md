@@ -1,8 +1,6 @@
 The <groovyc> Ant Task
 ======================
 
-version 4.0.26
-
 Table of Contents
 
 *   [1\. `groovyc`](#groovyc-ant-task-using)
@@ -136,6 +134,3 @@ groovyc srcdir:'${testSourceDirectory}', destdir:'${testClassesDirectory}', targ
 }
 ```
 More details about joint compilation can be found in the [joint compilation](tools-groovyc.html#section-jointcompilation) section.
-
-Version 4.0.26  
-Last updated 2025-02-25 08:23:11 +1000

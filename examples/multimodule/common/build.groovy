@@ -21,10 +21,10 @@ project.with {
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',
         name: '${artifactId}', description: "common library for multimodule example") {
       licenses {
-        license (
-            name:"MIT",
-            url:"https://opensource.org/license/mit"
-        )
+        license {
+            name("MIT")
+            url("https://opensource.org/license/mit")
+        }
       }
     }
     resolve {

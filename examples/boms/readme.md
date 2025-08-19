@@ -48,7 +48,7 @@ target('init') {
   dependencies.setRefid(ref)
   // Create the XML for each dependency defined
   StringBuilder deps = new StringBuilder()
-  se.alipsa.uso.tasks.CreatePom.appendDependencies(dependencies, deps)
+  se.alipsa.uso.tasks.ValidatePom.appendDependencies(dependencies, deps)
   pomFile.text = """\
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
