@@ -42,6 +42,9 @@ import java.util.StringTokenizer;
 
 /**
  * Access to the GroovyDoc tool from Ant.
+ * This task is based on the original Ant Groovydoc task, but has been modified to
+ * support modular GroovyDoc generation, i.e. it can generate documentation with references to
+ * Java9+ javadocs modules.
  */
 public class ModularGroovydoc extends Task {
   private final LoggingHelper log = new LoggingHelper(this);
@@ -80,7 +83,7 @@ public class ModularGroovydoc extends Task {
   public ModularGroovydoc() {
     packageNames = new ArrayList<>();
     excludePackageNames = new ArrayList<>();
-    packageSets = new ArrayList<DirSet>();
+    packageSets = new ArrayList<>();
     sourceFilesToDoc = new ArrayList<>();
     privateScope = false;
     protectedScope = false;

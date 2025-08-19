@@ -181,6 +181,10 @@ The build script is executed in the context of a ProjectBuilder instance running
 - variables that are declared without a type are global. You can use ant properties if you prefer, but it is not necessary.
 - variables that are declared with a type or with def are local
 - Maven ant tasks and the groovyc task are already defined so no need to do taskdef for them.
+- The uso ant tasks are also defined so you can use them directly in the build script without having to do a taskdef for them. They are:
+  - Layout - This is used to define the project layout, e.g. source directories, build directories, etc.
+  - ModularGroovyDoc - This is used to generate groovydoc for a project.
+  - ValidatePom - Used to validate a pom file against the maven pom schema.
 
 ## Installation
 To install uso, you need to have Groovy installed. You can use [sdkman](https://sdkman.io/) to install it. Once you have Groovy installed, you can install uso in the project you want to use it in using the following command:
@@ -197,7 +201,7 @@ Let's say we have 3 targets:
 - compile depends on init
 
 If you run the following commands:
-- `uso clean compile` will execute init -> clean -> init -> compile. (ant style)
+- `uso clean compile` will execute init -> clean -> init -> compile. (just like in a regular ant build)
 
 ### Documentation
 - The [user manual](docs/uso_user_manual.md) is a good start.
