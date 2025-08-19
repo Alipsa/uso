@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Grab('se.alipsa.uso:uso-core:0.0.5')
+@Grab('se.alipsa.uso:uso-core:0.1.0')
 @Grab('org.slf4j:slf4j-simple:2.0.17')
 @GrabConfig(systemClassLoader=true)
 import org.apache.tools.ant.BuildException

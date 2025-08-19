@@ -8,7 +8,7 @@ import groovy.ant.AntBuilder
 
 groupId = 'se.alipsa.uso'
 artifactId = 'uso-tasks'
-version = '0.0.5'
+version = '0.1.0'
 ant = new AntBuilder()
 
 ant.typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant.types.Dependency")

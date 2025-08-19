@@ -4,7 +4,7 @@ The `layout` task initializes a standard project directory structure and sets An
 
 This task is _automatically_ registered when using Uso. If you use Ant or AntBuilder directly you must first register the task with
 `taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')`
-This depends on the jar for the dependency `se.alipsa.uso:uso-tasks:0.0.5` to be available on the classpath.
+This depends on the jar for the dependency `se.alipsa.uso:uso-tasks:0.1.0` to be available on the classpath.
 
 ## Usage Example
 

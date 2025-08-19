@@ -1,13 +1,13 @@
 #!/usr/bin/env groovy
 @Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0')
 @Grab('org.apache.ant:ant-junitlauncher:1.10.15')
-@Grab('se.alipsa.uso:uso-tasks:0.0.5')
+@Grab('se.alipsa.uso:uso-tasks:0.1.0')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
 
 binding.groupId = 'se.alipsa.uso'
 binding.artifactId = 'uso-core'
-binding.version = '0.0.5'
+binding.version = '0.1.0'
 binding.ant = new AntBuilder()
 def groovyHome = System.getenv("GROOVY_HOME")
 
@@ -184,13 +184,13 @@ def createPom() {
       <dependency>
         <groupId>se.alipsa.uso</groupId>
         <artifactId>uso-tasks</artifactId>
-        <version>0.0.5</version>
+        <version>0.1.0</version>
       </dependency>
-      <dependency>
+      <!--dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-xml</artifactId>
-        <version>4.0.4</version>
-      </dependency>
+        <version>4.1.0</version>
+      </dependency-->
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-junitlauncher</artifactId>
