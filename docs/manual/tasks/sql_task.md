@@ -135,7 +135,7 @@ project.with {
   }
   // now the file query.out contains exactly "hello"
   loadfile(property: "row1col1", srcFile: "query.out")
-  println "row1col1 = ${antProject.getProperty('row1col1')}"
+  echo(message: 'row1col1 = ${row1col1}')
 }
 ```
 This will output
@@ -144,7 +144,7 @@ This will output
       [sql] Executing commands
       [sql] Executing commands
       [sql] 3 of 3 SQL statements executed successfully
-row1col1 = hello
+     [echo] row1col1 = hello
 ```
 ## Reference
 
