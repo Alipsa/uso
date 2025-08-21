@@ -1,11 +1,9 @@
 package se.alipsa.uso.tasks
 
 import groovy.transform.CompileStatic
-import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
-import se.alipsa.uso.model.MavenProject
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
@@ -39,10 +37,11 @@ class ValidatePom extends Task {
     if(!pomFile.getParentFile().exists()) {
       pomFile.getParentFile().mkdirs()
     }
-    validatePomContent(pomFile.text, MavenProject.schemaLocation)
+    validatePomContent(pomFile.text, schemaLocation)
   }
 
-  static Map<String, String> toMap(Dependency dep) {
+  /*
+  static Map<String, String> toMap(org.apache.maven.resolver.internal.ant.types.Dependency dep) {
     Map<String, String> params = [:]
     if (dep.groupId) {
       params.put('groupId', dep.groupId)
@@ -65,6 +64,8 @@ class ValidatePom extends Task {
     return params
   }
 
+   */
+
   static void validatePomContent(String content, String schemaLocation) {
     try {
       def xsdLocation = new URI(schemaLocation).toURL()
@@ -76,5 +77,9 @@ class ValidatePom extends Task {
     } catch (Exception e) {
       throw new BuildException("Failed to validate pom: ${e.message}", e)
     }
+  }
+
+  static String getSchemaLocation() {
+    'https://maven.apache.org/xsd/maven-4.0.0.xsd'
   }
 }

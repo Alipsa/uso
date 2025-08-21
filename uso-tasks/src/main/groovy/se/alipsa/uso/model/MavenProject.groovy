@@ -44,7 +44,7 @@ class MavenProject {
 
   void toPom(Writer writer) {
     JAXBContext context = JAXBContext.newInstance(Model.class)
-    Marshaller mar= context.createMarshaller()
+    Marshaller mar = context.createMarshaller()
     mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE)
     mar.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://maven.apache.org/POM/4.0.0 ${getSchemaLocation()}".toString())
     mar.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE)
