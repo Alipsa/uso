@@ -5,7 +5,6 @@ import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
-import se.alipsa.uso.model.MavenProject
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
@@ -39,7 +38,7 @@ class ValidatePom extends Task {
     if(!pomFile.getParentFile().exists()) {
       pomFile.getParentFile().mkdirs()
     }
-    validatePomContent(pomFile.text, MavenProject.schemaLocation)
+    validatePomContent(pomFile.text, schemaLocation)
   }
 
   static Map<String, String> toMap(Dependency dep) {
@@ -76,5 +75,9 @@ class ValidatePom extends Task {
     } catch (Exception e) {
       throw new BuildException("Failed to validate pom: ${e.message}", e)
     }
+  }
+
+  static String getSchemaLocation() {
+    'https://maven.apache.org/xsd/maven-4.0.0.xsd'
   }
 }
