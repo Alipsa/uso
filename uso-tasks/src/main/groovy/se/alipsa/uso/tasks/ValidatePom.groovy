@@ -1,7 +1,6 @@
 package se.alipsa.uso.tasks
 
 import groovy.transform.CompileStatic
-import org.apache.maven.resolver.internal.ant.types.Dependency
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
@@ -41,7 +40,8 @@ class ValidatePom extends Task {
     validatePomContent(pomFile.text, schemaLocation)
   }
 
-  static Map<String, String> toMap(Dependency dep) {
+  /*
+  static Map<String, String> toMap(org.apache.maven.resolver.internal.ant.types.Dependency dep) {
     Map<String, String> params = [:]
     if (dep.groupId) {
       params.put('groupId', dep.groupId)
@@ -63,6 +63,8 @@ class ValidatePom extends Task {
     }
     return params
   }
+
+   */
 
   static void validatePomContent(String content, String schemaLocation) {
     try {
