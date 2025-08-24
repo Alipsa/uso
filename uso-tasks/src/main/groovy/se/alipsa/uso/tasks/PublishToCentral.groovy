@@ -16,10 +16,12 @@ class PublishToCentral extends Task {
   private String username
   private String password
   private String publishUrl
+  private File bundleFile
+  private boolean autoDeploy = true
 
   @Override
   void execute() {
-
+    uploadAndCheck(bundleFile, autoDeploy)
   }
 
   void setVariables(String username, String password, String publishUrl) {
@@ -102,16 +104,16 @@ class PublishToCentral extends Task {
     conn.setRequestProperty("Authorization", authHeader())
     int status = conn.getResponseCode();
     if (status >= 400) {
-      log(url + " returned HTTP error code : " + status)
+      log("$url returned HTTP error code : $status")
       try (InputStream is = conn.getErrorStream()) {
         if (is != null) {
           String body = readFully(is)
-          log("Response body: " + body)
+          log("Response body: $body")
         }
       } catch (IOException e) {
-        log("Failed to read response body: " + e)
+        log("Failed to read response body: $e")
       }
-      throw new IOException("Failed to get status: HTTP " + status)
+      throw new IOException("Failed to get status: HTTP $status")
     }
     try (InputStream is = conn.getInputStream()) {
       if (is == null) {

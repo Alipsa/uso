@@ -18,6 +18,8 @@ ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.ta
 ant.dependencies(id: 'deps') {
   dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-core', version:'4.0.5')
   dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-runtime', version:'4.0.5')
+  dependency(groupId:'org.apache.maven', artifactId:'maven-model', version:'3.9.11')
+  dependency(groupId:'org.apache.maven.resolver', artifactId:'maven-resolver-api', version:'1.9.24')
   dependency(groupId:'org.apache.ant', artifactId: 'ant-junitlauncher', version:'1.10.15', scope: 'test')
   dependency(groupId: 'org.apache.maven.resolver', artifactId:'maven-resolver-ant-tasks', version:'1.6.0', scope: 'test')
   dependency(groupId: 'org.xmlunit', artifactId: 'xmlunit-core', version: '2.10.0', scope: 'test')
