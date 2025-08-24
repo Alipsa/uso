@@ -47,6 +47,8 @@ class ProjectBuilder extends AntBuilder {
 
     taskdef(name: 'validatePom', classname: 'se.alipsa.uso.tasks.ValidatePom')
     taskdef(name: 'layout', classname: 'se.alipsa.uso.tasks.Layout')
+    taskdef(name: 'createBundle', classname: 'se.alipsa.uso.tasks.CreateBundle')
+    taskdef(name: 'publishToCentral', classname: 'se.alipsa.uso.tasks.PublishToCentral')
   }
 
   void target(Map<String, String> params, Closure closure) {

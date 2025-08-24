@@ -11,6 +11,7 @@ class CreateBundleTest {
   void testCreateBundle() {
     AntBuilder ant = new AntBuilder()
     File pomFile = new File("out/test/pom.xml")
+    pomFile.parentFile.mkdirs()
     File signedPomFile = new File(pomFile.parentFile, pomFile.name + ".asc")
     signedPomFile.text = "Fake sign info"
     File jarFile = new File("out/test/create-bundle-test-1.0.0.jar")
