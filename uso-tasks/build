@@ -15,15 +15,18 @@ ant.typedef(name:"dependency", classname:"org.apache.maven.resolver.internal.ant
 ant.typedef(name:"dependencies", classname:"org.apache.maven.resolver.internal.ant.types.Dependencies")
 ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.tasks.Resolve")
 
+def jaxbVersion = '4.0.5'
+def xmlUnitVersion = '2.10.0'
 ant.dependencies(id: 'deps') {
-  dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-core', version:'4.0.5')
-  dependency(groupId:'org.glassfish.jaxb', artifactId:'jaxb-runtime', version:'4.0.5')
-  dependency(groupId:'org.apache.maven', artifactId:'maven-model', version:'3.9.11')
-  dependency(groupId:'org.apache.maven.resolver', artifactId:'maven-resolver-api', version:'1.9.24')
-  dependency(groupId:'org.apache.maven.resolver', artifactId:'maven-resolver-ant-tasks', version:'1.6.0')
-  dependency(groupId:'org.apache.ant', artifactId: 'ant-junitlauncher', version:'1.10.15', scope: 'test')
-  dependency(groupId: 'org.xmlunit', artifactId: 'xmlunit-core', version: '2.10.0', scope: 'test')
-  dependency(groupId: 'org.xmlunit', artifactId: 'xmlunit-matchers', version: '2.10.0', scope: 'test')
+  dependency(coords: "org.glassfish.jaxb:jaxb-core:${jaxbVersion}")
+  dependency(coords: "org.glassfish.jaxb:jaxb-runtime:${jaxbVersion}")
+  dependency(coords:'org.apache.maven:maven-model:3.9.11')
+  dependency(coords:'org.apache.maven.resolver:maven-resolver-api:1.9.24')
+  dependency(coords:'org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0')
+  dependency(coords: 'org.apache.ant:ant-junitlauncher:1.10.15:test')
+  dependency(coords: "org.xmlunit:xmlunit-core:${xmlUnitVersion}:test")
+  dependency(coords: "org.xmlunit:xmlunit-matchers:${xmlUnitVersion}:test")
+  dependency(coords: 'com.squareup.okhttp3:mockwebserver:4.12.0:test')
 }
 
 groovyHome = System.getenv("GROOVY_HOME")

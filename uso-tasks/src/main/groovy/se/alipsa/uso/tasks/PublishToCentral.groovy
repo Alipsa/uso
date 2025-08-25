@@ -18,6 +18,7 @@ class PublishToCentral extends Task {
   private String publishUrl
   private File bundleFile
   private boolean autoDeploy = true
+  private int pollDelayMs = 10000
 
   @Override
   void execute() {
@@ -102,7 +103,7 @@ class PublishToCentral extends Task {
     conn.setInstanceFollowRedirects(true)
     conn.setRequestMethod("POST")
     conn.setRequestProperty("Authorization", authHeader())
-    int status = conn.getResponseCode();
+    int status = conn.getResponseCode()
     if (status >= 400) {
       log("$url returned HTTP error code : $status")
       try (InputStream is = conn.getErrorStream()) {
@@ -156,12 +157,12 @@ class PublishToCentral extends Task {
     }
 
     log("Deployment ID: " + deploymentId)
-    log("Waiting 10 seconds before checking status...")
+    log("Waiting ${pollDelayMs/1000} seconds before checking status...")
     try {
-      Thread.sleep(10000)
+      Thread.sleep(pollDelayMs)
       String status = getStatus(deploymentId)
 
-      int retries = 10;
+      int retries = 10
       while (!Arrays.asList("VALIDATED", "PUBLISHING", "PUBLISHED", "FAILED")
           .contains(status)
           && retries-- > 0) {
@@ -210,5 +211,29 @@ class PublishToCentral extends Task {
 
   void setPublishUrl(String publishUrl) {
     this.publishUrl = publishUrl
+  }
+
+  File getBundleFile() {
+    return bundleFile
+  }
+
+  void setBundleFile(File bundleFile) {
+    this.bundleFile = bundleFile
+  }
+
+  boolean getAutoDeploy() {
+    return autoDeploy
+  }
+
+  void setAutoDeploy(boolean autoDeploy) {
+    this.autoDeploy = autoDeploy
+  }
+
+  int getPollDelayMs() {
+    return pollDelayMs
+  }
+
+  void setPollDelayMs(int pollDelayMs) {
+    this.pollDelayMs = pollDelayMs
   }
 }
