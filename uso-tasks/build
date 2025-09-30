@@ -146,23 +146,67 @@ def test() {
 
 
   ant.resolve(dependenciesref: 'deps') {
-    path(refId: 'testPath', classpath: 'test')
+    ant.path(refId: 'testPath', classpath: 'test')
   }
-  ant.junitlauncher(haltOnFailure: true, printSummary: true) {
-    classpath {
-      pathelement location: mainBuildDir
-      pathelement location: testBuildDir
-      groovyClasspath.each { jar ->
-        pathelement location: jar
+
+  def testFailed = false
+
+  try {
+    ant.junitlauncher(haltOnFailure: true, printSummary: 'withOutAndErr') {
+      classpath {
+        pathelement location: mainBuildDir
+        pathelement location: testBuildDir
+        groovyClasspath.each { jar ->
+          pathelement location: jar
+        }
+        path refid: "testPath"
       }
-      path refid: "testPath"
+      testclasses(outputdir: outputDir) {
+        fork(includeJUnitPlatformLibraries: false, includeAntRuntimeLibraries: false)
+        fileset dir: testBuildDir
+        listener type: "legacy-brief", sendSysOut: true
+        // Critical: Use legacy-xml to capture full data
+        listener type: "legacy-xml"
+      }
     }
-    testclasses(outputdir: outputDir.canonicalPath) {
-      fork(includeJUnitPlatformLibraries: false, includeAntRuntimeLibraries: false)
-      fileset dir: testBuildDir
-      listener type: "legacy-brief", sendSysOut: true
+  } catch (e) {
+    // Catch the build failure exception thrown by haltOnFailure: true
+    testFailed = true
+    println "JUnitLauncher failed, proceeding to generate detailed report..."
+  } finally {
+    // Create html report
+    File reportDir = new File(outputDir, "html")
+    reportDir.mkdirs()
+    ant.junitreport(todir: reportDir) {
+      fileset(dir:outputDir) {
+        include name:"TEST-*.xml"
+      }
+      report format:"frames", todir: reportDir
+    }
+    def failedTests = []
+    outputDir.eachFileMatch(~/TEST-.*\.xml/) { file ->
+      def xml = new groovy.xml.XmlSlurper().parse(file)
+      xml.testcase.each { tc ->
+        tc.failure.each { f ->
+          println "FAILED: ${tc.@classname}.${tc.@name}"
+          println f.text().trim()
+          println "-" * 80
+          failedTests << tc
+        }
+        tc.error.each { e ->
+          println "ERROR: ${tc.@classname}.${tc.@name}"
+          println e.text().trim()
+          println "-" * 80
+          failedTests << tc
+        }
+      }
     }
 
+    // 3. Re-throw the error to fail the build if tests actually failed
+    if (testFailed) {
+      // Use an Ant task to re-fail the build using the original message
+      ant.fail(message: "${failedTests.size()} tests failed!. See detailed report above.")
+    }
   }
 }
 
