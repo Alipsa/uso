@@ -4,14 +4,27 @@
 @Grab('se.alipsa.uso:uso-tasks:0.1.0')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
+import groovy.transform.Field
+import groovy.xml.XmlSlurper
+import org.apache.tools.ant.BuildException
 
-binding.groupId = 'se.alipsa.uso'
-binding.artifactId = 'uso-core'
-binding.version = '0.1.0'
-binding.ant = new AntBuilder()
-def groovyHome = System.getenv("GROOVY_HOME")
+import javax.xml.XMLConstants
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 
-binding.groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
+@Field
+String groupId = 'se.alipsa.uso'
+@Field
+String artifactId = 'uso-core'
+@Field
+String version = '0.1.0'
+@Field
+AntBuilder ant = new AntBuilder()
+@Field
+String groovyHome = System.getenv("GROOVY_HOME")
+
+@Field
+List<File>groovyClasspath = new File(groovyHome, "lib").listFiles().findAll { it.name.endsWith(".jar") }
 
 createProjectLayout()
 
@@ -107,11 +120,11 @@ def compileTest() {
 def test() {
   if (hasRan('isTested')) return
   println "\n[test]"
-  //ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask')
   def outputDir = new File(buildDir, "testoutput")
   if (!outputDir.exists()) {
     outputDir.mkdirs()
   }
+  ant.echo "TODO: use JunitJupiterTask here instead of junitlauncher for better output"
   ant.junitlauncher(haltOnFailure: true, printSummary: true) {
     classpath {
       pathelement location: '${mainBuildDir}'
@@ -146,7 +159,7 @@ def createPom() {
   println "\n[createPom]"
   def pomName = "$artifactId-${version}.pom"
   def pomFile = new File(mainBuildDir, pomName)
-  pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
+  String pom = """<?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -199,6 +212,19 @@ def createPom() {
     </dependencies>
   </project>
   """.stripIndent()
+
+  pomFile.text = pom
+  try {
+    XmlSlurper xmlSlurper = new XmlSlurper()
+    xmlSlurper.parseText(pom)
+    SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        .newSchema(new URI("https://maven.apache.org/xsd/maven-4.0.0.xsd").toURL())
+        .newValidator()
+        .validate(new StreamSource(new StringReader(pom)))
+    ant.echo "pom file is valid"
+  } catch (Exception e) {
+    throw new BuildException("uso core pom file is not valid!", e)
+  }
   binding.pomName = pomName
   ant.echo "created $pomFile"
 }

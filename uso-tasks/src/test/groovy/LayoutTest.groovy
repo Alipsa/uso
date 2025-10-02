@@ -11,7 +11,7 @@ class LayoutTest {
   void testLayoutDirectly() {
     AntBuilder ant = new AntBuilder()
     File outDir = new File('out/mvnJava')
-    Layout layout = new Layout(dir: outDir.getAbsolutePath(), type: 'maven', language:'java', loglevel: 'WARN')
+    Layout layout = new Layout(dir: outDir, type: 'maven', language:'java', loglevel: 'WARN')
     layout.project = ant.antProject
     layout.execute()
     assertTrue(outDir.exists() && outDir.isDirectory(), "${outDir.getAbsolutePath()} directory not created")
@@ -28,9 +28,10 @@ class LayoutTest {
       taskdef(name: "layout", classname: "se.alipsa.uso.tasks.Layout")
       layout(id: 'layout', dir: 'out/mvnGroovy', type: 'maven', language:'groovy', loglevel: '3')
     }
-    assertTrue(new File('out/mvnGroovy').exists() && new File('out/mvnGroovy').isDirectory(), "mvnGroovy directory not created")
+    File outDir = new File('out/mvnGroovy')
+    assertTrue outDir.exists() && outDir.isDirectory(), "Failed to create outDir: $outDir"
     def mainSrcDir = new File('out/mvnGroovy/src/main/groovy')
-    assertTrue mainSrcDir.exists() && mainSrcDir.isDirectory()
+    assertTrue mainSrcDir.exists() && mainSrcDir.isDirectory(), "Failed to create mainSrcDir: $mainSrcDir"
     assertTrue(ant.antProject.getProperty('testResourcesDir').contains('out/mvnGroovy/src/test/resources'),
         'Failed to find a property for testResourcesDir')
   }

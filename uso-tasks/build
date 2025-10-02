@@ -1,10 +1,18 @@
 #!/usr/bin/env groovy
 @Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0')
-@Grab('org.apache.ant:ant-junitlauncher:1.10.15')
+//@Grab('org.apache.ant:ant-junitlauncher:1.10.15')
 @Grab('org.codehaus.plexus:plexus-xml:4.1.0')
 @Grab(group='org.slf4j', module='slf4j-simple', version='2.0.17', scope='test')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
+import groovy.xml.XmlSlurper
+import org.apache.tools.ant.BuildException
+import org.apache.tools.ant.taskdefs.Java
+
+import javax.xml.XMLConstants
+import javax.xml.transform.Source
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 
 groupId = 'se.alipsa.uso'
 artifactId = 'uso-tasks'
@@ -17,16 +25,19 @@ ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.ta
 
 def jaxbVersion = '4.0.5'
 def xmlUnitVersion = '2.10.0'
+def junitPlatformVersion = '1.14.0'
 ant.dependencies(id: 'deps') {
   dependency(coords: "org.glassfish.jaxb:jaxb-core:${jaxbVersion}")
   dependency(coords: "org.glassfish.jaxb:jaxb-runtime:${jaxbVersion}")
   dependency(coords: "org.apache.maven:maven-model:3.9.11")
   dependency(coords: "org.apache.maven.resolver:maven-resolver-api:1.9.24")
   dependency(coords: "org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0")
-  dependency(coords: "org.apache.ant:ant-junitlauncher:1.10.15:test")
+  dependency(coords: "org.junit.platform:junit-platform-console:$junitPlatformVersion")
+  //dependency(coords: "org.apache.ant:ant-junitlauncher:1.10.15:test")
   dependency(coords: "org.xmlunit:xmlunit-core:${xmlUnitVersion}:test")
   dependency(coords: "org.xmlunit:xmlunit-matchers:${xmlUnitVersion}:test")
   dependency(coords: "com.squareup.okhttp3:mockwebserver:4.12.0:test")
+  dependency(coords: "org.slf4j:slf4j-simple:2.0.17:test")
 }
 
 groovyHome = System.getenv("GROOVY_HOME")
@@ -150,9 +161,13 @@ def test() {
 
 
   ant.resolve(dependenciesref: 'deps') {
-    path(refId: 'testPath', classpath: 'test')
+    ant.path(refId: 'testPath', classpath: 'test')
   }
-  ant.junitlauncher(haltOnFailure: true, printSummary: true) {
+
+  ant.echo("Running JUnit 5 ConsoleLauncher")
+
+  // Fork=false gives slight better output but exists the vm after completion
+  ant.java(classname:"org.junit.platform.console.ConsoleLauncher", fork: true, failonerror: true) {
     classpath {
       pathelement location: mainBuildDir
       pathelement location: testBuildDir
@@ -161,13 +176,70 @@ def test() {
       }
       path refid: "testPath"
     }
-    testclasses(outputdir: outputDir.canonicalPath) {
-      fork(includeJUnitPlatformLibraries: false, includeAntRuntimeLibraries: false)
-      fileset dir: testBuildDir
-      listener type: "legacy-brief", sendSysOut: true
+    arg value: "--scan-class-path"
+    arg value: testBuildDir
+  }
+
+  /* using the ConsoleLauncher is cleaner and gives better output even thogh the below also works
+  def testFailed = false
+  try {
+    ant.junitlauncher(haltOnFailure: true, printSummary: 'withOutAndErr') {
+      classpath {
+        pathelement location: mainBuildDir
+        pathelement location: testBuildDir
+        groovyClasspath.each { jar ->
+          pathelement location: jar
+        }
+        path refid: "testPath"
+      }
+      testclasses(outputdir: outputDir) {
+        fork(includeJUnitPlatformLibraries: false, includeAntRuntimeLibraries: false)
+        fileset dir: testBuildDir
+        listener type: "legacy-brief", sendSysOut: true
+        // Critical: Use legacy-xml to capture full data
+        listener type: "legacy-xml"
+      }
+    }
+  } catch (e) {
+    // Catch the build failure exception thrown by haltOnFailure: true
+    testFailed = true
+    println "JUnitLauncher failed, proceeding to generate detailed report..."
+  } finally {
+    // Create html report
+    File reportDir = new File(outputDir, "html")
+    reportDir.mkdirs()
+    ant.junitreport(todir: reportDir) {
+      fileset(dir:outputDir) {
+        include name:"TEST-*.xml"
+      }
+      report format:"frames", todir: reportDir
+    }
+    def failedTests = []
+    outputDir.eachFileMatch(~/TEST-.*\.xml/) { file ->
+      def xml = new groovy.xml.XmlSlurper().parse(file)
+      xml.testcase.each { tc ->
+        tc.failure.each { f ->
+          println "FAILED: ${tc.@classname}.${tc.@name}"
+          println f.text().trim()
+          println "-" * 80
+          failedTests << tc
+        }
+        tc.error.each { e ->
+          println "ERROR: ${tc.@classname}.${tc.@name}"
+          println e.text().trim()
+          println "-" * 80
+          failedTests << tc
+        }
+      }
     }
 
-  }
+    // 3. Re-throw the error to fail the build if tests actually failed
+    if (testFailed) {
+      // Use an Ant task to re-fail the build using the original message
+      ant.fail(message: "${failedTests.size()} tests failed!. See detailed report above.")
+    }
+  }*/
+
 }
 
 def jar() {
@@ -183,7 +255,7 @@ def createPom() {
   println "\n[createPom]"
   pomName = "$artifactId-${version}.pom"
   def pomFile = new File(mainBuildDir, pomName)
-  pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
+  String pom =  """<?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -224,6 +296,11 @@ def createPom() {
         <version>3.9.11</version>
       </dependency>
       <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-console</artifactId>
+        <version>1.14.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.maven.resolver</groupId>
         <artifactId>maven-resolver-ant-tasks</artifactId>
         <version>1.6.0</version>
@@ -241,6 +318,17 @@ def createPom() {
     </dependencies>
   </project>
   """.stripIndent()
+  try {
+    XmlSlurper xmlSlurper = new XmlSlurper()
+    xmlSlurper.parseText(pom)
+    SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        .newSchema(new URI("https://maven.apache.org/xsd/maven-4.0.0.xsd").toURL())
+        .newValidator()
+        .validate(new StreamSource(new StringReader(pom)))
+  } catch (Exception e) {
+    throw new BuildException("uso tasks pom file is not valid!", e)
+  }
+  pomFile.text = pom
   ant.echo "created $pomFile"
 }
 

@@ -17,7 +17,7 @@ project.with {
     layout(type: 'maven', language: 'groovy', logLevel: 3)
   }
 
-  target('init', depends: 'setup') {
+  target(name: 'init', depends: 'setup') {
     echo "Initializing project common..."
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
