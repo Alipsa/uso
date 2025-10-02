@@ -324,7 +324,7 @@ def createPom() {
   } catch (Exception e) {
     throw new BuildException("uso tasks pom file is not valid!", e)
   }
-    pomFile.text = pom
+  pomFile.text = pom
   ant.echo "created $pomFile"
 }
 
