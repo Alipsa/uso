@@ -5,8 +5,14 @@
 @Grab(group='org.slf4j', module='slf4j-simple', version='2.0.17', scope='test')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
+import groovy.xml.XmlSlurper
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.taskdefs.Java
+
+import javax.xml.XMLConstants
+import javax.xml.transform.Source
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 
 groupId = 'se.alipsa.uso'
 artifactId = 'uso-tasks'
@@ -156,8 +162,8 @@ def test() {
 
   ant.echo("Running JUnit 5 ConsoleLauncher")
 
-  // Fork=false gives slight better output but both works
-  ant.java(classname:"org.junit.platform.console.ConsoleLauncher", fork: false, failonerror: true) {
+  // Fork=false gives slight better output but exists the vm after completion
+  ant.java(classname:"org.junit.platform.console.ConsoleLauncher", fork: true, failonerror: true) {
     classpath {
       pathelement location: mainBuildDir
       pathelement location: testBuildDir
@@ -245,7 +251,7 @@ def createPom() {
   println "\n[createPom]"
   pomName = "$artifactId-${version}.pom"
   def pomFile = new File(mainBuildDir, pomName)
-  pomFile.text =  """<?xml version="1.0" encoding="UTF-8"?>
+  String pom =  """<?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -286,7 +292,6 @@ def createPom() {
         <version>3.9.11</version>
       </dependency>
       <dependency>
-      <dependency>
         <groupId>org.junit.platform</groupId>
         <artifactId>junit-platform-console</artifactId>
         <version>1.14.0</version>
@@ -309,6 +314,17 @@ def createPom() {
     </dependencies>
   </project>
   """.stripIndent()
+  try {
+    XmlSlurper xmlSlurper = new XmlSlurper()
+    xmlSlurper.parseText(pom)
+    SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        .newSchema(new URI("https://maven.apache.org/xsd/maven-4.0.0.xsd").toURL())
+        .newValidator()
+        .validate(new StreamSource(new StringReader(pom)))
+  } catch (Exception e) {
+    throw new BuildException("uso tasks pom file is not valid!", e)
+  }
+    pomFile.text = pom
   ant.echo "created $pomFile"
 }
 
