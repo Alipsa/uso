@@ -1,10 +1,12 @@
 #!/usr/bin/env groovy
 @Grab('org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0')
-@Grab('org.apache.ant:ant-junitlauncher:1.10.15')
+//@Grab('org.apache.ant:ant-junitlauncher:1.10.15')
 @Grab('org.codehaus.plexus:plexus-xml:4.1.0')
 @Grab(group='org.slf4j', module='slf4j-simple', version='2.0.17', scope='test')
 @GrabConfig(systemClassLoader=true)
 import groovy.ant.AntBuilder
+import org.apache.tools.ant.BuildException
+import org.apache.tools.ant.taskdefs.Java
 
 groupId = 'se.alipsa.uso'
 artifactId = 'uso-tasks'
@@ -17,16 +19,19 @@ ant.taskdef(name:"resolve", classname:"org.apache.maven.resolver.internal.ant.ta
 
 def jaxbVersion = '4.0.5'
 def xmlUnitVersion = '2.10.0'
+def junitPlatformVersion = '1.14.0'
 ant.dependencies(id: 'deps') {
   dependency(coords: "org.glassfish.jaxb:jaxb-core:${jaxbVersion}")
   dependency(coords: "org.glassfish.jaxb:jaxb-runtime:${jaxbVersion}")
   dependency(coords: "org.apache.maven:maven-model:3.9.11")
   dependency(coords: "org.apache.maven.resolver:maven-resolver-api:1.9.24")
   dependency(coords: "org.apache.maven.resolver:maven-resolver-ant-tasks:1.6.0")
-  dependency(coords: "org.apache.ant:ant-junitlauncher:1.10.15:test")
+  dependency(coords: "org.junit.platform:junit-platform-console:$junitPlatformVersion")
+  //dependency(coords: "org.apache.ant:ant-junitlauncher:1.10.15:test")
   dependency(coords: "org.xmlunit:xmlunit-core:${xmlUnitVersion}:test")
   dependency(coords: "org.xmlunit:xmlunit-matchers:${xmlUnitVersion}:test")
   dependency(coords: "com.squareup.okhttp3:mockwebserver:4.12.0:test")
+  dependency(coords: "org.slf4j:slf4j-simple:2.0.17:test")
 }
 
 groovyHome = System.getenv("GROOVY_HOME")
@@ -149,8 +154,24 @@ def test() {
     ant.path(refId: 'testPath', classpath: 'test')
   }
 
-  def testFailed = false
+  ant.echo("Running JUnit 5 ConsoleLauncher")
 
+  // Fork=false gives slight better output but both works
+  ant.java(classname:"org.junit.platform.console.ConsoleLauncher", fork: false, failonerror: true) {
+    classpath {
+      pathelement location: mainBuildDir
+      pathelement location: testBuildDir
+      groovyClasspath.each { jar ->
+        pathelement location: jar
+      }
+      path refid: "testPath"
+    }
+    arg value: "--scan-class-path"
+    arg value: testBuildDir
+  }
+
+  /* using the ConsoleLauncher is cleaner and gives better output even thogh the below also works
+  def testFailed = false
   try {
     ant.junitlauncher(haltOnFailure: true, printSummary: 'withOutAndErr') {
       classpath {
@@ -207,7 +228,8 @@ def test() {
       // Use an Ant task to re-fail the build using the original message
       ant.fail(message: "${failedTests.size()} tests failed!. See detailed report above.")
     }
-  }
+  }*/
+
 }
 
 def jar() {
@@ -262,6 +284,12 @@ def createPom() {
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-model</artifactId>
         <version>3.9.11</version>
+      </dependency>
+      <dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-console</artifactId>
+        <version>1.14.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.resolver</groupId>

@@ -57,20 +57,20 @@ import org.apache.tools.ant.Task
  */
 @CompileStatic
 class Layout extends Task {
-  String mainSrcDir
-  String testSrcDir
-  String mainResourcesDir
-  String testResourcesDir
-  String buildDir
-  String mainGeneratedDir
-  String testGeneratedDir
-  String mainClassesDir
-  String testClassesDir
-  String testResultDir
-  String testReportDir
-  String mainDocDir
-  String testDocDir
-  String distDir
+  File mainSrcDir
+  File testSrcDir
+  File mainResourcesDir
+  File testResourcesDir
+  File buildDir
+  File mainGeneratedDir
+  File testGeneratedDir
+  File mainClassesDir
+  File testClassesDir
+  File testResultDir
+  File testReportDir
+  File mainDocDir
+  File testDocDir
+  File distDir
   String type = 'maven'
   String language = 'groovy'
   File dir
@@ -85,58 +85,59 @@ class Layout extends Task {
   }
 
   File getDir() {
-    return dir ?: new File(getBasedir())
+    return dir
   }
 
   def mavenLayout() {
-    mainSrcDir = "${getDir()}/src/main/$language"
-    testSrcDir = "${getDir()}/src/test/$language"
-    mainResourcesDir = "${getDir()}/src/main/resources"
-    testResourcesDir = "${getDir()}/src/test/resources"
-    buildDir = "${getDir()}/target"
-    mainGeneratedDir = "${buildDir}/generated-sources"
-    testGeneratedDir = "${buildDir}/generated-test-sources"
-    mainClassesDir = "${buildDir}/classes"
-    testClassesDir = "${buildDir}/test-classes"
-    testResultDir = "${buildDir}/surefire-reports"
-    testReportDir = "${buildDir}/site"
-    mainDocDir = "${buildDir}/${language}doc"
-    testDocDir = "${buildDir}/test-${language}doc"
-    distDir = "${buildDir}"
+    //project.log("Creating maven layout, dir is ${getDir()}")
+    mainSrcDir = new File(dir, "src/main/$language")
+    testSrcDir = new File(dir, "src/test/$language")
+    mainResourcesDir = new File(dir, "src/main/resources")
+    testResourcesDir = new File(dir, "src/test/resources")
+    buildDir = new File(dir, "target")
+    mainGeneratedDir = new File(buildDir, "generated-sources")
+    testGeneratedDir = new File(buildDir, "generated-test-sources")
+    mainClassesDir = new File(buildDir, "classes")
+    testClassesDir = new File(buildDir, "test-classes")
+    testResultDir = new File(buildDir, "surefire-reports")
+    testReportDir = new File(buildDir, "site")
+    mainDocDir = new File(buildDir, "${language}doc")
+    testDocDir = new File(buildDir, "test-${language}doc")
+    distDir = buildDir
   }
 
   def gradleLayout() {
-    mainSrcDir = "${getDir()}/src/main/${language}"
-    testSrcDir = "${getDir()}/src/test/${language}"
-    mainResourcesDir = "${getDir()}/src/main/resources"
-    testResourcesDir = "${getDir()}/src/test/resources"
-    buildDir = "${getDir()}/build"
-    mainGeneratedDir = "${buildDir}/generated/sources/main/${language}"
-    testGeneratedDir = "${buildDir}/generated/sources/test/${language}"
-    mainClassesDir = "${buildDir}/classes/${language}/main"
-    testClassesDir = "${buildDir}/classes/${language}/test"
-    testResultDir = "${buildDir}/test-results/test"
-    testReportDir = "${buildDir}/test-results/report"
-    mainDocDir = "${buildDir}/docs/${language}doc"
-    testDocDir = "${buildDir}/docs/test-${language}doc"
-    distDir = "${buildDir}/libs"
+    mainSrcDir = new File(dir, "src/main/${language}")
+    testSrcDir = new File(dir, "src/test/${language}")
+    mainResourcesDir = new File(dir, "src/main/resources")
+    testResourcesDir = new File(dir, "src/test/resources")
+    buildDir = new File(dir, "build")
+    mainGeneratedDir = new File(buildDir, "generated/sources/main/${language}")
+    testGeneratedDir = new File(buildDir, "generated/sources/test/${language}")
+    mainClassesDir = new File(buildDir, "classes/${language}/main")
+    testClassesDir = new File(buildDir, "classes/${language}/test")
+    testResultDir = new File(buildDir, "test-results/test")
+    testReportDir = new File(buildDir, "test-results/report")
+    mainDocDir = new File(buildDir, "/docs/${language}doc")
+    testDocDir = new File(buildDir, "docs/test-${language}doc")
+    distDir = new File(buildDir, "libs")
   }
 
   def simpleLayout() {
-    mainSrcDir = "${getDir()}/src/code"
-    testSrcDir = "${getDir()}/test/code"
-    mainResourcesDir = "${getDir()}/src/resources"
-    testResourcesDir = "${getDir()}/test/resources"
-    buildDir = "${getDir()}/out"
-    mainGeneratedDir = "${buildDir}/generated-sources"
-    testGeneratedDir = "${buildDir}/generated-test-sources"
-    mainClassesDir = "${buildDir}/classes"
-    testClassesDir = "${buildDir}/test-classes"
-    testResultDir = "${buildDir}/test-results"
-    testReportDir = "${buildDir}/test-reports"
-    mainDocDir = "${buildDir}/${language}doc"
-    testDocDir = "${buildDir}/test-${language}doc"
-    distDir = "${buildDir}"
+    mainSrcDir = new File(dir, "src/code")
+    testSrcDir = new File(dir, "test/code")
+    mainResourcesDir = new File(dir, "src/resources")
+    testResourcesDir = new File(dir, "test/resources")
+    buildDir = new File(dir, "out")
+    mainGeneratedDir = new File(buildDir, "generated-sources")
+    testGeneratedDir = new File(buildDir, "generated-test-sources")
+    mainClassesDir = new File(buildDir, "classes")
+    testClassesDir = new File(buildDir, "test-classes")
+    testResultDir = new File(buildDir, "test-results")
+    testReportDir = new File(buildDir, "test-reports")
+    mainDocDir = new File(buildDir, "${language}doc")
+    testDocDir = new File(buildDir, "test-${language}doc")
+    distDir = buildDir
   }
 
   void execute() {
@@ -165,60 +166,58 @@ class Layout extends Task {
     createDirAndSetProperty('distDir', distDir)
   }
 
-  def createDirAndSetProperty(String name, String value) {
-    File targetDir = new File(value)
-    if (!targetDir.exists()) {
-      targetDir.mkdirs()
-    }
-    project.setProperty(name, value)
-    project.log("property: $name = $value", logLevel)
+  def createDirAndSetProperty(String name, File targetDir) {
+    //project.log("Layout: Creating directory $targetDir for property $name")
+    targetDir.mkdirs()
+    project.setProperty(name, targetDir.canonicalPath)
+    project.log("property: $name = $targetDir", logLevel)
   }
 
-  void setMainSrcDir(String mainSrcDir) {
+  void setMainSrcDir(File mainSrcDir) {
     this.mainSrcDir = mainSrcDir
   }
 
-  void setTestSrcDir(String testSrcDir) {
+  void setTestSrcDir(File testSrcDir) {
     this.testSrcDir = testSrcDir
   }
 
-  void setMainResourcesDir(String mainResourcesDir) {
+  void setMainResourcesDir(File mainResourcesDir) {
     this.mainResourcesDir = mainResourcesDir
   }
 
-  void setTestResourcesDir(String testResourcesDir) {
+  void setTestResourcesDir(File testResourcesDir) {
     this.testResourcesDir = testResourcesDir
   }
 
-  void setBuildDir(String buildDir) {
+  void setBuildDir(File buildDir) {
     this.buildDir = buildDir
   }
 
-  void setMainGeneratedDir(String mainGeneratedDir) {
+  void setMainGeneratedDir(File mainGeneratedDir) {
     this.mainGeneratedDir = mainGeneratedDir
   }
 
-  void setTestGeneratedDir(String testGeneratedDir) {
+  void setTestGeneratedDir(File testGeneratedDir) {
     this.testGeneratedDir = testGeneratedDir
   }
 
-  void setMainClassesDir(String mainClassesDir) {
+  void setMainClassesDir(File mainClassesDir) {
     this.mainClassesDir = mainClassesDir
   }
 
-  void setTestClassesDir(String testClassesDir) {
+  void setTestClassesDir(File testClassesDir) {
     this.testClassesDir = testClassesDir
   }
 
-  void setMainDocDir(String mainDocDir) {
+  void setMainDocDir(File mainDocDir) {
     this.mainDocDir = mainDocDir
   }
 
-  void setTestDocDir(String testDocDir) {
+  void setTestDocDir(File testDocDir) {
     this.testDocDir = testDocDir
   }
 
-  void setDistDir(String distDir) {
+  void setDistDir(File distDir) {
     this.distDir = distDir
   }
 
@@ -231,6 +230,7 @@ class Layout extends Task {
   }
 
   void setDir(File dir) {
+    project.log("Setting dir to $dir", logLevel)
     this.dir = dir
   }
 
@@ -238,11 +238,11 @@ class Layout extends Task {
     this.logLevel = logLevel
   }
 
-  void setTestResultDir(String testResultDir) {
+  void setTestResultDir(File testResultDir) {
     this.testResultDir= testResultDir
   }
 
-  void setTestReportDir(String testReportDir) {
+  void setTestReportDir(File testReportDir) {
     this.testReportDir = testReportDir
   }
 }
