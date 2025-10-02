@@ -120,7 +120,7 @@ def compile() {
 def compileTest() {
   if (hasRan('isCompiledTest')) return
   println "\n[compileTest]"
-  ant.echo "Compiling test groovy classes"
+  ant.echo "Compiling test groovy classes to $testBuildDir"
   ant.groovyc(srcdir: 'src/test/groovy', destdir: testBuildDir) {
     classpath {
       pathelement path: mainBuildDir
@@ -133,6 +133,10 @@ def compileTest() {
     javac {
       include(name: '**/*.java')
     }
+  }
+  ant.echo("copy test resources")
+  ant.copy(todir: testBuildDir) {
+    fileset(dir: 'src/test/resources')
   }
 }
 

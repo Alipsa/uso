@@ -7,15 +7,18 @@ project.with {
   // we cannot create methods inside the 'with', but closures are a good substitute
   checkProperty = { String propName, String pathPart ->
     fail unless: propName, message: "$propName property is not set"
-    assert antProject.getProperty(propName).contains(pathPart)
-    File propDir = new File(antProject.getProperty(propName))
+    String propValue = antProject.getProperty(propName)
+    if (!antProject.getProperties().containsKey(propName)) {
+      fail message: "$propName has value $propValue which does not contain $pathPart"
+    }
+    File propDir = new File(propValue)
     if (!propDir.exists()) {
       fail message: "$propName directory does not exist: ${propDir}"
     }
   }
 
   taskdef(name: "layout", classname: "se.alipsa.uso.tasks.Layout")
-  layout(dir: 'mvnGroovy', type: 'maven', language: 'groovy')
+  layout(dir: 'mvnGroovy', type: 'maven', language: 'groovy', logLevel: '3')
   checkProperty('mainSrcDir', 'mvnGroovy/src/main/groovy')
   checkProperty('testSrcDir', 'mvnGroovy/src/test/groovy')
   checkProperty('mainResourcesDir', 'mvnGroovy/src/main/resources')

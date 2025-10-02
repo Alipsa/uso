@@ -8,9 +8,12 @@ project.with {
     dependency(coords: '${groupId}:multimodule-common:1.0.0')
   }
 
-  target('init') {
-    echo "Subproject B initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}"
+  target(name: 'setup') {
     layout(type: 'maven', language: 'groovy')
+  }
+
+  target(name: 'init', depends: 'setup') {
+    echo 'Subproject B initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}'
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'deps',
@@ -32,7 +35,8 @@ project.with {
     }
   }
 
-  target(name: 'clean') {
+  target(name: 'clean', depends: 'setup') {
+    echo 'Deleting build directory ${buildDir}'
     delete dir: '${buildDir}', quiet: true
   }
 
