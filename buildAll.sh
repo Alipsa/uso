@@ -39,7 +39,7 @@ buildExample examples/simpleExample clean compile
 buildExample examples/dependencies clean jar
 buildExample examples/publish clean publishLocal
 buildExample examples/boms clean publishLocal
-buildExample examples/layout compile
+buildExample examples/layout clean compile
 buildExample examples/multimodule buildAll
 echo ""
 banner "Done!"
