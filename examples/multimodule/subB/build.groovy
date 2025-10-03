@@ -3,13 +3,14 @@ project.with {
   version = '1.0.0'
   defaultTarget = 'init'
   property(file: '../multimodule.properties')
+  echo 'Multimodule subA, groupId: ${groupId}, basedDir = ${basedir}, buildDir=${buildDir}'
 
   dependencies(id: 'deps') {
     dependency(coords: '${groupId}:multimodule-common:1.0.0')
   }
 
   target(name: 'setup') {
-    layout(type: 'maven', language: 'groovy')
+    layout(type: 'maven', language: 'groovy', logLevel: 4)
   }
 
   target(name: 'init', depends: 'setup') {

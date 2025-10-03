@@ -299,6 +299,7 @@ class ProjectBuilder extends AntBuilder {
     ProjectBuilder projectBuilder = new ProjectBuilder()
     binding.setVariable("project", projectBuilder)
     projectBuilder.antProject.addBuildListener(new ErrorReportingListener(file.name))
+    projectBuilder.antProject.properties.clear()
 
     GroovyShell shell = new GroovyShell(binding)
     def codeSource = new GroovyCodeSource(file.text, file.name, file.absoluteFile.getParent())

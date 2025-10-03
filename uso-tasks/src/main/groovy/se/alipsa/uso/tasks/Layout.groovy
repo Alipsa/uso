@@ -1,9 +1,9 @@
 package se.alipsa.uso.tasks
 
 import groovy.transform.CompileStatic
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
-import org.apache.tools.ant.types.LogLevel
 
 /**
  * This task creates some standard layout for a project and defined properties
@@ -17,7 +17,7 @@ import org.apache.tools.ant.types.LogLevel
  *     <dd>the language to use, e.g. groovy, java, scala. Default is groovy</dd>
  *     <dt>dir</dt>
  *     <dd>the base directory for the layout. Default is basedir</dd>
- *     <dt>logLevel</dt>
+ *     <dt>loglevel</dt>
  *     <dd>the log level to use. Default is 2 (Project.MSG_INFO). If you set it to 3 (Project.MSG_VERBOSE) the property
  *     names and their values will be printed (unless you have changed the messageOutPutLevel)</dd>
  *   </dl>
@@ -58,24 +58,24 @@ import org.apache.tools.ant.types.LogLevel
  */
 @CompileStatic
 class Layout extends Task {
-  File mainSrcDir
-  File testSrcDir
-  File mainResourcesDir
-  File testResourcesDir
-  File buildDir
-  File mainGeneratedDir
-  File testGeneratedDir
-  File mainClassesDir
-  File testClassesDir
-  File testResultDir
-  File testReportDir
-  File mainDocDir
-  File testDocDir
-  File distDir
-  String type = 'maven'
-  String language = 'groovy'
-  File dir
-  int logLevel = Project.MSG_VERBOSE
+  private File mainSrcDir
+  private File testSrcDir
+  private File mainResourcesDir
+  private File testResourcesDir
+  private File buildDir
+  private File mainGeneratedDir
+  private File testGeneratedDir
+  private File mainClassesDir
+  private File testClassesDir
+  private File testResultDir
+  private File testReportDir
+  private File mainDocDir
+  private File testDocDir
+  private File distDir
+  private String type = 'maven'
+  private String language = 'groovy'
+  private File dir
+  private int loglevel = Project.MSG_VERBOSE
 
   Layout() {
     super()
@@ -85,17 +85,13 @@ class Layout extends Task {
     return project.getBaseDir()?.canonicalPath ?: project.getProperty('basedir') ?: '.'
   }
 
-  File getDir() {
-    return dir
-  }
-
   def mavenLayout() {
     //project.log("Creating maven layout, dir is ${getDir()}")
-    mainSrcDir = new File(dir, "src/main/$language")
-    testSrcDir = new File(dir, "src/test/$language")
-    mainResourcesDir = new File(dir, "src/main/resources")
-    testResourcesDir = new File(dir, "src/test/resources")
-    buildDir = new File(dir, "target")
+    mainSrcDir = new File(getDir(), "src/main/$language")
+    testSrcDir = new File(getDir(), "src/test/$language")
+    mainResourcesDir = new File(getDir(), "src/main/resources")
+    testResourcesDir = new File(getDir(), "src/test/resources")
+    buildDir = new File(getDir(), "target")
     mainGeneratedDir = new File(buildDir, "generated-sources")
     testGeneratedDir = new File(buildDir, "generated-test-sources")
     mainClassesDir = new File(buildDir, "classes")
@@ -108,11 +104,11 @@ class Layout extends Task {
   }
 
   def gradleLayout() {
-    mainSrcDir = new File(dir, "src/main/${language}")
-    testSrcDir = new File(dir, "src/test/${language}")
-    mainResourcesDir = new File(dir, "src/main/resources")
-    testResourcesDir = new File(dir, "src/test/resources")
-    buildDir = new File(dir, "build")
+    mainSrcDir = new File(getDir(), "src/main/${language}")
+    testSrcDir = new File(getDir(), "src/test/${language}")
+    mainResourcesDir = new File(getDir(), "src/main/resources")
+    testResourcesDir = new File(getDir(), "src/test/resources")
+    buildDir = new File(getDir(), "build")
     mainGeneratedDir = new File(buildDir, "generated/sources/main/${language}")
     testGeneratedDir = new File(buildDir, "generated/sources/test/${language}")
     mainClassesDir = new File(buildDir, "classes/${language}/main")
@@ -125,11 +121,11 @@ class Layout extends Task {
   }
 
   def simpleLayout() {
-    mainSrcDir = new File(dir, "src/code")
-    testSrcDir = new File(dir, "test/code")
-    mainResourcesDir = new File(dir, "src/resources")
-    testResourcesDir = new File(dir, "test/resources")
-    buildDir = new File(dir, "out")
+    mainSrcDir = new File(getDir(), "src/code")
+    testSrcDir = new File(getDir(), "test/code")
+    mainResourcesDir = new File(getDir(), "src/resources")
+    testResourcesDir = new File(getDir(), "test/resources")
+    buildDir = new File(getDir(), "out")
     mainGeneratedDir = new File(buildDir, "generated-sources")
     testGeneratedDir = new File(buildDir, "generated-test-sources")
     mainClassesDir = new File(buildDir, "classes")
@@ -141,7 +137,7 @@ class Layout extends Task {
     distDir = buildDir
   }
 
-  void execute() {
+  void execute() throws BuildException {
     printSettings()
     if (type == 'maven') {
       mavenLayout()
@@ -151,6 +147,14 @@ class Layout extends Task {
       simpleLayout()
     } else {
       throw new IllegalArgumentException("Unknown layout type: $type")
+    }
+    boolean result = getDir().mkdirs()
+    if (!getDir().exists()) {
+      throw new BuildException("Failed to create directory ${getDir()}")
+    } else if (result) {
+      log("Created directory ${getDir()}")
+    } else {
+      log("Directory ${getDir()} already exists")
     }
     createDirAndSetProperty('mainSrcDir', mainSrcDir)
     createDirAndSetProperty('testSrcDir', testSrcDir)
@@ -172,7 +176,7 @@ class Layout extends Task {
     //project.log("Layout: Creating directory $targetDir for property $name")
     targetDir.mkdirs()
     project.setProperty(name, targetDir.canonicalPath)
-    project.log("property: $name = $targetDir", logLevel)
+    project.log("property: $name = $targetDir", loglevel)
   }
 
   void setMainSrcDir(File mainSrcDir) {
@@ -189,6 +193,14 @@ class Layout extends Task {
 
   void setTestResourcesDir(File testResourcesDir) {
     this.testResourcesDir = testResourcesDir
+  }
+
+  void setTestResultDir(File testResultDir) {
+    this.testResultDir= testResultDir
+  }
+
+  void setTestReportDir(File testReportDir) {
+    this.testReportDir = testReportDir
   }
 
   void setBuildDir(File buildDir) {
@@ -232,15 +244,26 @@ class Layout extends Task {
   }
 
   void setDir(File dir) {
-    log("Setting dir to $dir", logLevel)
+    if (dir == null) return
+    log("Setting dir to $dir", loglevel)
+    if (project != null)
+      project.setProperty('layoutdir', dir.canonicalPath)
     this.dir = dir
   }
 
-  void setLoglevel(int logLevel) {
-    setLogLevel(logLevel)
+  File getDir() {
+    def ld = project.getProperty('layoutdir')
+    if (ld != null) {
+      if (ld.startsWith('/')) {
+        return new File(ld)
+      } else {
+        return new File(getBasedir(), ld)
+      }
+    }
+    return dir ?: new File(getBasedir())
   }
 
-  void setLogLevel(int logLevel) {
+  void setLoglevel(int logLevel) {
     String level = switch (logLevel) {
       case Project.MSG_ERR -> 'ERROR'
       case Project.MSG_WARN -> 'WARN'
@@ -250,14 +273,10 @@ class Layout extends Task {
       default -> 'UNKNOWN'
     }
     log("Setting log level to $level ($logLevel)", Project.MSG_WARN)
-    this.logLevel = logLevel
+    this.loglevel = logLevel
   }
 
   void setLoglevel(String logLevel) {
-    setLogLevel(logLevel)
-  }
-
-  void setLogLevel(String logLevel) {
     int level = switch (logLevel.toUpperCase()) {
       case '0', 'ERROR' -> Project.MSG_ERR
       case '1', 'WARN' -> Project.MSG_WARN
@@ -267,22 +286,16 @@ class Layout extends Task {
       default -> Project.MSG_INFO
     }
     log("Setting log level to $level", Project.MSG_WARN)
-    this.logLevel = level
-  }
-
-  void setTestResultDir(File testResultDir) {
-    this.testResultDir= testResultDir
-  }
-
-  void setTestReportDir(File testReportDir) {
-    this.testReportDir = testReportDir
+    this.loglevel = level
   }
 
   void printSettings() {
     println "Type: $type"
     println "Language: $language"
-    println "Base dir: ${getBasedir()}"
-    println "Layout dir: $dir"
-    println "Log level: $logLevel"
+    println "Base dir:    ${getBasedir()}"
+    println "dir var:     $dir"
+    println "Layout dir:  ${getDir()} "
+    println "layout prop: ${project.getProperty('layoutdir')}"
+    println "Log level: $loglevel"
   }
 }

@@ -1,10 +1,12 @@
+import jdk.jfr.internal.LogLevel
+
 project.with {
   name = 'common'
   artifactId = 'multimodule-common'
   version = '1.0.0'
   defaultTarget = 'init'
   property(file: '../multimodule.properties')
-  echo 'Multimodule common, before calling base, groupId: ${groupId}'
+  echo 'Multimodule common, groupId: ${groupId}, basedDir = ${basedir}, buildDir=${buildDir}'
 
   dependencies(id: 'compile') {
     dependency(coords: 'org.apache.commons:commons-lang3:3.17.0')
@@ -14,7 +16,7 @@ project.with {
   }
 
   target(name: 'setup') {
-    layout(type: 'maven', language: 'groovy', logLevel: 3)
+    layout(type: 'maven', language: 'groovy', logLevel: 4)
   }
 
   target(name: 'init', depends: 'setup') {

@@ -10,9 +10,14 @@ class LayoutTest {
   @Test
   void testLayoutDirectly() {
     AntBuilder ant = new AntBuilder()
+    ant.echo "** testLayoutDirectly **"
     File outDir = new File('out/mvnJava')
-    Layout layout = new Layout(dir: outDir, type: 'maven', language:'java', loglevel: 'WARN')
+    Layout layout = new Layout()
     layout.project = ant.antProject
+    layout.setDir outDir
+    layout.setType 'maven'
+    layout.setLanguage 'java'
+    layout.setLoglevel  'WARN'
     layout.execute()
     assertTrue(outDir.exists() && outDir.isDirectory(), "${outDir.getAbsolutePath()} directory not created")
     def mainSrcDir = new File(outDir,'src/main/java')
@@ -24,11 +29,17 @@ class LayoutTest {
   @Test
   void testLayout() {
     AntBuilder ant = new AntBuilder()
+    ant.echo "** testLayout **"
     ant.with {
       taskdef(name: "layout", classname: "se.alipsa.uso.tasks.Layout")
-      layout(id: 'layout', dir: 'out/mvnGroovy', type: 'maven', language:'groovy', loglevel: '3')
+      layout(id: 'layout', dir: 'out/mvnGroovy', type: 'maven', language:'groovy', loglevel: '1')
+      echo 'dir:       ${basedir}/out/mvnGroovy'
+      echo 'layoutdir: ${layoutdir}'
     }
-    File outDir = new File('out/mvnGroovy')
+    /*ant.antProject.properties.each {
+      println it.key + ' = ' + it.value
+    }*/
+    File outDir = new File(ant.antProject.getProperty('layoutdir'))
     assertTrue outDir.exists() && outDir.isDirectory(), "Failed to create outDir: $outDir"
     def mainSrcDir = new File('out/mvnGroovy/src/main/groovy')
     assertTrue mainSrcDir.exists() && mainSrcDir.isDirectory(), "Failed to create mainSrcDir: $mainSrcDir"
@@ -39,6 +50,7 @@ class LayoutTest {
   @Test
   void externalBuildScriptTest() {
     AntBuilder ant = new AntBuilder()
+    ant.echo "** externalBuildScriptTest **"
     File buildScript = new File(getClass().getResource('/build.groovy').toURI())
     assertTrue(buildScript.exists())
     GroovyScriptEngineImpl gse = new GroovyScriptEngineImpl()
