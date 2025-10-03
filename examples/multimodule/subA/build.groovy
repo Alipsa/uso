@@ -11,9 +11,12 @@ project.with {
     dependency(groupId: 'org.junit.platform', artifactId:'junit-platform-launcher', version:'1.12.2', scope: 'test')
   }
 
-  target('init') {
-    echo 'Subproject A initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}'
+  target('setup') {
     layout(type: 'maven', language: 'groovy', logLevel: 2)
+  }
+
+  target(name: 'init', depends: 'setup') {
+    echo 'Subproject A initializing with groupId: ${groupId}, artifactId: ${artifactId}, version: ${version}'
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'deps',
@@ -35,7 +38,8 @@ project.with {
     }
   }
 
-  target(name: 'clean') {
+  target(name: 'clean', depends: 'setup') {
+    echo 'Deleting build directory ${buildDir}'
     delete dir: '${buildDir}', quiet: true
   }
 

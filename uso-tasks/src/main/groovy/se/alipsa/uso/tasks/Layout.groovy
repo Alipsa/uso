@@ -3,6 +3,7 @@ package se.alipsa.uso.tasks
 import groovy.transform.CompileStatic
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
+import org.apache.tools.ant.types.LogLevel
 
 /**
  * This task creates some standard layout for a project and defined properties
@@ -141,6 +142,7 @@ class Layout extends Task {
   }
 
   void execute() {
+    printSettings()
     if (type == 'maven') {
       mavenLayout()
     } else if (type == 'gradle') {
@@ -230,12 +232,42 @@ class Layout extends Task {
   }
 
   void setDir(File dir) {
-    project.log("Setting dir to $dir", logLevel)
+    log("Setting dir to $dir", logLevel)
     this.dir = dir
   }
 
+  void setLoglevel(int logLevel) {
+    setLogLevel(logLevel)
+  }
+
   void setLogLevel(int logLevel) {
+    String level = switch (logLevel) {
+      case Project.MSG_ERR -> 'ERROR'
+      case Project.MSG_WARN -> 'WARN'
+      case Project.MSG_INFO -> 'INFO'
+      case Project.MSG_VERBOSE -> 'VERBOSE'
+      case Project.MSG_DEBUG -> 'DEBUG'
+      default -> 'UNKNOWN'
+    }
+    log("Setting log level to $level ($logLevel)", Project.MSG_WARN)
     this.logLevel = logLevel
+  }
+
+  void setLoglevel(String logLevel) {
+    setLogLevel(logLevel)
+  }
+
+  void setLogLevel(String logLevel) {
+    int level = switch (logLevel.toUpperCase()) {
+      case '0', 'ERROR' -> Project.MSG_ERR
+      case '1', 'WARN' -> Project.MSG_WARN
+      case '2', 'INFO' -> Project.MSG_INFO
+      case '3', 'VERBOSE' -> Project.MSG_VERBOSE
+      case '4', 'DEBUG' -> Project.MSG_DEBUG
+      default -> Project.MSG_INFO
+    }
+    log("Setting log level to $level", Project.MSG_WARN)
+    this.logLevel = level
   }
 
   void setTestResultDir(File testResultDir) {
@@ -244,5 +276,13 @@ class Layout extends Task {
 
   void setTestReportDir(File testReportDir) {
     this.testReportDir = testReportDir
+  }
+
+  void printSettings() {
+    println "Type: $type"
+    println "Language: $language"
+    println "Base dir: ${getBasedir()}"
+    println "Layout dir: $dir"
+    println "Log level: $logLevel"
   }
 }

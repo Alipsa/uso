@@ -13,9 +13,12 @@ project.with {
     dependency(coords: 'org.junit.platform:junit-platform-launcher:1.12.2:test')
   }
 
-  target('init') {
-    echo "Initializing project common..."
+  target(name: 'setup') {
     layout(type: 'maven', language: 'groovy', logLevel: 3)
+  }
+
+  target(name: 'init', depends: 'setup') {
+    echo "Initializing project common..."
     def pomFile = new File($('distDir'), "${artifactId}-${version}.pom")
     echo "Creating and registering the pom file ${pomFile.canonicalPath}"
     createPom(pomTarget: pomFile, dependenciesRef: 'compile',
@@ -33,7 +36,8 @@ project.with {
     }
   }
 
-  target(name: 'clean') {
+  target(name: 'clean', depends: 'setup') {
+    echo 'Deleting build directory ${buildDir}'
     delete dir: '${buildDir}', quiet: true
   }
 
